@@ -29,47 +29,47 @@ const POSTER_HOTSPOTS: {
   width: string;
   height: string;
 }[] = [
-    {
-      id: 'loi-ngo',
-      name: '1. Lời ngỏ',
-      left: '8.5%',
-      top: '38.6%',
-      width: '33.5%',
-      height: '3.2%',
-    },
-    {
-      id: 'truyen-ngan',
-      name: '2. Truyện ngắn',
-      left: '57.0%',
-      top: '46.8%',
-      width: '34.0%',
-      height: '3.2%',
-    },
-    {
-      id: 'tho',
-      name: '3. Thơ',
-      left: '8.0%',
-      top: '67.0%',
-      width: '33.5%',
-      height: '3.2%',
-    },
-    {
-      id: 'mv',
-      name: '4. Âm nhạc',
-      left: '58.0%',
-      top: '77.2%',
-      width: '34.0%',
-      height: '3.2%',
-    },
-    {
-      id: 'tri-an',
-      name: '5. Bài tri ân',
-      left: '32.5%',
-      top: '96.0%',
-      width: '42.5%',
-      height: '3.2%',
-    },
-  ];
+  {
+    id: 'loi-ngo',
+    name: '1. Lời ngỏ',
+    left: '8.5%',
+    top: '38.6%',
+    width: '33.5%',
+    height: '3.2%',
+  },
+  {
+    id: 'truyen-ngan',
+    name: '2. Truyện ngắn',
+    left: '57.0%',
+    top: '46.8%',
+    width: '34.0%',
+    height: '3.2%',
+  },
+  {
+    id: 'tho',
+    name: '3. Thơ',
+    left: '8.0%',
+    top: '67.0%',
+    width: '33.5%',
+    height: '3.2%',
+  },
+  {
+    id: 'mv',
+    name: '4. Âm nhạc',
+    left: '58.0%',
+    top: '77.2%',
+    width: '34.0%',
+    height: '3.2%',
+  },
+  {
+    id: 'tri-an',
+    name: '5. Bài tri ân',
+    left: '32.5%',
+    top: '96.0%',
+    width: '42.5%',
+    height: '3.2%',
+  },
+];
 
 export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
   config,
