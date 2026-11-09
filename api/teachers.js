@@ -1,6 +1,39 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
+const CLOUD_IMPRESSIONS_ID = 'ff808181a09d98f701a1c10cd3967210';
+const CLOUD_API_URL = `https://api.restful-api.dev/objects/${CLOUD_IMPRESSIONS_ID}`;
+
+async function getCloudImpressions() {
+  try {
+    const res = await fetch(CLOUD_API_URL, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      return data?.data?.impressionsByTeacher || {};
+    }
+  } catch (err) {
+    console.error('Error reading cloud impressions:', err);
+  }
+  return {};
+}
+
+async function saveCloudImpressions(impressionsByTeacher) {
+  try {
+    const res = await fetch(CLOUD_API_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'baotuong_impressions',
+        data: { impressionsByTeacher },
+      }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.error('Error saving cloud impressions:', err);
+    return false;
+  }
+}
+
 // Hỗ trợ kết nối Redis / KV trên Vercel để lưu trữ tập trung xuyên suốt tất cả thiết bị
 async function getUpstashTeachers() {
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
@@ -77,6 +110,26 @@ export default async function handler(req, res) {
     teachers = await getInitialFileTeachers();
   }
 
+  // Tự động đồng bộ các cảm nhận từ Cloud Store xuyên suốt tất cả thiết bị
+  const cloudImpressions = await getCloudImpressions();
+  teachers = teachers.map((teacher) => {
+    const cloudList = cloudImpressions[teacher.id] || [];
+    const existingIds = new Set((teacher.impressions || []).map((i) => i.id));
+    const combined = [...(teacher.impressions || [])];
+    for (const item of cloudList) {
+      if (!existingIds.has(item.id)) {
+        combined.push(item);
+        existingIds.add(item.id);
+      }
+    }
+    combined.sort((a, b) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return timeB - timeA;
+    });
+    return { ...teacher, impressions: combined };
+  });
+
   if (req.method === 'GET') {
     return res.status(200).json({
       teachers,
@@ -102,7 +155,6 @@ export default async function handler(req, res) {
     teacherId = String(body.teacherId);
   } else if (req.url) {
     const segments = req.url.split('?')[0].split('/').filter(Boolean);
-    // segments e.g. ['api', 'teachers', 'teacher-1']
     if (segments.length >= 3 && segments[1] === 'teachers') {
       teacherId = decodeURIComponent(segments[2]);
     }
@@ -143,10 +195,15 @@ export default async function handler(req, res) {
       const traits = targetTeacher.personalityTraits || [];
       const updatedTraits = traits.includes(trait) ? traits : [...traits, trait];
 
+      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
+      const updatedList = [newImp, ...currentList.filter((i) => i.id !== newImp.id)];
+      cloudImpressions[targetTeacher.id] = updatedList;
+      await saveCloudImpressions(cloudImpressions);
+
       const updatedTeacher = {
         ...targetTeacher,
         personalityTraits: updatedTraits,
-        impressions: [newImp, ...(targetTeacher.impressions || [])],
+        impressions: updatedList,
         updatedAt: new Date().toISOString(),
       };
 
@@ -160,12 +217,13 @@ export default async function handler(req, res) {
     if (body.updateImpression && typeof body.updateImpression === 'object') {
       const up = body.updateImpression;
       const impId = String(up.id || '').trim();
-      const impIndex = (targetTeacher.impressions || []).findIndex((i) => i.id === impId);
+      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
+      const impIndex = currentList.findIndex((i) => i.id === impId);
       if (impIndex === -1) {
         return res.status(404).json({ error: 'Không tìm thấy cảm nhận cần chỉnh sửa.' });
       }
 
-      const currentImp = targetTeacher.impressions[impIndex];
+      const currentImp = currentList[impIndex];
       const updatedImp = {
         ...currentImp,
         studentName: up.studentName !== undefined ? String(up.studentName).trim() : currentImp.studentName,
@@ -174,8 +232,10 @@ export default async function handler(req, res) {
         detail: up.detail !== undefined ? String(up.detail).trim() : currentImp.detail,
       };
 
-      const nextImps = [...targetTeacher.impressions];
+      const nextImps = [...currentList];
       nextImps[impIndex] = updatedImp;
+      cloudImpressions[targetTeacher.id] = nextImps;
+      await saveCloudImpressions(cloudImpressions);
 
       const updatedTeacher = {
         ...targetTeacher,
@@ -192,7 +252,10 @@ export default async function handler(req, res) {
     // 3. Xoá cảm nhận học sinh qua PATCH
     if (body.deleteImpressionId) {
       const impId = String(body.deleteImpressionId).trim();
-      const nextImps = (targetTeacher.impressions || []).filter((i) => i.id !== impId);
+      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
+      const nextImps = currentList.filter((i) => i.id !== impId);
+      cloudImpressions[targetTeacher.id] = nextImps;
+      await saveCloudImpressions(cloudImpressions);
 
       const updatedTeacher = {
         ...targetTeacher,

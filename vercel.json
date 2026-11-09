@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/teachers/:match*",
+      "destination": "/api/teachers"
+    },
+    {
+      "source": "/api/wishes/:match*",
+      "destination": "/api/wishes"
+    }
+  ]
+}

@@ -250,7 +250,10 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
       await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deleteImpressionId: impressionId }),
+        body: JSON.stringify({
+          teacherId: activeTeacher.id,
+          deleteImpressionId: impressionId,
+        }),
       });
     } catch {
       // Tiếp tục xóa cục bộ
@@ -292,6 +295,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
       if (editingImpressionId) {
         // Cập nhật cảm nhận đã có
         const payload = {
+          teacherId: activeTeacher.id,
           updateImpression: {
             id: editingImpressionId,
             studentName,
@@ -351,6 +355,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
       } else {
         // Thêm cảm nhận mới
         const payload = {
+          teacherId: activeTeacher.id,
           impression: {
             studentName,
             className: className || '9A3',

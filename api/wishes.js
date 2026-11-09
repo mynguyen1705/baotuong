@@ -1,6 +1,41 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
+const CLOUD_WISHES_ID = 'ff808181a09d98f701a1c10cd30f720f';
+const CLOUD_WISHES_URL = `https://api.restful-api.dev/objects/${CLOUD_WISHES_ID}`;
+
+async function getCloudWishes() {
+  try {
+    const res = await fetch(CLOUD_WISHES_URL, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data?.data?.wishes) && data.data.wishes.length > 0) {
+        return data.data.wishes;
+      }
+    }
+  } catch (err) {
+    console.error('Error reading cloud wishes:', err);
+  }
+  return null;
+}
+
+async function saveCloudWishes(wishes) {
+  try {
+    const res = await fetch(CLOUD_WISHES_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'baotuong_wishes',
+        data: { wishes },
+      }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.error('Error saving cloud wishes:', err);
+    return false;
+  }
+}
+
 // Hỗ trợ kết nối Redis / KV trên Vercel để lưu trữ tập trung xuyên suốt tất cả thiết bị
 async function getUpstashWishes() {
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
@@ -81,8 +116,11 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Lấy danh sách lời chúc từ Cloud Redis hoặc tệp mặc định
+  // Lấy danh sách lời chúc: ưu tiên Redis -> Cloud Store -> tệp mặc định
   let cloudWishes = await getUpstashWishes();
+  if (!cloudWishes) {
+    cloudWishes = await getCloudWishes();
+  }
   if (!cloudWishes) {
     cloudWishes = await getInitialFileWishes();
   }
@@ -115,6 +153,7 @@ export default async function handler(req, res) {
 
     const updated = [newWish, ...cloudWishes.filter((w) => w.id !== newWish.id)];
     await setUpstashWishes(updated);
+    await saveCloudWishes(updated);
 
     return res.status(201).json({ wish: newWish });
   }
@@ -148,6 +187,7 @@ export default async function handler(req, res) {
 
     cloudWishes[index] = updatedWish;
     await setUpstashWishes(cloudWishes);
+    await saveCloudWishes(cloudWishes);
 
     return res.status(200).json({ wish: updatedWish });
   }
@@ -168,6 +208,7 @@ export default async function handler(req, res) {
 
     const filtered = cloudWishes.filter((w) => w.id !== String(id));
     await setUpstashWishes(filtered);
+    await saveCloudWishes(filtered);
 
     return res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công.' });
   }
