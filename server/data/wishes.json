@@ -1,12 +1,18 @@
 {
   "wishes": [
     {
+      "id": "wish-1794235620000-baokhoi",
+      "senderName": "Nguyễn Đức Bảo Khôi",
+      "className": "9A3",
+      "message": "Cảm ơn tất cả thầy cô đã đồng hành cùng chúng em suốt thời gian qua, thầy cô luôn tận tâm chỉ bảo, giảng bài. Dù đôi lúc lớp vẫn còn ồn ào và chưa tập trung nhưng thầy cô vẫn cố gắng đưa đò sang sông. Thầy cô là những người lái đò, những người âm thầm hi sinh mà em sẽ không bao giờ quên được!",
+      "createdAt": "2026-11-09T15:07:00.000Z"
+    },
+    {
       "id": "wish-1794049247793-a0bc860d",
       "senderName": "Nguyễn Trà My",
       "className": "9A3",
       "message": "Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!",
-      "createdAt": "2026-11-07T11:00:47.793Z",
-      "signatureHash": "1d345516a4338d3b8e5ad736bd5390a05ac61e1b8ad02742fa723c75af3b89c9"
+      "createdAt": "2026-11-07T11:00:47.793Z"
     }
   ]
 }

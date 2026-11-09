@@ -51,7 +51,7 @@ export const WishesModal: React.FC<WishesModalProps> = ({
               <div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-0.5 text-xs font-bold text-amber-900">
                   <Sparkles className="h-3.5 w-3.5 text-poster-orange" />
-                  Nhịp Cầu Tri Ân 20/11 • Chi đội 9A3 – TH&THCS Hiệp Thạnh
+                  Tri ân Thầy Cô • 20/11 • Chi đội 9A3 – TH&THCS Hiệp Thạnh
                 </span>
                 <h2 className="mt-1 font-display text-xl sm:text-2xl font-extrabold text-stone-900">
                   Sổ Tay Lời Chúc Ngày Nhà Giáo Việt Nam 20/11
@@ -73,27 +73,25 @@ export const WishesModal: React.FC<WishesModalProps> = ({
               <button
                 type="button"
                 onClick={() => onModeChange('submit')}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold transition ${
-                  mode === 'submit'
-                    ? 'bg-gradient-to-b from-orange-400 to-poster-orange text-white shadow-sm'
-                    : 'border border-amber-300 bg-white text-stone-700 hover:bg-amber-50'
-                }`}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold transition ${mode === 'submit'
+                  ? 'bg-gradient-to-b from-orange-400 to-poster-orange text-white shadow-sm'
+                  : 'border border-amber-300 bg-white text-stone-700 hover:bg-amber-50'
+                  }`}
               >
                 <Send className="h-4 w-4" />
-                <span>Gửi Lời Chúc 20/11 (Học Sinh)</span>
+                <span>Gửi Lời Chúc 20/11 </span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onModeChange('view')}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold transition ${
-                  mode === 'view'
-                    ? 'bg-red-700 text-white shadow-sm'
-                    : 'border border-amber-300 bg-white text-stone-700 hover:bg-amber-50'
-                }`}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold transition ${mode === 'view'
+                  ? 'bg-red-700 text-white shadow-sm'
+                  : 'border border-amber-300 bg-white text-stone-700 hover:bg-amber-50'
+                  }`}
               >
                 <BookHeart className="h-4 w-4" />
-                <span>Xem Lời Chúc (Dành Cho Thầy Cô)</span>
+                <span>Xem Lời Chúc </span>
               </button>
             </div>
 

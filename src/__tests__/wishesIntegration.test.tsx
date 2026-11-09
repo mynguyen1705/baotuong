@@ -72,7 +72,11 @@ describe('Tích hợp luồng Gửi & Xem lời chúc 20/11 trên App', () => {
       },
     });
     const dialog = screen.getByRole('dialog');
-    fireEvent.click(within(dialog).getByRole('button', { name: /^Gửi lời chúc 20\/11$/i }));
+    const submitBtn = within(dialog)
+      .getAllByRole('button')
+      .find((btn) => btn.getAttribute('type') === 'submit');
+    expect(submitBtn).toBeDefined();
+    fireEvent.click(submitBtn!);
 
     expect(await screen.findByText(/Đã gửi lời chúc thành công/i)).toBeInTheDocument();
     sessionA.unmount();
