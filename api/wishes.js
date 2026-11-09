@@ -4,7 +4,7 @@ import path from 'path';
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -63,6 +63,46 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString(),
     };
     return res.status(201).json({ wish: newWish });
+  }
+
+  if (req.method === 'PATCH' || req.method === 'PUT') {
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        // ignore
+      }
+    }
+    const id = req.query.id || body?.id;
+    const { senderName, className, message } = body || {};
+    if (!id) {
+      return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
+    }
+    const updatedWish = {
+      id: String(id),
+      senderName: String(senderName || '').trim(),
+      className: String(className || '').trim(),
+      message: String(message || '').trim(),
+      createdAt: new Date().toISOString(),
+    };
+    return res.status(200).json({ wish: updatedWish });
+  }
+
+  if (req.method === 'DELETE') {
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        // ignore
+      }
+    }
+    const id = req.query.id || body?.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
+    }
+    return res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công.' });
   }
 
   return res.status(405).json({ error: 'Phương thức không được hỗ trợ.' });

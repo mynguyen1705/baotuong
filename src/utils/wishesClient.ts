@@ -1,9 +1,12 @@
 import { CreateWishInput, WishItem } from '../types/wishes';
+import { isLocalhostClient } from './isLocalhostClient';
 import { validateWishInput } from './validateWish';
 
 const WISHES_API_ENDPOINT = '/api/wishes';
 const WISHES_PUBLIC_FALLBACK = '/wishes-data.json';
 const LOCAL_STORAGE_KEY = 'baotuong_local_wishes';
+const MY_WISH_IDS_KEY = 'baotuong_my_wish_ids';
+const DELETED_WISH_IDS_KEY = 'baotuong_deleted_wish_ids';
 
 const DEFAULT_SEED_WISHES: WishItem[] = [
   {
@@ -22,6 +25,72 @@ const DEFAULT_SEED_WISHES: WishItem[] = [
     createdAt: '2026-11-07T11:00:47.793Z',
   },
 ];
+
+export function getMyWishIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(MY_WISH_IDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addMyWishId(id: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getMyWishIds();
+    if (!current.includes(id)) {
+      localStorage.setItem(MY_WISH_IDS_KEY, JSON.stringify([id, ...current]));
+    }
+  } catch {
+    // Ignore error
+  }
+}
+
+export function removeMyWishId(id: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getMyWishIds();
+    const updated = current.filter((item) => item !== id);
+    localStorage.setItem(MY_WISH_IDS_KEY, JSON.stringify(updated));
+  } catch {
+    // Ignore error
+  }
+}
+
+export function isMyWish(id: string): boolean {
+  if (isLocalhostClient()) {
+    return true; // Máy chủ chính của chủ sở hữu có toàn quyền
+  }
+  return getMyWishIds().includes(id);
+}
+
+function getDeletedWishIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(DELETED_WISH_IDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function addDeletedWishId(id: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getDeletedWishIds();
+    if (!current.includes(id)) {
+      localStorage.setItem(DELETED_WISH_IDS_KEY, JSON.stringify([id, ...current]));
+    }
+  } catch {
+    // Ignore error
+  }
+}
 
 function getLocalWishes(): WishItem[] {
   if (typeof window === 'undefined') return [];
@@ -43,6 +112,17 @@ function saveLocalWish(wish: WishItem): void {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
   } catch {
     // Ignore localStorage quotas or errors
+  }
+}
+
+function removeLocalWish(id: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getLocalWishes();
+    const updated = current.filter((w) => w.id !== id);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+  } catch {
+    // Ignore error
   }
 }
 
@@ -100,15 +180,21 @@ export async function fetchWishes(signal?: AbortSignal): Promise<WishItem[]> {
     fetchedWishes = DEFAULT_SEED_WISHES;
   }
 
-  // 4. Đồng bộ thêm các lời chúc người dùng vừa gửi trên thiết bị này (localStorage)
+  // 4. Lọc bỏ các lời chúc đã bị xóa trên thiết bị này
+  const deletedIds = new Set(getDeletedWishIds());
+  const activeFetched = fetchedWishes.filter((item) => !deletedIds.has(item.id));
+
+  // 5. Đồng bộ thêm các lời chúc người dùng vừa gửi / cập nhật trên thiết bị này (localStorage)
   const localWishes = getLocalWishes();
   const map = new Map<string, WishItem>();
 
-  for (const item of fetchedWishes) {
+  for (const item of activeFetched) {
     map.set(item.id, item);
   }
   for (const localItem of localWishes) {
-    map.set(localItem.id, localItem);
+    if (!deletedIds.has(localItem.id)) {
+      map.set(localItem.id, localItem);
+    }
   }
 
   const merged = Array.from(map.values());
@@ -142,6 +228,7 @@ export async function submitWish(input: CreateWishInput): Promise<WishItem> {
       const data = await response.json();
       if (data?.wish) {
         saveLocalWish(data.wish);
+        addMyWishId(data.wish.id);
         return data.wish;
       }
     } else {
@@ -179,5 +266,75 @@ export async function submitWish(input: CreateWishInput): Promise<WishItem> {
   };
 
   saveLocalWish(localCreatedWish);
+  addMyWishId(localCreatedWish.id);
   return localCreatedWish;
+}
+
+export async function updateWish(id: string, input: Partial<CreateWishInput>): Promise<WishItem> {
+  const validation = validateWishInput(input);
+  if (!validation.valid) {
+    const firstError =
+      validation.fieldErrors.senderName ||
+      validation.fieldErrors.className ||
+      validation.fieldErrors.message ||
+      'Dữ liệu lời chúc không hợp lệ.';
+    throw new Error(firstError);
+  }
+
+  // 1. Thử gửi lên API máy chủ nếu có
+  try {
+    const response = await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(validation.cleaned),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data?.wish) {
+        saveLocalWish(data.wish);
+        addMyWishId(data.wish.id);
+        return data.wish;
+      }
+    }
+  } catch {
+    // Tiếp tục lưu trữ cục bộ
+  }
+
+  // 2. Cập nhật trong bộ nhớ cục bộ
+  const currentLocal = getLocalWishes();
+  const existing = currentLocal.find((w) => w.id === id);
+  const updatedWish: WishItem = {
+    id,
+    senderName: validation.cleaned.senderName,
+    className: validation.cleaned.className,
+    message: validation.cleaned.message,
+    createdAt: existing?.createdAt || new Date().toISOString(),
+  };
+
+  saveLocalWish(updatedWish);
+  addMyWishId(id);
+  return updatedWish;
+}
+
+export async function deleteWish(id: string): Promise<void> {
+  // 1. Thử gửi lên API máy chủ nếu có
+  try {
+    await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+  } catch {
+    // Tiếp tục cập nhật cục bộ
+  }
+
+  // 2. Đánh dấu xóa và xóa khỏi bộ nhớ thiết bị
+  addDeletedWishId(id);
+  removeLocalWish(id);
+  removeMyWishId(id);
 }

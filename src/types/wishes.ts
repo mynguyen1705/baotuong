@@ -12,6 +12,12 @@ export interface CreateWishInput {
   message: string;
 }
 
+export interface UpdateWishInput {
+  senderName?: string;
+  className?: string;
+  message?: string;
+}
+
 export type WishesModalMode = 'submit' | 'view';
 
 export interface WishValidationResult {

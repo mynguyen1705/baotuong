@@ -21,6 +21,13 @@ export class DuplicateWishError extends Error {
   }
 }
 
+export class WishNotFoundError extends Error {
+  constructor(message = 'Không tìm thấy lời chúc trong hệ thống.') {
+    super(message);
+    this.name = 'WishNotFoundError';
+  }
+}
+
 export interface WishesStoreOptions {
   storageFilePath?: string;
   duplicateWindowMs?: number;
@@ -33,6 +40,8 @@ interface StoredWishRecord extends WishItem {
 export interface WishesStore {
   listWishes(): Promise<WishItem[]>;
   addWish(input: CreateWishInput): Promise<WishItem>;
+  updateWish(id: string, input: Partial<CreateWishInput>): Promise<WishItem>;
+  deleteWish(id: string): Promise<void>;
 }
 
 function getServerConfig(options?: WishesStoreOptions) {
@@ -161,6 +170,58 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
         const updated = [newRecord, ...records];
         await writeRecords(updated);
         return toPublicWish(newRecord);
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
+    },
+
+    async updateWish(id: string, input: Partial<CreateWishInput>): Promise<WishItem> {
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const index = records.findIndex((w) => w.id === id);
+        if (index === -1) {
+          throw new WishNotFoundError();
+        }
+
+        const current = records[index];
+        const validation = validateWishInput({
+          senderName: input.senderName ?? current.senderName,
+          className: input.className ?? current.className,
+          message: input.message ?? current.message,
+        });
+
+        if (!validation.valid) {
+          throw new WishValidationError(
+            validation.errorMessage || 'Dữ liệu lời chúc không hợp lệ.',
+            validation.fieldErrors
+          );
+        }
+
+        const updatedRecord: StoredWishRecord = {
+          ...current,
+          senderName: validation.cleaned.senderName,
+          className: validation.cleaned.className,
+          message: validation.cleaned.message,
+        };
+
+        records[index] = updatedRecord;
+        await writeRecords(records);
+        return toPublicWish(updatedRecord);
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
+    },
+
+    async deleteWish(id: string): Promise<void> {
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const filtered = records.filter((w) => w.id !== id);
+        if (filtered.length === records.length) {
+          throw new WishNotFoundError();
+        }
+        await writeRecords(filtered);
       });
 
       writeQueue = task.catch(() => {});
