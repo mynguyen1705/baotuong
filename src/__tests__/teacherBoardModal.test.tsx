@@ -80,6 +80,24 @@ describe('TeacherSummaryBoardSection & TeacherBoardModal', () => {
               ...current.impressions,
             ];
           }
+          if (body.updateImpression) {
+            current.impressions = current.impressions.map((imp) =>
+              imp.id === body.updateImpression.id
+                ? {
+                    ...imp,
+                    studentName: body.updateImpression.studentName ?? imp.studentName,
+                    className: body.updateImpression.className ?? imp.className,
+                    trait: body.updateImpression.trait ?? imp.trait,
+                    detail: body.updateImpression.detail ?? imp.detail,
+                  }
+                : imp
+            );
+          }
+          if (body.deleteImpressionId) {
+            current.impressions = current.impressions.filter(
+              (imp) => imp.id !== body.deleteImpressionId
+            );
+          }
           teachersState[idx] = current;
           return {
             ok: true,
@@ -209,6 +227,137 @@ describe('TeacherSummaryBoardSection & TeacherBoardModal', () => {
     });
     fireEvent.click(deleteBtn);
     expect(onDelete).toHaveBeenCalledWith(teachersState[0].id);
+  });
+
+  it('allows students to submit, edit, and delete their own impressions with "Của bạn" badge and allows owner to manage', async () => {
+    // Mock window.confirm
+    vi.stubGlobal('confirm', () => true);
+
+    let currentTeachers = structuredClone(teachersState);
+    const handleUpdate = vi.fn((next: TeacherProfile[]) => {
+      currentTeachers = next;
+    });
+
+    const { rerender } = render(
+      <TeacherBoardModal
+        isOpen={true}
+        mode="detail"
+        isOwner={false}
+        teachers={currentTeachers}
+        selectedTeacherId={currentTeachers[0].id}
+        onClose={() => {}}
+        onModeChange={() => {}}
+        onSelectTeacher={() => {}}
+        onTeachersUpdated={handleUpdate}
+      />
+    );
+
+    // Initial impressions should not have "Của bạn" for this client
+    expect(screen.queryByText(/Của bạn/i)).not.toBeInTheDocument();
+
+    // 1. Submit a new impression
+    fireEvent.change(screen.getByPlaceholderText(/Nguyễn Minh Anh \(Tổ 2\)/i), {
+      target: { value: 'Bảo Khôi' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Giảng bài siêu dễ hiểu/i), {
+      target: { value: 'Rất tận tâm' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Chia sẻ câu chuyện nhỏ/i), {
+      target: { value: 'Thầy luôn kiên nhẫn giảng lại từng bài toán khó cho chúng em.' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Lưu vào hồ sơ tính cách của thầy\/cô/i }));
+
+    await waitFor(() => {
+      expect(handleUpdate).toHaveBeenCalled();
+    });
+
+    // Re-render with updated teachers
+    rerender(
+      <TeacherBoardModal
+        isOpen={true}
+        mode="detail"
+        isOwner={false}
+        teachers={currentTeachers}
+        selectedTeacherId={currentTeachers[0].id}
+        onClose={() => {}}
+        onModeChange={() => {}}
+        onSelectTeacher={() => {}}
+        onTeachersUpdated={handleUpdate}
+      />
+    );
+
+    // Now the submitted impression should have the "Của bạn" badge
+    expect(screen.getByText(/Của bạn/i)).toBeInTheDocument();
+    expect(screen.getByText(/Bảo Khôi/i)).toBeInTheDocument();
+    expect(screen.getByText(/Rất tận tâm/i)).toBeInTheDocument();
+
+    // The edit and delete buttons must be present for this impression
+    const editBtn = screen.getByRole('button', { name: /Sửa cảm nhận của Bảo Khôi/i });
+    const deleteBtn = screen.getByRole('button', { name: /Xóa cảm nhận của Bảo Khôi/i });
+    expect(editBtn).toBeInTheDocument();
+    expect(deleteBtn).toBeInTheDocument();
+
+    // 2. Click Edit button
+    fireEvent.click(editBtn);
+
+    // Heading should change to edit mode
+    expect(
+      screen.getByText(/Chỉnh sửa chi tiết tính cách & kỷ niệm của bạn/i)
+    ).toBeInTheDocument();
+
+    // Form should be pre-filled
+    const traitInput = screen.getByPlaceholderText(/Giảng bài siêu dễ hiểu/i) as HTMLInputElement;
+    expect(traitInput.value).toBe('Rất tận tâm');
+
+    // Change trait and detail
+    fireEvent.change(traitInput, { target: { value: 'Cực kỳ tận tâm và chu đáo' } });
+    fireEvent.click(screen.getByRole('button', { name: /Cập nhật kỷ niệm & tính cách/i }));
+
+    await waitFor(() => {
+      expect(handleUpdate).toHaveBeenCalledTimes(2);
+    });
+
+    rerender(
+      <TeacherBoardModal
+        isOpen={true}
+        mode="detail"
+        isOwner={false}
+        teachers={currentTeachers}
+        selectedTeacherId={currentTeachers[0].id}
+        onClose={() => {}}
+        onModeChange={() => {}}
+        onSelectTeacher={() => {}}
+        onTeachersUpdated={handleUpdate}
+      />
+    );
+
+    expect(screen.getByText(/Cực kỳ tận tâm và chu đáo/i)).toBeInTheDocument();
+
+    // 3. Delete the impression
+    const deleteBtnAfterEdit = screen.getByRole('button', { name: /Xóa cảm nhận của Bảo Khôi/i });
+    fireEvent.click(deleteBtnAfterEdit);
+
+    await waitFor(() => {
+      expect(handleUpdate).toHaveBeenCalledTimes(3);
+    });
+
+    rerender(
+      <TeacherBoardModal
+        isOpen={true}
+        mode="detail"
+        isOwner={false}
+        teachers={currentTeachers}
+        selectedTeacherId={currentTeachers[0].id}
+        onClose={() => {}}
+        onModeChange={() => {}}
+        onSelectTeacher={() => {}}
+        onTeachersUpdated={handleUpdate}
+      />
+    );
+
+    expect(screen.queryByText(/Của bạn/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Bảo Khôi/i)).not.toBeInTheDocument();
   });
 });
 

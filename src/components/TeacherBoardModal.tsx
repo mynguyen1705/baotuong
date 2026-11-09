@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import {
   Camera,
   CheckCircle2,
+  Clock,
+  Edit2,
   Heart,
   ImagePlus,
   MessageSquarePlus,
@@ -14,11 +16,20 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { TeacherModalMode, TeacherProfile } from '../types/teachers';
+import { TeacherImpression, TeacherModalMode, TeacherProfile } from '../types/teachers';
 import { TeacherAvatarIllustration } from './TeacherAvatarIllustration';
 import { DecoPolaroidFrame } from './DecoPolaroidFrame';
 import { TeacherSummaryBoardSection } from './TeacherSummaryBoardSection';
 import { fileToImageDataUrl } from '../utils/imageDataUrl';
+import {
+  addDeletedImpressionId,
+  addMyImpressionId,
+  formatImpressionTime,
+  isMyImpression,
+  removeLocalImpression,
+  removeMyImpressionId,
+  saveLocalImpression,
+} from '../utils/impressionsClient';
 
 export interface TeacherBoardModalProps {
   isOpen: boolean;
@@ -65,6 +76,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
   const [impressionTrait, setImpressionTrait] = useState('');
   const [impressionDetail, setImpressionDetail] = useState('');
   const [customPhotoUrlInput, setCustomPhotoUrlInput] = useState('');
+  const [editingImpressionId, setEditingImpressionId] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,6 +85,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
   useEffect(() => {
     setErrorMessage(null);
     setSuccessMessage(null);
+    setEditingImpressionId(null);
   }, [mode, selectedTeacherId, isOpen]);
 
   const handleUploadNewTeacherPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,7 +217,70 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
     }
   };
 
-  const handleAddImpressionSubmit = async (e: React.FormEvent) => {
+  const handleStartEditImpression = (imp: TeacherImpression) => {
+    setEditingImpressionId(imp.id);
+    setStudentName(imp.studentName);
+    setClassName(imp.className || '9A3');
+    setImpressionTrait(imp.trait);
+    setImpressionDetail(imp.detail);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+  };
+
+  const handleCancelEditImpression = () => {
+    setEditingImpressionId(null);
+    setStudentName('');
+    setClassName('9A3');
+    setImpressionTrait('');
+    setImpressionDetail('');
+    setErrorMessage(null);
+  };
+
+  const handleDeleteImpression = async (impressionId: string) => {
+    if (!activeTeacher) return;
+    if (typeof window !== 'undefined' && !window.confirm('Bạn có chắc chắn muốn xóa cảm nhận này không?')) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    // 1. Thử gửi lên máy chủ nếu có
+    try {
+      await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deleteImpressionId: impressionId }),
+      });
+    } catch {
+      // Tiếp tục xóa cục bộ
+    }
+
+    // 2. Ghi nhận xóa vào bộ nhớ thiết bị
+    addDeletedImpressionId(impressionId);
+    removeMyImpressionId(impressionId);
+    removeLocalImpression(activeTeacher.id, impressionId);
+
+    // 3. Cập nhật giao diện
+    const nextImps = activeTeacher.impressions.filter((i) => i.id !== impressionId);
+    const updatedTeacher: TeacherProfile = {
+      ...activeTeacher,
+      impressions: nextImps,
+      updatedAt: new Date().toISOString(),
+    };
+
+    onTeachersUpdated(
+      teachers.map((item) => (item.id === updatedTeacher.id ? updatedTeacher : item))
+    );
+
+    if (editingImpressionId === impressionId) {
+      handleCancelEditImpression();
+    }
+
+    setSuccessMessage('Đã xóa cảm nhận thành công!');
+  };
+
+  const handleAddOrEditImpressionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeTeacher) return;
 
@@ -213,35 +289,142 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          impression: {
+      if (editingImpressionId) {
+        // Cập nhật cảm nhận đã có
+        const payload = {
+          updateImpression: {
+            id: editingImpressionId,
             studentName,
-            className,
+            className: className || '9A3',
             trait: impressionTrait,
             detail: impressionDetail,
           },
-        }),
-      });
+        };
 
-      const data = await res.json();
-      if (!res.ok) {
-        setErrorMessage(data.error || 'Vui lòng điền đầy đủ thông tin cảm nhận.');
-        return;
+        let updatedTeacher: TeacherProfile | null = null;
+        try {
+          const res = await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.teacher) updatedTeacher = data.teacher;
+          }
+        } catch {
+          // Bỏ qua lỗi kết nối và lưu trữ cục bộ
+        }
+
+        const existingImp = activeTeacher.impressions.find((i) => i.id === editingImpressionId);
+        const updatedImp: TeacherImpression = {
+          id: editingImpressionId,
+          studentName,
+          className: className || '9A3',
+          trait: impressionTrait,
+          detail: impressionDetail,
+          createdAt: existingImp?.createdAt || new Date().toISOString(),
+        };
+
+        saveLocalImpression(activeTeacher.id, updatedImp);
+
+        if (!updatedTeacher) {
+          const nextImps = activeTeacher.impressions.map((i) =>
+            i.id === editingImpressionId ? updatedImp : i
+          );
+          updatedTeacher = {
+            ...activeTeacher,
+            impressions: nextImps,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+
+        onTeachersUpdated(
+          teachers.map((item) => (item.id === updatedTeacher!.id ? updatedTeacher! : item))
+        );
+
+        setEditingImpressionId(null);
+        setStudentName('');
+        setImpressionTrait('');
+        setImpressionDetail('');
+        setSuccessMessage('Đã cập nhật chi tiết cảm nhận thành công!');
+      } else {
+        // Thêm cảm nhận mới
+        const payload = {
+          impression: {
+            studentName,
+            className: className || '9A3',
+            trait: impressionTrait,
+            detail: impressionDetail,
+          },
+        };
+
+        let updatedTeacher: TeacherProfile | null = null;
+        let createdImpId = `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+        try {
+          const res = await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.teacher) {
+              updatedTeacher = data.teacher;
+              if (data.impression?.id) {
+                createdImpId = data.impression.id;
+              } else if (
+                Array.isArray(data.teacher.impressions) &&
+                data.teacher.impressions.length > 0
+              ) {
+                createdImpId = data.teacher.impressions[0].id;
+              }
+            }
+          }
+        } catch {
+          // Fallback cục bộ
+        }
+
+        const newImp: TeacherImpression = {
+          id: createdImpId,
+          studentName,
+          className: className || '9A3',
+          trait: impressionTrait,
+          detail: impressionDetail,
+          createdAt: new Date().toISOString(),
+        };
+
+        addMyImpressionId(newImp.id);
+        saveLocalImpression(activeTeacher.id, newImp);
+
+        if (!updatedTeacher) {
+          const traits = activeTeacher.personalityTraits.includes(impressionTrait)
+            ? activeTeacher.personalityTraits
+            : [...activeTeacher.personalityTraits, impressionTrait];
+          updatedTeacher = {
+            ...activeTeacher,
+            personalityTraits: traits,
+            impressions: [newImp, ...activeTeacher.impressions],
+            updatedAt: new Date().toISOString(),
+          };
+        }
+
+        onTeachersUpdated(
+          teachers.map((item) => (item.id === updatedTeacher!.id ? updatedTeacher! : item))
+        );
+
+        setStudentName('');
+        setImpressionTrait('');
+        setImpressionDetail('');
+        setSuccessMessage('Đã gửi cảm nhận & bổ sung tính cách giáo viên thành công!');
       }
-
-      const updated: TeacherProfile = data.teacher;
-      onTeachersUpdated(
-        teachers.map((item) => (item.id === updated.id ? updated : item))
-      );
-      setStudentName('');
-      setImpressionTrait('');
-      setImpressionDetail('');
-      setSuccessMessage('Đã gửi cảm nhận & bổ sung tính cách giáo viên thành công!');
-    } catch {
-      setErrorMessage('Không thể kết nối máy chủ khi gửi cảm nhận.');
+    } catch (err: unknown) {
+      let msg = 'Không thể kết nối máy chủ khi gửi cảm nhận.';
+      if (typeof err === 'string') msg = err;
+      else if (err instanceof Error && err.message) msg = err.message;
+      if (msg === '[object Object]') msg = 'Không thể kết nối máy chủ khi gửi cảm nhận.';
+      setErrorMessage(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -553,13 +736,29 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Biểu mẫu cho học sinh bổ sung chi tiết tính cách & kỷ niệm với giáo viên này */}
+                  {/* Biểu mẫu cho học sinh bổ sung / chỉnh sửa chi tiết tính cách & kỷ niệm với giáo viên này */}
                   <div className="rounded-2xl border-2 border-sky-200 bg-white p-5 shadow-sm">
-                    <h4 className="flex items-center gap-2 font-display text-base font-extrabold text-stone-900">
-                      <MessageSquarePlus className="h-4 w-4 text-sky-700" />
-                      <span>Biểu mẫu gửi thêm chi tiết tính cách & kỷ niệm về thầy/cô</span>
-                    </h4>
-                    <form onSubmit={handleAddImpressionSubmit} className="mt-3 space-y-3">
+                    <div className="flex items-center justify-between gap-2 border-b border-sky-100 pb-2.5">
+                      <h4 className="flex items-center gap-2 font-display text-base font-extrabold text-stone-900">
+                        <MessageSquarePlus className="h-4 w-4 text-sky-700" />
+                        <span>
+                          {editingImpressionId
+                            ? 'Chỉnh sửa chi tiết tính cách & kỷ niệm của bạn'
+                            : 'Biểu mẫu gửi thêm chi tiết tính cách & kỷ niệm về thầy/cô'}
+                        </span>
+                      </h4>
+                      {editingImpressionId && (
+                        <button
+                          type="button"
+                          onClick={handleCancelEditImpression}
+                          className="rounded-lg bg-stone-100 px-2.5 py-1 text-xs font-bold text-stone-600 transition hover:bg-stone-200"
+                        >
+                          Hủy sửa
+                        </button>
+                      )}
+                    </div>
+
+                    <form onSubmit={handleAddOrEditImpressionSubmit} className="mt-3 space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="sm:col-span-2">
                           <label className="block text-xs font-bold text-stone-700">
@@ -613,14 +812,29 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
                         />
                       </div>
 
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs sm:text-sm font-extrabold text-white shadow hover:bg-sky-800 disabled:opacity-50"
-                      >
-                        <Sparkles className="h-4 w-4" />
-                        <span>Lưu vào hồ sơ tính cách của thầy/cô</span>
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs sm:text-sm font-extrabold text-white shadow hover:bg-sky-800 disabled:opacity-50"
+                        >
+                          <Sparkles className="h-4 w-4" />
+                          <span>
+                            {editingImpressionId
+                              ? 'Cập nhật kỷ niệm & tính cách'
+                              : 'Lưu vào hồ sơ tính cách của thầy/cô'}
+                          </span>
+                        </button>
+                        {editingImpressionId && (
+                          <button
+                            type="button"
+                            onClick={handleCancelEditImpression}
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-stone-300 bg-white px-4 py-2 text-xs sm:text-sm font-bold text-stone-700 hover:bg-stone-50"
+                          >
+                            <span>Hủy bỏ</span>
+                          </button>
+                        )}
+                      </div>
                     </form>
 
                     {/* Danh sách cảm nhận đã gửi */}
@@ -628,23 +842,82 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
                       <p className="text-xs font-extrabold uppercase tracking-wider text-stone-600">
                         Cảm nhận từ học sinh lớp 9A3 ({activeTeacher.impressions.length}):
                       </p>
-                      <div className="mt-2.5 space-y-2.5 max-h-56 overflow-y-auto pr-1">
-                        {activeTeacher.impressions.map((imp) => (
-                          <div
-                            key={imp.id}
-                            className="rounded-xl border border-sky-100 bg-sky-50/60 p-3 text-xs"
-                          >
-                            <div className="flex items-center justify-between font-bold text-sky-950">
-                              <span>
-                                {imp.studentName} ({imp.className})
-                              </span>
-                              <span className="rounded-full bg-amber-200/80 px-2.5 py-0.5 text-[11px] text-amber-950">
-                                {imp.trait}
-                              </span>
-                            </div>
-                            <p className="mt-1 text-stone-700">{imp.detail}</p>
-                          </div>
-                        ))}
+                      <div className="mt-2.5 space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                        {activeTeacher.impressions.length === 0 ? (
+                          <p className="py-4 text-center text-xs text-stone-500 italic">
+                            Chưa có cảm nhận nào cho thầy/cô. Hãy là người đầu tiên chia sẻ kỷ niệm nhé!
+                          </p>
+                        ) : (
+                          activeTeacher.impressions.map((imp) => {
+                            const isMine = isMyImpression(imp.id, isOwner);
+                            return (
+                              <div
+                                key={imp.id}
+                                className={`rounded-xl border p-3 text-xs transition ${
+                                  isMine
+                                    ? 'border-emerald-300 bg-emerald-50/70 shadow-sm'
+                                    : 'border-sky-100 bg-sky-50/60'
+                                }`}
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-1.5 font-bold text-sky-950">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span>
+                                      {imp.studentName} ({imp.className})
+                                    </span>
+                                    {isMine && (
+                                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-extrabold text-emerald-800">
+                                        <UserCheck className="h-3 w-3 text-emerald-700" />
+                                        <span>Của bạn</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="rounded-full bg-amber-200/80 px-2.5 py-0.5 text-[11px] text-amber-950 font-bold">
+                                    {imp.trait}
+                                  </span>
+                                </div>
+
+                                <p className="mt-1.5 text-stone-700 whitespace-pre-line leading-relaxed">
+                                  {imp.detail}
+                                </p>
+
+                                {/* Chân thẻ: Thời gian gửi & nút Sửa / Xóa */}
+                                <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-sky-200/60 pt-2 text-[11px] text-stone-500">
+                                  <div className="flex items-center gap-1">
+                                    {imp.createdAt && (
+                                      <>
+                                        <Clock className="h-3 w-3 text-stone-400" />
+                                        <span>{formatImpressionTime(imp.createdAt)}</span>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {isMine && (
+                                    <div className="flex items-center gap-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleStartEditImpression(imp)}
+                                        aria-label={`Sửa cảm nhận của ${imp.studentName}`}
+                                        className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-900 transition hover:bg-amber-100"
+                                      >
+                                        <Edit2 className="h-3 w-3 text-amber-700" />
+                                        <span>Sửa</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteImpression(imp.id)}
+                                        aria-label={`Xóa cảm nhận của ${imp.studentName}`}
+                                        className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
+                                      >
+                                        <Trash2 className="h-3 w-3 text-red-600" />
+                                        <span>Xóa</span>
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
                       </div>
                     </div>
                   </div>

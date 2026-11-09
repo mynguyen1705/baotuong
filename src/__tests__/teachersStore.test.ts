@@ -139,5 +139,37 @@ describe('teachersStore', () => {
       TeacherNotFoundError
     );
   });
+
+  it('allows adding, updating, and deleting impressions on a teacher profile', async () => {
+    const store = createTeachersStore({ storageFilePath });
+    const initial = await store.listTeachers();
+    const target = initial[0];
+
+    // 1. Add impression
+    const updatedWithImp = await store.addImpression(target.id, {
+      studentName: 'Nguyễn Văn B',
+      className: '9A3',
+      trait: 'Hài hước vui tính',
+      detail: 'Thầy luôn kể chuyện cười trước khi vào bài giảng.',
+    });
+
+    const newImp = updatedWithImp.impressions[0];
+    expect(newImp.studentName).toBe('Nguyễn Văn B');
+    expect(newImp.trait).toBe('Hài hước vui tính');
+
+    // 2. Update impression
+    const updatedImpTeacher = await store.updateImpression(target.id, newImp.id, {
+      trait: 'Siêu hài hước',
+      detail: 'Thầy luôn kể chuyện vui và giúp lớp tiếp thu bài nhanh.',
+    });
+
+    const editedImp = updatedImpTeacher.impressions.find((i) => i.id === newImp.id);
+    expect(editedImp?.trait).toBe('Siêu hài hước');
+    expect(editedImp?.detail).toBe('Thầy luôn kể chuyện vui và giúp lớp tiếp thu bài nhanh.');
+
+    // 3. Delete impression
+    const afterDeleteTeacher = await store.deleteImpression(target.id, newImp.id);
+    expect(afterDeleteTeacher.impressions.some((i) => i.id === newImp.id)).toBe(false);
+  });
 });
 

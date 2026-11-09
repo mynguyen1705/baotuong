@@ -15,6 +15,7 @@ import { WishesModal } from './components/WishesModal';
 import { TeacherSummaryBoardSection } from './components/TeacherSummaryBoardSection';
 import { TeacherBoardModal } from './components/TeacherBoardModal';
 import { isLocalhostClient } from './utils/isLocalhostClient';
+import { mergeAllTeachersWithLocal } from './utils/impressionsClient';
 
 function parseSectionHash(hash: string): SectionId | null {
   const cleaned = hash.replace(/^#/, '').trim();
@@ -69,7 +70,7 @@ export const App: React.FC = () => {
       if (!res.ok) return;
       const data = await res.json();
       if (data && Array.isArray(data.teachers)) {
-        const fetchedTeachers: TeacherProfile[] = data.teachers;
+        const fetchedTeachers: TeacherProfile[] = mergeAllTeachersWithLocal(data.teachers);
         setTeachers(fetchedTeachers);
         setSelectedTeacherId((prevId) => {
           if (prevId && fetchedTeachers.some((t) => t.id === prevId)) {

@@ -161,6 +161,20 @@ export function createTeachersMiddleware(store: TeachersStore) {
     }
 
     if (urlPath.startsWith('/api/teachers/') && method === 'DELETE') {
+      const subPath = urlPath.slice('/api/teachers/'.length).trim();
+      if (subPath.includes('/impressions/')) {
+        const [rawTeacherId, rawImpId] = subPath.split('/impressions/');
+        const teacherId = decodeURIComponent(rawTeacherId || '');
+        const impId = decodeURIComponent(rawImpId || '');
+        try {
+          const updatedTeacher = await store.deleteImpression(teacherId, impId);
+          sendJson(res, 200, { teacher: updatedTeacher, deletedId: impId });
+        } catch (err: unknown) {
+          sendJson(res, 500, { error: 'Không thể xóa cảm nhận.' });
+        }
+        return;
+      }
+
       if (!isOwner) {
         sendJson(res, 403, {
           error:
@@ -263,6 +277,23 @@ export function createTeachersMiddleware(store: TeachersStore) {
             trait: typeof imp.trait === 'string' ? imp.trait : '',
             detail: typeof imp.detail === 'string' ? imp.detail : '',
           });
+        }
+
+        // 3. Check if updating an existing student impression
+        if (parsed.updateImpression && typeof parsed.updateImpression === 'object') {
+          const up = parsed.updateImpression as Record<string, unknown>;
+          const impId = typeof up.id === 'string' ? up.id : '';
+          updatedTeacher = await store.updateImpression(teacherId, impId, {
+            studentName: typeof up.studentName === 'string' ? up.studentName : undefined,
+            className: typeof up.className === 'string' ? up.className : undefined,
+            trait: typeof up.trait === 'string' ? up.trait : undefined,
+            detail: typeof up.detail === 'string' ? up.detail : undefined,
+          });
+        }
+
+        // 4. Check if deleting a student impression via PATCH
+        if (typeof parsed.deleteImpressionId === 'string' && parsed.deleteImpressionId.trim()) {
+          updatedTeacher = await store.deleteImpression(teacherId, parsed.deleteImpressionId.trim());
         }
 
         if (!updatedTeacher) {

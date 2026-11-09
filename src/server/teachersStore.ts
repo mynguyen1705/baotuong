@@ -38,6 +38,12 @@ export interface TeachersStore {
   updateTeacher(id: string, input: UpdateTeacherInput): Promise<TeacherProfile>;
   deleteTeacher(id: string): Promise<void>;
   addImpression(id: string, input: AddTeacherImpressionInput): Promise<TeacherProfile>;
+  updateImpression(
+    teacherId: string,
+    impressionId: string,
+    input: Partial<AddTeacherImpressionInput>
+  ): Promise<TeacherProfile>;
+  deleteImpression(teacherId: string, impressionId: string): Promise<TeacherProfile>;
 }
 
 function inferAvatarTheme(subject: string, provided?: TeacherAvatarTheme): TeacherAvatarTheme {
@@ -325,6 +331,87 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
           ...existing,
           personalityTraits: mergedTraits,
           impressions: [newImpression, ...existing.impressions],
+          updatedAt: new Date().toISOString(),
+        };
+
+        const nextRecords = [...records];
+        nextRecords[index] = updatedTeacher;
+        await writeRecords(nextRecords);
+        return updatedTeacher;
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
+    },
+
+    async updateImpression(
+      teacherId: string,
+      impressionId: string,
+      input: Partial<AddTeacherImpressionInput>
+    ): Promise<TeacherProfile> {
+      const targetId = cleanText(teacherId);
+      const targetImpId = cleanText(impressionId);
+
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const index = records.findIndex((item) => item.id === targetId);
+        if (index === -1) {
+          throw new TeacherNotFoundError();
+        }
+
+        const existing = records[index];
+        const impIndex = existing.impressions.findIndex((imp) => imp.id === targetImpId);
+        if (impIndex === -1) {
+          throw new TeacherValidationError('Không tìm thấy cảm nhận cần chỉnh sửa.');
+        }
+
+        const currentImp = existing.impressions[impIndex];
+        const updatedImp: TeacherImpression = {
+          ...currentImp,
+          studentName:
+            input.studentName !== undefined ? cleanText(input.studentName) : currentImp.studentName,
+          className:
+            input.className !== undefined ? cleanText(input.className) || '9A3' : currentImp.className,
+          trait: input.trait !== undefined ? cleanText(input.trait) : currentImp.trait,
+          detail: input.detail !== undefined ? cleanText(input.detail) : currentImp.detail,
+        };
+
+        const nextImpressions = [...existing.impressions];
+        nextImpressions[impIndex] = updatedImp;
+
+        const updatedTeacher: TeacherProfile = {
+          ...existing,
+          impressions: nextImpressions,
+          updatedAt: new Date().toISOString(),
+        };
+
+        const nextRecords = [...records];
+        nextRecords[index] = updatedTeacher;
+        await writeRecords(nextRecords);
+        return updatedTeacher;
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
+    },
+
+    async deleteImpression(teacherId: string, impressionId: string): Promise<TeacherProfile> {
+      const targetId = cleanText(teacherId);
+      const targetImpId = cleanText(impressionId);
+
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const index = records.findIndex((item) => item.id === targetId);
+        if (index === -1) {
+          throw new TeacherNotFoundError();
+        }
+
+        const existing = records[index];
+        const nextImpressions = existing.impressions.filter((imp) => imp.id !== targetImpId);
+
+        const updatedTeacher: TeacherProfile = {
+          ...existing,
+          impressions: nextImpressions,
           updatedAt: new Date().toISOString(),
         };
 
