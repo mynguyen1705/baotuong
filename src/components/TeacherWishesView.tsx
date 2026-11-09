@@ -70,12 +70,15 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
       setWishes(data);
       setStatus('loaded');
     } catch (err: unknown) {
-      const msg =
-        typeof err === 'string'
-          ? err
-          : err instanceof Error
-          ? err.message
-          : 'Không thể tải danh sách lời chúc lúc này.';
+      let msg = 'Không thể tải danh sách lời chúc lúc này.';
+      if (typeof err === 'string') {
+        msg = err;
+      } else if (err instanceof Error && err.message) {
+        msg = err.message;
+      }
+      if (!msg || msg === '[object Object]' || msg.includes('[object Object]')) {
+        msg = 'Không thể kết nối đến máy chủ lời chúc lúc này. Vui lòng bấm Thử lại để tải lại.';
+      }
       setErrorMessage(msg);
       setStatus('error');
     }
