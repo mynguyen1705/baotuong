@@ -1,4 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import type { Plugin } from 'vite';
 import {
   createWishesStore,
@@ -104,6 +106,22 @@ export function wishesApiPlugin(options?: WishesStoreOptions): Plugin {
 
   return {
     name: 'baotuong-wishes-api',
+    async buildStart() {
+      try {
+        const wishes = await store.listWishes();
+        if (Array.isArray(wishes) && wishes.length > 0) {
+          const publicFile = path.resolve(process.cwd(), 'public', 'wishes-data.json');
+          await fs.mkdir(path.dirname(publicFile), { recursive: true });
+          await fs.writeFile(
+            publicFile,
+            JSON.stringify({ wishes }, null, 2),
+            'utf-8'
+          );
+        }
+      } catch {
+        // Ignore snapshot write errors in restricted environments
+      }
+    },
     configureServer(server) {
       server.middlewares.use(middleware);
     },

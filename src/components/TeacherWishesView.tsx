@@ -48,9 +48,13 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
       setWishes(data);
       setStatus('loaded');
     } catch (err: unknown) {
-      setErrorMessage(
-        err instanceof Error ? err.message : 'Không thể tải danh sách lời chúc lúc này.'
-      );
+      const msg =
+        typeof err === 'string'
+          ? err
+          : err instanceof Error
+          ? err.message
+          : 'Không thể tải danh sách lời chúc lúc này.';
+      setErrorMessage(msg);
       setStatus('error');
     }
   }, []);

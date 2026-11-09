@@ -79,6 +79,21 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
       return [];
     } catch (err: unknown) {
       if ((err as { code?: string })?.code === 'ENOENT') {
+        const isCustomStorage = Boolean(options?.storageFilePath || process.env.WISHES_STORAGE_FILE);
+        if (!isCustomStorage) {
+          try {
+            const publicFallback = path.resolve(process.cwd(), 'public', 'wishes-data.json');
+            const publicRaw = await fs.readFile(publicFallback, 'utf-8');
+            const publicParsed = JSON.parse(publicRaw);
+            const wishes = Array.isArray(publicParsed) ? publicParsed : publicParsed?.wishes;
+            if (Array.isArray(wishes) && wishes.length > 0) {
+              await writeRecords(wishes);
+              return wishes;
+            }
+          } catch {
+            // ignore fallback error
+          }
+        }
         return [];
       }
       throw err;
