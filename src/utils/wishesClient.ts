@@ -10,15 +10,8 @@ const DELETED_WISH_IDS_KEY = 'baotuong_deleted_wish_ids';
 
 const DEFAULT_SEED_WISHES: WishItem[] = [
   {
-    id: 'wish-1794055311352-b2f47b2e',
-    senderName: 'Nguyễn Trà My',
-    className: '9A3',
-    message: 'Cảm ơn Thầy cô đã bên cạnh',
-    createdAt: '2026-11-07T12:41:51.352Z',
-  },
-  {
     id: 'wish-1794049247793-a0bc860d',
-    senderName: 'Nguyễn Minh Khang',
+    senderName: 'Nguyễn Trà My',
     className: '9A3',
     message:
       'Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!',
