@@ -72,6 +72,8 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
     process.env.TEACHERS_STORAGE_FILE ||
     path.resolve(process.cwd(), 'server', 'data', 'teachers.json');
 
+  const isCustomStorage = Boolean(options?.storageFilePath || process.env.TEACHERS_STORAGE_FILE);
+
   let writeQueue: Promise<unknown> = Promise.resolve();
 
   async function writeRecords(records: TeacherProfile[]): Promise<void> {
@@ -94,6 +96,20 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
       return seeded;
     } catch (err: unknown) {
       if ((err as { code?: string })?.code === 'ENOENT') {
+        if (!isCustomStorage) {
+          try {
+            const publicFallback = path.resolve(process.cwd(), 'public', 'teachers-data.json');
+            const publicRaw = await fs.readFile(publicFallback, 'utf-8');
+            const publicParsed = JSON.parse(publicRaw);
+            const teachers = Array.isArray(publicParsed) ? publicParsed : publicParsed?.teachers;
+            if (Array.isArray(teachers) && teachers.length > 0) {
+              await writeRecords(teachers);
+              return teachers;
+            }
+          } catch {
+            // ignore fallback error
+          }
+        }
         const seeded = structuredClone(DEFAULT_TEACHERS_SEED);
         await writeRecords(seeded);
         return seeded;

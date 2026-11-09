@@ -312,13 +312,15 @@ export function teachersApiPlugin(options?: TeachersStoreOptions): Plugin {
     async buildStart() {
       try {
         const teachers = await store.listTeachers();
-        const publicFile = path.resolve(process.cwd(), 'public', 'teachers-data.json');
-        await fs.mkdir(path.dirname(publicFile), { recursive: true });
-        await fs.writeFile(
-          publicFile,
-          JSON.stringify({ teachers, isOwner: false }, null, 2),
-          'utf-8'
-        );
+        if (Array.isArray(teachers) && teachers.length > 0) {
+          const publicFile = path.resolve(process.cwd(), 'public', 'teachers-data.json');
+          await fs.mkdir(path.dirname(publicFile), { recursive: true });
+          await fs.writeFile(
+            publicFile,
+            JSON.stringify({ teachers, isOwner: false }, null, 2),
+            'utf-8'
+          );
+        }
       } catch {
         // Ignore snapshot write errors in restricted environments
       }
