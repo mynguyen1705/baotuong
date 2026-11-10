@@ -1,6 +1,6 @@
 import { exec } from 'node:child_process';
 
-let syncTimeout: NodeJS.Timeout | null = null;
+let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 let isSyncing = false;
 let pendingSync = false;
 
