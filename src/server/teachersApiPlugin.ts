@@ -9,6 +9,7 @@ import {
   TeachersStoreOptions,
   TeacherValidationError,
 } from './teachersStore';
+import { triggerAutoGitPush } from './autoGitSync';
 
 const MAX_BODY_SIZE_BYTES = 5 * 1024 * 1024; // 5MB to support teacher photo Data URLs
 
@@ -358,6 +359,12 @@ export function teachersApiPlugin(options?: TeachersStoreOptions): Plugin {
     },
     configureServer(server) {
       server.middlewares.use(middleware);
+      server.watcher.on('change', (file) => {
+        const norm = file.replace(/\\/g, '/');
+        if (norm.includes('src/data/baotuongData.ts') || norm.includes('yeucau.txt')) {
+          triggerAutoGitPush(4000);
+        }
+      });
     },
     configurePreviewServer(server) {
       server.middlewares.use(middleware);

@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { triggerAutoGitPush } from './autoGitSync';
 import { CreateWishInput, WishItem } from '../types/wishes';
 import { validateWishInput } from '../utils/validateWish';
 
@@ -73,6 +74,7 @@ function toPublicWish(record: StoredWishRecord): WishItem {
 
 export function createWishesStore(options?: WishesStoreOptions): WishesStore {
   const { storageFilePath, serverSecret, duplicateWindowMs } = getServerConfig(options);
+  const isCustomStorage = Boolean(options?.storageFilePath || process.env.WISHES_STORAGE_FILE);
   let writeQueue: Promise<unknown> = Promise.resolve();
 
   async function readRecords(): Promise<StoredWishRecord[]> {
@@ -112,6 +114,22 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
   async function writeRecords(records: StoredWishRecord[]): Promise<void> {
     await fs.mkdir(path.dirname(storageFilePath), { recursive: true });
     await fs.writeFile(storageFilePath, JSON.stringify({ wishes: records }, null, 2), 'utf-8');
+
+    if (!isCustomStorage) {
+      try {
+        const publicFile = path.resolve(process.cwd(), 'public', 'wishes-data.json');
+        await fs.mkdir(path.dirname(publicFile), { recursive: true });
+        await fs.writeFile(
+          publicFile,
+          JSON.stringify({ wishes: records.map(toPublicWish) }, null, 2),
+          'utf-8'
+        );
+      } catch {
+        // Bỏ qua lỗi ghi file tĩnh
+      }
+
+      triggerAutoGitPush();
+    }
   }
 
   return {

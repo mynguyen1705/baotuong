@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { triggerAutoGitPush } from './autoGitSync';
 import {
   AddTeacherImpressionInput,
   CreateTeacherInput,
@@ -85,6 +86,22 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
   async function writeRecords(records: TeacherProfile[]): Promise<void> {
     await fs.mkdir(path.dirname(storageFilePath), { recursive: true });
     await fs.writeFile(storageFilePath, JSON.stringify({ teachers: records }, null, 2), 'utf-8');
+
+    if (!isCustomStorage) {
+      try {
+        const publicFile = path.resolve(process.cwd(), 'public', 'teachers-data.json');
+        await fs.mkdir(path.dirname(publicFile), { recursive: true });
+        await fs.writeFile(
+          publicFile,
+          JSON.stringify({ teachers: records, isOwner: false }, null, 2),
+          'utf-8'
+        );
+      } catch {
+        // Bỏ qua lỗi ghi file tĩnh
+      }
+
+      triggerAutoGitPush();
+    }
   }
 
   async function readRecords(): Promise<TeacherProfile[]> {
