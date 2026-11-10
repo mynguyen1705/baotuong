@@ -174,9 +174,8 @@ export const TeacherSummaryBoardSection: React.FC<TeacherSummaryBoardSectionProp
     <section
       id="khu-vuc-bang-giao-vien"
       aria-label="Bảng tổng hợp giáo viên bộ môn"
-      className={`relative mx-auto w-full ${
-        isStandaloneModal ? 'max-w-4xl' : 'max-w-5xl px-3 sm:px-6 py-8 sm:py-12'
-      }`}
+      className={`relative mx-auto w-full ${isStandaloneModal ? 'max-w-4xl' : 'max-w-5xl px-3 sm:px-6 py-8 sm:py-12'
+        }`}
     >
       {/* Khung Poster Nền Xanh Da Trời Chuẩn Ảnh Mẫu */}
       <div
@@ -288,305 +287,305 @@ export const TeacherSummaryBoardSection: React.FC<TeacherSummaryBoardSectionProp
                 className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-amber-500 px-4 py-1.5 text-xs sm:text-sm font-extrabold text-white shadow-md transition hover:bg-amber-600"
               >
                 <PlusCircle className="h-4 w-4" />
-                <span>+ Thêm giáo viên & ảnh (Quyền Chủ Sở Hữu)</span>
+                <span>+ Thêm giáo viên & ảnh</span>
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => onOpenForm(teachers[0]?.id)}
-              className="inline-flex items-center gap-1.5 rounded-full border-2 border-sky-900/20 bg-white/95 px-4 py-1.5 text-xs sm:text-sm font-bold text-sky-950 shadow-sm transition hover:bg-sky-50"
-            >
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              <span>Điền biểu mẫu tính cách giáo viên</span>
-            </button>
-            {!isStandaloneModal && onOpenFullBoard && (
-              <button
-                type="button"
-                onClick={onOpenFullBoard}
-                className="inline-flex items-center gap-1.5 rounded-full border-2 border-white/80 bg-sky-900/80 px-4 py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm transition hover:bg-sky-950"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                <span>Trang xem cho Thầy Cô ({teachers.length} giáo viên)</span>
-              </button>
-            )}
-          </div>
-        </div>
+                  <button
+                    type="button"
+                    onClick={() => onOpenForm(teachers[0]?.id)}
+                    className="inline-flex items-center gap-1.5 rounded-full border-2 border-sky-900/20 bg-white/95 px-4 py-1.5 text-xs sm:text-sm font-bold text-sky-950 shadow-sm transition hover:bg-sky-50"
+                  >
+                    <Sparkles className="h-4 w-4 text-amber-500" />
+                    <span>Điền biểu mẫu tính cách giáo viên</span>
+                  </button>
+                  {!isStandaloneModal && onOpenFullBoard && (
+                    <button
+                      type="button"
+                      onClick={onOpenFullBoard}
+                      className="inline-flex items-center gap-1.5 rounded-full border-2 border-white/80 bg-sky-900/80 px-4 py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm transition hover:bg-sky-950"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      <span>Trang xem cho Thầy Cô ({teachers.length} giáo viên)</span>
+                    </button>
+                  )}
+                </div>
+              </div>
 
         {/* Tờ Giấy Vở Kẻ Ngang Đặt Hơi Nghiêng Chuẩn Poster */}
-        <div className="relative z-10 mx-2 sm:mx-8 mt-2 mb-16 sm:mb-20">
-          <div
-            className="relative rounded-xl border-2 border-stone-300 bg-white px-3 sm:px-8 pt-8 pb-12 shadow-[0_18px_40px_rgba(12,74,110,0.32)] sm:-rotate-[0.6deg]"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #bae6fd 31px, #bae6fd 33px)',
-              backgroundPositionY: '18px',
-            }}
-          >
-            {/* Lề đỏ dọc bên trái của trang vở học trò */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute top-0 bottom-0 left-6 sm:left-12 w-[2px] bg-rose-300/70"
-            />
+            <div className="relative z-10 mx-2 sm:mx-8 mt-2 mb-16 sm:mb-20">
+              <div
+                className="relative rounded-xl border-2 border-stone-300 bg-white px-3 sm:px-8 pt-8 pb-12 shadow-[0_18px_40px_rgba(12,74,110,0.32)] sm:-rotate-[0.6deg]"
+                style={{
+                  backgroundImage:
+                    'repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #bae6fd 31px, #bae6fd 33px)',
+                  backgroundPositionY: '18px',
+                }}
+              >
+                {/* Lề đỏ dọc bên trái của trang vở học trò */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-0 bottom-0 left-6 sm:left-12 w-[2px] bg-rose-300/70"
+                />
 
-            {/* Ghim kẹp giấy vàng góc trên trái & bạc góc trên phải */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 50 110"
-              className="pointer-events-none absolute -top-7 left-5 sm:left-10 h-16 w-8 -rotate-6"
-            >
-              <path
-                d="M15,75 L15,20 C15,8 35,8 35,20 L35,85 C35,100 10,100 10,85 L10,32 C10,24 26,24 26,32 L26,72"
-                fill="none"
-                stroke="#eab308"
-                strokeWidth="4.5"
-                strokeLinecap="round"
-              />
-            </svg>
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 50 110"
-              className="pointer-events-none absolute -top-7 right-6 sm:right-12 h-16 w-8 rotate-12"
-            >
-              <path
-                d="M15,75 L15,20 C15,8 35,8 35,20 L35,85 C35,100 10,100 10,85 L10,32 C10,24 26,24 26,32 L26,72"
-                fill="none"
-                stroke="#94a3b8"
-                strokeWidth="4.5"
-                strokeLinecap="round"
-              />
-            </svg>
+                {/* Ghim kẹp giấy vàng góc trên trái & bạc góc trên phải */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 50 110"
+                  className="pointer-events-none absolute -top-7 left-5 sm:left-10 h-16 w-8 -rotate-6"
+                >
+                  <path
+                    d="M15,75 L15,20 C15,8 35,8 35,20 L35,85 C35,100 10,100 10,85 L10,32 C10,24 26,24 26,32 L26,72"
+                    fill="none"
+                    stroke="#eab308"
+                    strokeWidth="4.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 50 110"
+                  className="pointer-events-none absolute -top-7 right-6 sm:right-12 h-16 w-8 rotate-12"
+                >
+                  <path
+                    d="M15,75 L15,20 C15,8 35,8 35,20 L35,85 C35,100 10,100 10,85 L10,32 C10,24 26,24 26,32 L26,72"
+                    fill="none"
+                    stroke="#94a3b8"
+                    strokeWidth="4.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
 
-            {/* Doodle trang trí xen kẽ trên giấy vở: Trái tim, Hình nón, Bình thí nghiệm, Chuỗi ADN, Ngôi sao, Công thức Toán */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 60 60"
-              className="pointer-events-none absolute left-1/2 top-8 -translate-x-1/2 h-10 w-10 hidden md:block"
-            >
-              <path
-                d="M30,48 C30,48 10,34 10,20 C10,12 18,8 25,14 C28,16 30,19 30,19 C30,19 32,16 35,14 C42,8 50,12 50,20 C50,34 30,48 30,48 Z"
-                fill="#fb7185"
-                stroke="#1e293b"
-                strokeWidth="2.5"
-              />
-            </svg>
+                {/* Doodle trang trí xen kẽ trên giấy vở: Trái tim, Hình nón, Bình thí nghiệm, Chuỗi ADN, Ngôi sao, Công thức Toán */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 60 60"
+                  className="pointer-events-none absolute left-1/2 top-8 -translate-x-1/2 h-10 w-10 hidden md:block"
+                >
+                  <path
+                    d="M30,48 C30,48 10,34 10,20 C10,12 18,8 25,14 C28,16 30,19 30,19 C30,19 32,16 35,14 C42,8 50,12 50,20 C50,34 30,48 30,48 Z"
+                    fill="#fb7185"
+                    stroke="#1e293b"
+                    strokeWidth="2.5"
+                  />
+                </svg>
 
-            {/* Hình nón hình học bên lề trái */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 70 70"
-              className="pointer-events-none absolute left-1 top-[31%] h-12 w-12 hidden sm:block"
-            >
-              <polygon
-                points="35,8 12,54 58,54"
-                fill="#e0f2fe"
-                stroke="#1e293b"
-                strokeWidth="2.2"
-              />
-              <ellipse
-                cx="35"
-                cy="54"
-                rx="23"
-                ry="7"
-                fill="#bae6fd"
-                stroke="#1e293b"
-                strokeWidth="2.2"
-              />
-            </svg>
+                {/* Hình nón hình học bên lề trái */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 70 70"
+                  className="pointer-events-none absolute left-1 top-[31%] h-12 w-12 hidden sm:block"
+                >
+                  <polygon
+                    points="35,8 12,54 58,54"
+                    fill="#e0f2fe"
+                    stroke="#1e293b"
+                    strokeWidth="2.2"
+                  />
+                  <ellipse
+                    cx="35"
+                    cy="54"
+                    rx="23"
+                    ry="7"
+                    fill="#bae6fd"
+                    stroke="#1e293b"
+                    strokeWidth="2.2"
+                  />
+                </svg>
 
-            {/* Bình tam giác thí nghiệm Hóa/Sinh bên lề trái dưới */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 70 80"
-              className="pointer-events-none absolute left-1 top-[64%] h-14 w-14 -rotate-12 hidden sm:block"
-            >
-              <circle cx="34" cy="12" r="3" fill="none" stroke="#1e293b" strokeWidth="2" />
-              <circle cx="42" cy="6" r="2.5" fill="none" stroke="#1e293b" strokeWidth="2" />
-              <path
-                d="M28,18 L42,18 L42,30 L56,64 C58,69 55,73 49,73 L21,73 C15,73 12,69 14,64 L28,30 Z"
-                fill="#ffffff"
-                stroke="#1e293b"
-                strokeWidth="2.4"
-              />
-              <path d="M18,56 L52,56 L55,66 L15,66 Z" fill="#a5b4fc" />
-            </svg>
+                {/* Bình tam giác thí nghiệm Hóa/Sinh bên lề trái dưới */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 70 80"
+                  className="pointer-events-none absolute left-1 top-[64%] h-14 w-14 -rotate-12 hidden sm:block"
+                >
+                  <circle cx="34" cy="12" r="3" fill="none" stroke="#1e293b" strokeWidth="2" />
+                  <circle cx="42" cy="6" r="2.5" fill="none" stroke="#1e293b" strokeWidth="2" />
+                  <path
+                    d="M28,18 L42,18 L42,30 L56,64 C58,69 55,73 49,73 L21,73 C15,73 12,69 14,64 L28,30 Z"
+                    fill="#ffffff"
+                    stroke="#1e293b"
+                    strokeWidth="2.4"
+                  />
+                  <path d="M18,56 L52,56 L55,66 L15,66 Z" fill="#a5b4fc" />
+                </svg>
 
-            {/* Chuỗi xoắn ADN ở giữa trang */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 60 100"
-              className="pointer-events-none absolute left-1/2 top-[62%] -translate-x-1/2 h-16 w-12 rotate-12 hidden md:block"
-            >
-              <path
-                d="M15,10 C45,30 15,70 45,90"
-                fill="none"
-                stroke="#ec4899"
-                strokeWidth="3.5"
-              />
-              <path
-                d="M45,10 C15,30 45,70 15,90"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3.5"
-              />
-              <line x1="22" y1="22" x2="38" y2="22" stroke="#1e293b" strokeWidth="2" />
-              <line x1="20" y1="50" x2="40" y2="50" stroke="#1e293b" strokeWidth="2" />
-              <line x1="22" y1="78" x2="38" y2="78" stroke="#1e293b" strokeWidth="2" />
-            </svg>
+                {/* Chuỗi xoắn ADN ở giữa trang */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 60 100"
+                  className="pointer-events-none absolute left-1/2 top-[62%] -translate-x-1/2 h-16 w-12 rotate-12 hidden md:block"
+                >
+                  <path
+                    d="M15,10 C45,30 15,70 45,90"
+                    fill="none"
+                    stroke="#ec4899"
+                    strokeWidth="3.5"
+                  />
+                  <path
+                    d="M45,10 C15,30 45,70 15,90"
+                    fill="none"
+                    stroke="#3b82f6"
+                    strokeWidth="3.5"
+                  />
+                  <line x1="22" y1="22" x2="38" y2="22" stroke="#1e293b" strokeWidth="2" />
+                  <line x1="20" y1="50" x2="40" y2="50" stroke="#1e293b" strokeWidth="2" />
+                  <line x1="22" y1="78" x2="38" y2="78" stroke="#1e293b" strokeWidth="2" />
+                </svg>
 
-            {/* Lưới 2 Cột Các Thẻ Polaroid Giáo Viên */}
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-10 sm:gap-y-12 px-3 sm:px-8">
-              {teachers.map((teacher, index) => {
-                const tiltClass =
-                  index % 2 === 0
-                    ? 'sm:-rotate-[2deg] hover:rotate-0'
-                    : 'sm:rotate-[2deg] hover:rotate-0';
+                {/* Lưới 2 Cột Các Thẻ Polaroid Giáo Viên */}
+                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-10 sm:gap-y-12 px-3 sm:px-8">
+                  {teachers.map((teacher, index) => {
+                    const tiltClass =
+                      index % 2 === 0
+                        ? 'sm:-rotate-[2deg] hover:rotate-0'
+                        : 'sm:rotate-[2deg] hover:rotate-0';
 
-                return (
-                  <article
-                    key={teacher.id}
-                    className={`group flex flex-col items-center transition duration-300 ${tiltClass}`}
-                  >
-                    {/* Khung Polaroid Trang Trí Pastel Deco (6 mẫu luân phiên) */}
-                    <DecoPolaroidFrame
-                      index={index}
-                      onClick={() => onSelectTeacher(teacher)}
-                      sticker={
-                        <PolaroidDieCutSticker
-                          text={teacher.badgeText}
-                          side={teacher.badgeSide}
+                    return (
+                      <article
+                        key={teacher.id}
+                        className={`group flex flex-col items-center transition duration-300 ${tiltClass}`}
+                      >
+                        {/* Khung Polaroid Trang Trí Pastel Deco (6 mẫu luân phiên) */}
+                        <DecoPolaroidFrame
+                          index={index}
                           onClick={() => onSelectTeacher(teacher)}
-                        />
-                      }
-                      caption={
-                        <h3 className="font-display text-sm sm:text-base font-black uppercase tracking-tight text-stone-900 leading-snug">
-                          {teacher.subject} - {teacher.honorificAndName}
-                        </h3>
-                      }
-                    >
-                      <div
-                        onClick={() => onSelectTeacher(teacher)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            onSelectTeacher(teacher);
+                          sticker={
+                            <PolaroidDieCutSticker
+                              text={teacher.badgeText}
+                              side={teacher.badgeSide}
+                              onClick={() => onSelectTeacher(teacher)}
+                            />
                           }
-                        }}
-                        aria-label={`Xem chi tiết tính cách ${teacher.subject} - ${teacher.honorificAndName}`}
-                        className="relative h-full w-full cursor-pointer"
-                      >
-                        <TeacherAvatarIllustration
-                          photoUrl={teacher.photoUrl}
-                          theme={teacher.avatarTheme}
-                          honorificAndName={teacher.honorificAndName}
-                          subject={teacher.subject}
-                          className="h-full w-full transition duration-300 group-hover:scale-105"
-                        />
-
-                        {/* Gợi ý nhấp xem hồ sơ chi tiết */}
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
-                          <span className="text-[11px] font-bold text-white">
-                            Nhấp để xem tính cách & kỷ niệm ({teacher.impressions.length})
-                          </span>
-                        </div>
-                      </div>
-                    </DecoPolaroidFrame>
-
-                    {/* 2 Dòng Mô Tả Ngắn Bên Dưới Khung Polaroid */}
-                    <p
-                      onClick={() => onSelectTeacher(teacher)}
-                      className="mt-2.5 max-w-[280px] cursor-pointer text-center font-sans text-xs sm:text-sm font-bold text-stone-800 leading-snug hover:text-sky-900"
-                    >
-                      {teacher.summary}
-                    </p>
-
-                    {/* Thanh nút dưới thẻ: Học sinh xem hồ sơ; Chủ sở hữu (isOwner) có thêm nút Đổi ảnh & Xóa giáo viên */}
-                    <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => onSelectTeacher(teacher)}
-                        className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-[11px] font-bold text-sky-900 hover:bg-sky-200"
-                      >
-                        <Users className="h-3 w-3" />
-                        <span>Hồ sơ ({teacher.impressions.length})</span>
-                      </button>
-
-                      {isOwner && onUpdateTeacherPhoto && (
-                        <>
-                          <input
-                            ref={(el) => {
-                              fileInputRefs.current[teacher.id] = el;
+                          caption={
+                            <h3 className="font-display text-sm sm:text-base font-black uppercase tracking-tight text-stone-900 leading-snug">
+                              {teacher.subject} - {teacher.honorificAndName}
+                            </h3>
+                          }
+                        >
+                          <div
+                            onClick={() => onSelectTeacher(teacher)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                onSelectTeacher(teacher);
+                              }
                             }}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            aria-label={`Tải ảnh mới cho ${teacher.honorificAndName}`}
-                            onChange={(e) => handleFileChange(teacher.id, e)}
-                          />
+                            aria-label={`Xem chi tiết tính cách ${teacher.subject} - ${teacher.honorificAndName}`}
+                            className="relative h-full w-full cursor-pointer"
+                          >
+                            <TeacherAvatarIllustration
+                              photoUrl={teacher.photoUrl}
+                              theme={teacher.avatarTheme}
+                              honorificAndName={teacher.honorificAndName}
+                              subject={teacher.subject}
+                              className="h-full w-full transition duration-300 group-hover:scale-105"
+                            />
+
+                            {/* Gợi ý nhấp xem hồ sơ chi tiết */}
+                            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
+                              <span className="text-[11px] font-bold text-white">
+                                Nhấp để xem tính cách & kỷ niệm ({teacher.impressions.length})
+                              </span>
+                            </div>
+                          </div>
+                        </DecoPolaroidFrame>
+
+                        {/* 2 Dòng Mô Tả Ngắn Bên Dưới Khung Polaroid */}
+                        <p
+                          onClick={() => onSelectTeacher(teacher)}
+                          className="mt-2.5 max-w-[280px] cursor-pointer text-center font-sans text-xs sm:text-sm font-bold text-stone-800 leading-snug hover:text-sky-900"
+                        >
+                          {teacher.summary}
+                        </p>
+
+                        {/* Thanh nút dưới thẻ: Học sinh xem hồ sơ; Chủ sở hữu (isOwner) có thêm nút Đổi ảnh & Xóa giáo viên */}
+                        <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5">
                           <button
                             type="button"
-                            onClick={() => fileInputRefs.current[teacher.id]?.click()}
-                            title="Thêm hoặc đổi ảnh giáo viên này (Chỉ dành cho chủ sở hữu)"
-                            className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-900 hover:bg-amber-100"
+                            onClick={() => onSelectTeacher(teacher)}
+                            className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-[11px] font-bold text-sky-900 hover:bg-sky-200"
                           >
-                            <Camera className="h-3 w-3 text-amber-700" />
-                            <span>{teacher.photoUrl ? 'Đổi ảnh' : 'Thêm ảnh'}</span>
+                            <Users className="h-3 w-3" />
+                            <span>Hồ sơ ({teacher.impressions.length})</span>
                           </button>
-                        </>
-                      )}
 
-                      {isOwner && onDeleteTeacher && (
-                        <button
-                          type="button"
-                          onClick={() => onDeleteTeacher(teacher.id)}
-                          aria-label={`Xóa giáo viên ${teacher.honorificAndName}`}
-                          title="Xóa giáo viên này khỏi bảng tổng hợp (Chỉ dành cho chủ sở hữu)"
-                          className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-bold text-red-700 hover:bg-red-100"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                          <span>Xóa</span>
-                        </button>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
+                          {isOwner && onUpdateTeacherPhoto && (
+                            <>
+                              <input
+                                ref={(el) => {
+                                  fileInputRefs.current[teacher.id] = el;
+                                }}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                aria-label={`Tải ảnh mới cho ${teacher.honorificAndName}`}
+                                onChange={(e) => handleFileChange(teacher.id, e)}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => fileInputRefs.current[teacher.id]?.click()}
+                                title="Thêm hoặc đổi ảnh giáo viên này (Chỉ dành cho chủ sở hữu)"
+                                className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-900 hover:bg-amber-100"
+                              >
+                                <Camera className="h-3 w-3 text-amber-700" />
+                                <span>{teacher.photoUrl ? 'Đổi ảnh' : 'Thêm ảnh'}</span>
+                              </button>
+                            </>
+                          )}
+
+                          {isOwner && onDeleteTeacher && (
+                            <button
+                              type="button"
+                              onClick={() => onDeleteTeacher(teacher.id)}
+                              aria-label={`Xóa giáo viên ${teacher.honorificAndName}`}
+                              title="Xóa giáo viên này khỏi bảng tổng hợp (Chỉ dành cho chủ sở hữu)"
+                              className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-bold text-red-700 hover:bg-red-100"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                              <span>Xóa</span>
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                {/* Công thức viết tay toán √học² góc dưới phải của tờ giấy */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-3 right-6 -rotate-12 font-serif text-base sm:text-lg italic font-bold text-stone-700"
+                >
+                  toán √<span className="underline decoration-stone-700">học²</span>
+                </div>
+              </div>
             </div>
 
-            {/* Công thức viết tay toán √học² góc dưới phải của tờ giấy */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute bottom-3 right-6 -rotate-12 font-serif text-base sm:text-lg italic font-bold text-stone-700"
-            >
-              toán √<span className="underline decoration-stone-700">học²</span>
+            {/* Giấy Nhớ Màu Vàng Góc Dưới Trái Chuẩn Poster Mẫu */}
+            <div className="relative z-20 -mt-12 sm:-mt-14 mb-5 px-4 sm:px-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+              <div className="relative -rotate-[2deg] rounded-sm bg-[#fde047] px-5 sm:px-7 py-3.5 shadow-[0_10px_20px_rgba(0,0,0,0.22)] border border-amber-400 max-w-md">
+                <p className="font-handwriting text-lg sm:text-2xl font-bold text-stone-900 leading-snug text-center">
+                  Chào mừng các em học sinh
+                  <br />
+                  đến với năm học mới !
+                </p>
+              </div>
+
+              {/* Thông tin phân quyền & đồng bộ góc dưới phải */}
+              <div className="rounded-2xl border border-white/60 bg-white/90 px-4 py-2.5 text-xs text-stone-700 shadow-md backdrop-blur-sm">
+                <p className="font-bold text-sky-950">
+                  {isOwner
+                    ? 'Quyền Chủ Sở Hữu (Localhost): Được phép thêm / bớt giáo viên & đổi ảnh'
+                    : 'Chế độ Khách / Học Sinh: Xem bảng tổng hợp & gửi cảm nhận tính cách'}
+                </p>
+                <p className="mt-0.5 text-[11px] text-stone-600">
+                  Mọi thay đổi từ máy chủ của bạn được đồng bộ trực tiếp sang thiết bị của thầy cô.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Giấy Nhớ Màu Vàng Góc Dưới Trái Chuẩn Poster Mẫu */}
-        <div className="relative z-20 -mt-12 sm:-mt-14 mb-5 px-4 sm:px-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
-          <div className="relative -rotate-[2deg] rounded-sm bg-[#fde047] px-5 sm:px-7 py-3.5 shadow-[0_10px_20px_rgba(0,0,0,0.22)] border border-amber-400 max-w-md">
-            <p className="font-handwriting text-lg sm:text-2xl font-bold text-stone-900 leading-snug text-center">
-              Chào mừng các em học sinh
-              <br />
-              đến với năm học mới !
-            </p>
-          </div>
-
-          {/* Thông tin phân quyền & đồng bộ góc dưới phải */}
-          <div className="rounded-2xl border border-white/60 bg-white/90 px-4 py-2.5 text-xs text-stone-700 shadow-md backdrop-blur-sm">
-            <p className="font-bold text-sky-950">
-              {isOwner
-                ? 'Quyền Chủ Sở Hữu (Localhost): Được phép thêm / bớt giáo viên & đổi ảnh'
-                : 'Chế độ Khách / Học Sinh: Xem bảng tổng hợp & gửi cảm nhận tính cách'}
-            </p>
-            <p className="mt-0.5 text-[11px] text-stone-600">
-              Mọi thay đổi từ máy chủ của bạn được đồng bộ trực tiếp sang thiết bị của thầy cô.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+        </section>
+        );
 };
