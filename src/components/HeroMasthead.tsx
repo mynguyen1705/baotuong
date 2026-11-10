@@ -121,42 +121,77 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
           </div>
         </motion.div>
 
-        {/* Cụm Banner Infographic Nghệ Thuật Chuẩn Poster Gốc */}
-        <div className="mt-4 text-center relative">
+        {/* Cụm Tiêu Đề Poster Chính: BÁO TƯỜNG SỐ + chào mừng Ngày nhà giáo Việt Nam 20/11 + Đôi cánh CHẮP CÁNH ƯỚC MƠ */}
+        <div className="mt-6 text-center relative">
+          {/* Máy bay giấy vàng bên trái & xanh bên phải */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center"
+            animate={{ x: [0, 8, 0], y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="pointer-events-none hidden sm:block absolute left-6 md:left-16 top-10"
           >
-            {/* Khung tranh ảnh Banner Poster gốc sắc nét */}
-            <div className="relative w-full max-w-xl md:max-w-3xl lg:max-w-4xl rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-amber-400 bg-amber-100 p-1.5 sm:p-2.5 shadow-xl sm:shadow-2xl overflow-hidden">
-              <div className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-inner bg-[#fff9ed]">
-                <img
-                  data-testid="hero-banner-image"
-                  src="/posters/hero-banner-chap-canh.jpg"
-                  alt="Báo tường số Chắp Cánh Ước Mơ - Chi đội 9A3 - TH&THCS Hiệp Thạnh"
-                  className="w-full h-auto block select-none"
-                  style={{
-                    imageRendering: '-webkit-optimize-contrast',
-                  }}
-                  loading="eager"
-                />
-              </div>
+            <PaperAirplaneSVG color="amber" className="w-12 h-12 -rotate-12" />
+          </motion.div>
+          <motion.div
+            animate={{ x: [0, -8, 0], y: [0, -6, 0] }}
+            transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+            className="pointer-events-none hidden sm:block absolute right-8 md:right-20 top-10"
+          >
+            <PaperAirplaneSVG color="sky" className="w-12 h-12 scale-x-[-1] rotate-12" />
+          </motion.div>
 
-              {/* Semantic text ẩn dành cho trợ năng Screen Readers & Vitest */}
-              <h1 className="sr-only">
-                BÁO TƯỜNG SỐ 9A3
-                <span>CHẮP CÁNH</span>
-                <span>ƯỚC MƠ</span>
-                Chào mừng Ngày nhà giáo Việt Nam 20/11
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.55 }}
+          >
+            {/* Dòng 1: BÁO TƯỜNG SỐ */}
+            <p className="font-display text-2xl sm:text-4xl font-extrabold uppercase tracking-wider text-stone-900">
+              BÁO TƯỜNG SỐ
+            </p>
+
+            {/* Dòng 2: chào mừng Ngày nhà giáo Việt Nam 20/11 */}
+            <p className="mt-0.5 font-script text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900">
+              chào mừng Ngày nhà giáo Việt Nam 20/11
+            </p>
+
+            {/* Dòng 3: Đôi cánh Ước Mơ + Chữ 3D Cam Vàng CHẮP CÁNH / ƯỚC MƠ */}
+            <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2">
+              <motion.div
+                animate={{ rotate: [-2, 3, -2] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+                className="-mr-3 sm:-mr-5 self-end mb-2"
+              >
+                <DreamWingSVG
+                  side="left"
+                  className="w-20 sm:w-32 md:w-40 h-auto drop-shadow-md"
+                />
+              </motion.div>
+
+              <h1 className="relative z-10 leading-[0.92] select-none">
+                <span className="title-3d-orange block text-4xl sm:text-6xl md:text-7xl tracking-wide">
+                  CHẮP CÁNH
+                </span>
+                <span className="title-3d-orange block text-5xl sm:text-7xl md:text-8xl tracking-wide mt-0.5">
+                  ƯỚC MƠ
+                </span>
               </h1>
+
+              <motion.div
+                animate={{ rotate: [2, -3, 2] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+                className="-ml-3 sm:-ml-5 self-end mb-2"
+              >
+                <DreamWingSVG
+                  side="right"
+                  className="w-20 sm:w-32 md:w-40 h-auto drop-shadow-md"
+                />
+              </motion.div>
             </div>
 
             {/* Ruy băng thông tin Chi đội 9A3 & Chủ đề cuộc thi */}
-            <div className="mt-3.5 inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 rounded-full border border-amber-400/90 bg-amber-100/95 px-4 sm:px-6 py-1.5 text-xs sm:text-sm font-bold text-amber-950 shadow-sm backdrop-blur-sm">
+            <div className="mt-3 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-amber-400/90 bg-amber-100/90 px-5 py-1.5 text-xs sm:text-sm font-bold text-amber-950 shadow-sm">
               <span>✨ {config.className} – {config.schoolName}</span>
-              <span className="hidden sm:inline">•</span>
+              <span>•</span>
               <span>Chủ đề: “{config.competitionTheme}”</span>
             </div>
           </motion.div>
