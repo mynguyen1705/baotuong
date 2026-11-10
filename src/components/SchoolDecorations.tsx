@@ -577,8 +577,7 @@ export const FlyingPaperAirplanes: React.FC = () => {
 };
 
 /**
- * Hệ thống Trang Trí Cành Hoa Phượng Đỏ Rực Rỡ & Máy Bay Giấy Hai Bên Rìa Trang Chủ (Chuẩn Poster)
- * Đã loại bỏ hoàn toàn các bình thí nghiệm, công thức toán học và mô hình nguyên tử
+ * Hệ thống Trang Trí Sách Vở, Đồ Dùng Học Tập, Kí Hiệu Toán Học & Hoá Học Hai Bên Trang Chủ
  */
 export const SchoolSideDecorations: React.FC = () => {
   return (
@@ -587,117 +586,111 @@ export const SchoolSideDecorations: React.FC = () => {
       className="pointer-events-none absolute inset-0 overflow-hidden z-10 select-none"
       aria-hidden="true"
     >
-      {/* ==================== BÊN TRÁI TRANG CHỦ: CÀNH PHƯỢNG ĐỎ ==================== */}
-      <div data-testid="flamboyant-branch-left" className="contents">
-        {/* Cụm 1: Góc trên bên trái: Cành hoa phượng đỏ thắm rủ xuống */}
+      {/* ==================== BÊN TRÁI TRANG CHỦ ==================== */}
+      <div data-testid="school-supplies-left" className="contents">
+        {/* Cụm 1: Góc trên bên trái: Chồng sách vintage + Bộ ê-ke compa + Ký hiệu Pi & Tích phân */}
         <motion.div
-          style={{ transformOrigin: '0% 0%' }}
+          style={{ transformOrigin: '20% 20%' }}
           animate={{
-            rotate: [-1.5, 2.5, -1, -1.5],
-            y: [0, -5, 2, 0],
+            rotate: [-2, 3, -1.5, -2],
+            y: [0, -6, 2, 0],
           }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-4 -left-6 sm:-left-2 lg:left-0 z-10"
+          transition={{ duration: 5.6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -top-1 -left-4 sm:left-2 lg:left-4 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Cành hoa phượng đỏ góc trái"
-            className="w-36 sm:w-52 md:w-64 lg:w-72 h-auto drop-shadow-xl"
-            loading="eager"
-          />
+          <div className="flex flex-col gap-1 items-start">
+            <VintageBookStackSVG className="w-32 sm:w-44 md:w-52 h-auto drop-shadow-lg" />
+            <MathFormulasDoodleSVG type="calc" className="w-28 sm:w-36 h-auto -mt-2 ml-4" />
+          </div>
         </motion.div>
 
-        {/* Cụm 2: Tầng giữa bên trái: Chùm hoa phượng đỏ vắt ngang */}
+        {/* Cụm 2: Tầng giữa bên trái: Bình thí nghiệm hóa học sủi bọt + Vòng Benzen C6H6 */}
         <motion.div
-          style={{ transformOrigin: '10% 50%' }}
+          style={{ transformOrigin: '30% 50%' }}
           animate={{
-            rotate: [1.5, -2, 1.2, 1.5],
-            y: [0, 6, -3, 0],
+            rotate: [2, -2.5, 1.8, 2],
+            y: [0, 8, -4, 0],
           }}
-          transition={{ duration: 6.8, delay: 0.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="hidden md:block absolute top-[560px] -left-8 lg:-left-4 z-10 opacity-90"
+          transition={{ duration: 6.2, delay: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+          className="hidden md:block absolute top-[520px] left-2 lg:left-6 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Chùm hoa phượng tầng giữa trái"
-            className="w-28 sm:w-40 lg:w-48 h-auto -rotate-12 drop-shadow-lg"
-            loading="lazy"
-          />
+          <div className="flex flex-col gap-2 items-start">
+            <ChemistryLabSVG className="w-32 sm:w-40 lg:w-44 h-auto drop-shadow-md" />
+            <MathFormulasDoodleSVG type="science" className="w-28 sm:w-34 h-auto ml-2" />
+          </div>
         </motion.div>
 
-        {/* Cụm 3: Nửa dưới bên trái: Cành hoa phượng cuối trang */}
+        {/* Cụm 3: Nửa dưới bên trái: Cuốn vở học sinh mở + Bút thước + Công thức Pytago */}
         <motion.div
-          style={{ transformOrigin: '20% 60%' }}
+          style={{ transformOrigin: '40% 60%' }}
           animate={{
-            rotate: [-2, 1.8, -2],
-            y: [0, -6, 0],
+            rotate: [-2.5, 2, -2.5],
+            y: [0, -7, 0],
           }}
-          transition={{ duration: 6.2, delay: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="hidden lg:block absolute top-[1240px] -left-6 lg:left-0 z-10 opacity-85"
+          transition={{ duration: 5.8, delay: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          className="hidden lg:block absolute top-[1180px] left-2 lg:left-6 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Hoa phượng đỏ tầng dưới trái"
-            className="w-32 sm:w-44 lg:w-52 h-auto rotate-6 drop-shadow-md"
-            loading="lazy"
-          />
+          <div className="flex flex-col gap-2 items-start">
+            <OpenNotebookSVG className="w-36 sm:w-48 lg:w-52 h-auto drop-shadow-md" />
+            <MathFormulasDoodleSVG type="geometry" className="w-32 sm:w-40 h-auto ml-4" />
+          </div>
         </motion.div>
       </div>
 
-      {/* ==================== BÊN PHẢI TRANG CHỦ: CÀNH PHƯỢNG ĐỎ ==================== */}
-      <div data-testid="flamboyant-branch-right" className="contents">
-        {/* Cụm 1: Góc trên bên phải: Cành hoa phượng đỏ lật đối xứng */}
+      {/* ==================== BÊN PHẢI TRANG CHỦ ==================== */}
+      <div data-testid="school-supplies-right" className="contents">
+        {/* Cụm 1: Góc trên bên phải: Cuốn vở ô ly mở + Bộ thước ê-ke compa + Mô hình nguyên tử */}
         <motion.div
-          style={{ transformOrigin: '100% 0%' }}
+          style={{ transformOrigin: '80% 20%' }}
           animate={{
-            rotate: [1.8, -2.2, 1.2, 1.8],
-            y: [0, 6, -2, 0],
+            rotate: [2.5, -2.8, 1.6, 2.5],
+            y: [0, 7, -3, 0],
           }}
-          transition={{ duration: 6.2, delay: 0.3, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-4 -right-6 sm:-right-2 lg:right-0 z-10"
+          transition={{ duration: 5.8, delay: 0.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -top-1 -right-4 sm:right-2 lg:right-4 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Cành hoa phượng đỏ góc phải"
-            className="w-36 sm:w-52 md:w-64 lg:w-72 h-auto scale-x-[-1] drop-shadow-xl"
-            loading="eager"
-          />
+          <div className="flex flex-col gap-1 items-end">
+            <OpenNotebookSVG className="w-32 sm:w-44 md:w-52 h-auto drop-shadow-lg" />
+            <div className="flex items-center gap-2 -mt-2 mr-2">
+              <AtomModelSVG className="w-20 sm:w-26 h-auto drop-shadow-sm" />
+              <MathFormulasDoodleSVG type="geometry" className="w-28 sm:w-36 h-auto" />
+            </div>
+          </div>
         </motion.div>
 
-        {/* Cụm 2: Tầng giữa bên phải: Chùm hoa phượng đỏ */}
+        {/* Cụm 2: Tầng giữa bên phải: Chồng sách giáo khoa + Bộ ê-ke thước kẻ + Ký hiệu Pi & Tích phân */}
         <motion.div
-          style={{ transformOrigin: '90% 50%' }}
+          style={{ transformOrigin: '70% 50%' }}
           animate={{
-            rotate: [-1.8, 2.2, -1.5, -1.8],
-            y: [0, -7, 2, 0],
+            rotate: [-2.2, 2.6, -1.8, -2.2],
+            y: [0, -8, 3, 0],
           }}
-          transition={{ duration: 7, delay: 1.0, repeat: Infinity, ease: 'easeInOut' }}
-          className="hidden md:block absolute top-[560px] -right-8 lg:-right-4 z-10 opacity-90"
+          transition={{ duration: 6.5, delay: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+          className="hidden md:block absolute top-[520px] right-2 lg:right-6 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Chùm hoa phượng tầng giữa phải"
-            className="w-28 sm:w-40 lg:w-48 h-auto scale-x-[-1] rotate-12 drop-shadow-lg"
-            loading="lazy"
-          />
+          <div className="flex flex-col gap-2 items-end">
+            <VintageBookStackSVG className="w-32 sm:w-40 lg:w-48 h-auto drop-shadow-md" />
+            <StationerySetSVG className="w-28 sm:w-36 h-auto mr-4" />
+          </div>
         </motion.div>
 
-        {/* Cụm 3: Nửa dưới bên phải: Hoa phượng */}
+        {/* Cụm 3: Nửa dưới bên phải: Phòng thí nghiệm hóa học sủi bọt + Nguyên tử + E=mc² */}
         <motion.div
-          style={{ transformOrigin: '80% 60%' }}
+          style={{ transformOrigin: '60% 60%' }}
           animate={{
-            rotate: [2, -2, 2],
-            y: [0, 5, 0],
+            rotate: [2.2, -2.4, 2.2],
+            y: [0, 6, 0],
           }}
-          transition={{ duration: 5.9, delay: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          className="hidden lg:block absolute top-[1240px] -right-6 lg:right-0 z-10 opacity-85"
+          transition={{ duration: 5.5, delay: 2.0, repeat: Infinity, ease: 'easeInOut' }}
+          className="hidden lg:block absolute top-[1180px] right-2 lg:right-6 z-10"
         >
-          <img
-            src="/decorations/hoa-phuong.png"
-            alt="Hoa phượng đỏ tầng dưới phải"
-            className="w-32 sm:w-44 lg:w-52 h-auto scale-x-[-1] -rotate-6 drop-shadow-md"
-            loading="lazy"
-          />
+          <div className="flex flex-col gap-2 items-end">
+            <ChemistryLabSVG className="w-32 sm:w-42 lg:w-46 h-auto drop-shadow-md" />
+            <div className="flex items-center gap-2 mr-2">
+              <AtomModelSVG className="w-20 sm:w-24 h-auto" />
+              <MathFormulasDoodleSVG type="science" className="w-26 sm:w-32 h-auto" />
+            </div>
+          </div>
         </motion.div>
       </div>
 

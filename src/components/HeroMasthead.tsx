@@ -19,6 +19,7 @@ import {
   HotAirBalloonSVG,
   PaperAirplaneSVG,
 } from './PosterDecorations';
+import { VintageBookStackSVG } from './SchoolDecorations';
 
 export interface HeroMastheadProps {
   config: BaoTuongConfig;
@@ -43,18 +44,14 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
 }) => {
   return (
     <header className="relative overflow-hidden pt-4 pb-6 px-4 sm:px-6 lg:px-8">
-      {/* Cành hoa phượng đỏ góc trái trên cùng đung đưa nhẹ nhàng */}
+      {/* Chồng sách vở tri thức góc trái trên cùng đung đưa nhẹ nhàng */}
       <motion.div
         style={{ transformOrigin: '0% 0%' }}
-        animate={{ rotate: [-1.5, 2, -1.5], y: [0, 4, 0] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute -top-4 left-0 sm:left-2 z-10 opacity-90"
+        animate={{ rotate: [-2, 3, -2], y: [0, 3, 0] }}
+        transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute -top-2 left-1 sm:left-4 z-10 opacity-90"
       >
-        <img
-          src="/decorations/hoa-phuong.png"
-          alt="Cành hoa phượng đỏ góc trái"
-          className="w-28 sm:w-40 md:w-48 h-auto drop-shadow-md"
-        />
+        <VintageBookStackSVG className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-md" />
       </motion.div>
 
       {/* Khinh khí cầu đỏ-kem góc phải trên cùng (giống hệt Poster mẫu) */}

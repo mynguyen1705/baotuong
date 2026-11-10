@@ -72,6 +72,47 @@ function toPublicWish(record: StoredWishRecord): WishItem {
   };
 }
 
+const CLOUD_WISHES_URL = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1c10cd30f720f';
+
+async function fetchCloudWishes(): Promise<StoredWishRecord[] | null> {
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    return null;
+  }
+  try {
+    const res = await fetch(CLOUD_WISHES_URL, {
+      headers: { Accept: 'application/json' },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data?.data?.wishes) && data.data.wishes.length > 0) {
+        return data.data.wishes;
+      }
+    }
+  } catch {
+    // Bỏ qua lỗi mạng
+  }
+  return null;
+}
+
+async function pushCloudWishes(wishes: StoredWishRecord[]): Promise<boolean> {
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    return false;
+  }
+  try {
+    const res = await fetch(CLOUD_WISHES_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'baotuong_wishes',
+        data: { wishes: wishes.map(toPublicWish) },
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function createWishesStore(options?: WishesStoreOptions): WishesStore {
   const { storageFilePath, serverSecret, duplicateWindowMs } = getServerConfig(options);
   const isCustomStorage = Boolean(options?.storageFilePath || process.env.WISHES_STORAGE_FILE);
@@ -128,6 +169,7 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
         // Bỏ qua lỗi ghi file tĩnh
       }
 
+      pushCloudWishes(records).catch(() => {});
       triggerAutoGitPush();
     }
   }
@@ -135,6 +177,36 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
   return {
     async listWishes(): Promise<WishItem[]> {
       const records = await readRecords();
+
+      // Đồng bộ hai chiều từ Cloud Store về Local nếu có lời chúc mới từ khách / học sinh
+      if (!isCustomStorage) {
+        try {
+          const cloudWishes = await fetchCloudWishes();
+          if (cloudWishes && Array.isArray(cloudWishes) && cloudWishes.length > 0) {
+            const map = new Map<string, StoredWishRecord>();
+            for (const r of records) {
+              map.set(r.id, r);
+            }
+            let hasNew = false;
+            for (const cw of cloudWishes) {
+              if (!map.has(cw.id)) {
+                map.set(cw.id, cw);
+                hasNew = true;
+              }
+            }
+            if (hasNew) {
+              const merged = Array.from(map.values());
+              await writeRecords(merged);
+              return merged
+                .map(toPublicWish)
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            }
+          }
+        } catch {
+          // Bỏ qua lỗi mạng
+        }
+      }
+
       return records
         .map(toPublicWish)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

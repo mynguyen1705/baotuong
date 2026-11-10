@@ -4,6 +4,8 @@ import {
   QrCode,
   Play,
   Volume2,
+  Feather,
+  Sparkles,
   Heart,
 } from 'lucide-react';
 import { SectionData, SectionId } from '../types/baotuong';
@@ -12,6 +14,7 @@ import {
   PaperAirplaneSVG,
   PointerHandIcon,
 } from './PosterDecorations';
+import { StationerySetSVG, VintageBookStackSVG } from './SchoolDecorations';
 
 export interface InfographicGridProps {
   sections: SectionData[];
@@ -63,30 +66,30 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
     >
       {/* Khung Poster Giấy Màu Nước Ấm Áp Chứa Đủ 5 Mục (2x2 + 1 Đáy) */}
       <div className="relative rounded-[2.25rem] border-4 border-amber-300/90 bg-gradient-to-b from-[#FFFDF6] via-[#FDF5E2] to-[#F9E8C8] p-5 sm:p-8 md:p-10 shadow-2xl overflow-hidden">
-        {/* Cành hoa phượng và máy bay giấy trang trí nhẹ nhàng bên sườn khung poster */}
-        <div className="pointer-events-none absolute top-[40%] -left-3 z-10 hidden sm:block opacity-85">
-          <PaperAirplaneSVG color="amber" className="w-12 h-12 -rotate-12 drop-shadow-md" />
+        {/* Đồ dùng học tập và sách vở trang trí bên sườn giống báo tường học trò */}
+        <div className="pointer-events-none absolute top-[43%] -left-5 z-10 hidden sm:block opacity-75">
+          <StationerySetSVG className="w-24 h-24" />
         </div>
-        <div className="pointer-events-none absolute bottom-5 -right-3 z-10 hidden sm:block opacity-85">
-          <PaperAirplaneSVG color="sky" className="w-12 h-12 rotate-12 scale-x-[-1] drop-shadow-md" />
+        <div className="pointer-events-none absolute bottom-4 -right-4 z-10 hidden sm:block opacity-75">
+          <VintageBookStackSVG className="w-28 h-28" />
         </div>
 
         {/* LƯỚI 2 CỘT CHO MỤC 1, 2, 3, 4 */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-9 relative z-20">
           {/* =========================================================
-              MỤC 1: 1. LỜI NGỎ (Tranh minh họa sách mở, lọ mực, bút máy)
+              MỤC 1: 1. LỜI NGỎ (Trang sách mở tỏa sáng + Lọ mực + Bút máy)
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
-            className="flex flex-col justify-between rounded-3xl border-2 border-amber-300/80 bg-amber-50/70 p-5 sm:p-6 shadow-md"
+            className="flex flex-col justify-between rounded-3xl border-2 border-amber-300/80 bg-amber-50/55 p-5 sm:p-6 shadow-sm"
           >
             <div>
               {/* Tiêu đề mục chuẩn style Poster gốc */}
               <div className="flex items-center justify-between gap-2">
-                <span className="font-serif text-xs font-extrabold uppercase tracking-widest text-amber-800">
+                <span className="font-serif text-xs font-extrabold uppercase tracking-widest text-amber-800/70">
                   {loiNgo.typoTheme.displayNumeral} • MỞ ĐẦU
                 </span>
                 <button
@@ -109,24 +112,59 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 </p>
               </div>
 
-              {/* Khung tranh minh họa nghệ thuật từ Poster gốc */}
+              {/* Nghệ thuật Typographic Trang Sách Mở Tỏa Sáng + Lọ mực xanh + Máy bay giấy */}
               <div
                 onClick={() => onSelectSection('loi-ngo')}
-                className="mt-4 relative cursor-pointer group"
+                className="mt-4 relative cursor-pointer pt-2 pb-3"
               >
-                <div className="overflow-hidden rounded-2xl border-2 border-amber-400 bg-amber-100 shadow-md transition group-hover:shadow-lg group-hover:scale-[1.01]">
-                  <img
-                    src="/sections/sec-loi-ngo.jpg"
-                    alt="1. Lời ngỏ - Báo tường số Chi đội 9A3"
-                    className="w-full h-auto block select-none object-cover"
-                    loading="lazy"
+                {/* Máy bay giấy bay ra từ trang sách */}
+                <PaperAirplaneSVG
+                  color="sky"
+                  className="pointer-events-none absolute -top-2 right-1 w-10 h-10 z-20"
+                />
+
+                {/* Hai trang sách mở phát sáng lấp lánh */}
+                <div className="open-book-surface relative grid grid-cols-1 sm:grid-cols-2 rounded-2xl border-2 border-[#B45309] p-4 sm:p-5 shadow-lg">
+                  {/* Gáy sách ở giữa */}
+                  <div
+                    aria-hidden="true"
+                    className="hidden sm:block absolute inset-y-2 left-1/2 w-[3px] -translate-x-1/2 bg-gradient-to-b from-amber-300 via-amber-700/50 to-amber-300"
                   />
+                  {/* Ánh sáng lấp lánh giữa sách */}
+                  <Sparkles className="pointer-events-none absolute top-2 left-1/2 -translate-x-1/2 h-5 w-5 text-amber-500 animate-pulse" />
+
+                  {/* Trang trái: Chữ viết tay nghệ thuật */}
+                  <div className="pr-0 sm:pr-4 border-b sm:border-b-0 border-amber-300/70 pb-3 sm:pb-0 flex flex-col justify-between">
+                    <span className="font-script text-2xl sm:text-3xl font-bold text-amber-900 leading-tight">
+                      Chắp cánh ước mơ
+                    </span>
+                    <p className="mt-2 font-serif text-xs sm:text-sm italic text-stone-800 leading-relaxed">
+                      “{loiNgo.typoTheme.featuredLines[0]}{' '}
+                      {loiNgo.typoTheme.featuredLines[1]}”
+                    </p>
+                    <div className="mt-3 flex items-center gap-1.5 text-[11px] font-bold text-amber-900">
+                      <Feather className="h-3.5 w-3.5 text-sky-700" />
+                      <span>Chi đội 9A3 • TH&THCS Hiệp Thạnh</span>
+                    </div>
+                  </div>
+
+                  {/* Trang phải: Trích đoạn Lời ngỏ Typographic */}
+                  <div className="pl-0 sm:pl-4 pt-3 sm:pt-0 flex flex-col justify-between">
+                    <p className="font-serif text-xs sm:text-sm text-stone-800 leading-relaxed first-letter:float-left first-letter:mr-1.5 first-letter:font-serif first-letter:text-3xl first-letter:font-bold first-letter:text-poster-orange">
+                      Tháng Mười Một lại về mang theo sắc nắng vàng dịu dàng và lòng biết ơn sâu sắc của tuổi học trò cuối cấp...
+                    </p>
+                    <p className="mt-2 text-right font-script text-base font-bold text-red-800">
+                      — Tập thể Lớp 9A3 —
+                    </p>
+                  </div>
                 </div>
-                <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-stone-700">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-200/80 px-2.5 py-1 text-[11px] font-bold text-amber-950">
+
+                {/* Lọ mực xanh góc trái dưới của trang sách */}
+                <div className="mt-2 flex items-center justify-between px-1 text-xs text-stone-600">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-sky-900 px-2.5 py-1 text-[11px] font-bold text-sky-100 shadow-sm">
                     🖋️ Nét bút tri ân 20/11
                   </span>
-                  <span className="font-serif italic text-amber-900 font-semibold">
+                  <span className="font-serif italic text-amber-900">
                     Bấm để đọc trọn vẹn Lời ngỏ →
                   </span>
                 </div>
@@ -137,14 +175,14 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           </motion.article>
 
           {/* =========================================================
-              MỤC 2: 2. TRUYỆN NGẮN (Tranh minh họa cô trò đọc sách dưới cây)
+              MỤC 2: 2. TRUYỆN NGẮN - Người gieo hạt lặng lẽ (Dưới tán cây xanh sân trường)
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="flex flex-col justify-between rounded-3xl border-2 border-emerald-400/80 bg-gradient-to-b from-emerald-50/70 via-amber-50/50 to-lime-100/60 p-5 sm:p-6 shadow-md"
+            className="flex flex-col justify-between rounded-3xl border-2 border-emerald-400/70 bg-gradient-to-b from-emerald-50/70 via-amber-50/50 to-lime-100/60 p-5 sm:p-6 shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between gap-2">
@@ -171,26 +209,37 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 </p>
               </div>
 
-              {/* Khung tranh minh họa nghệ thuật từ Poster gốc */}
+              {/* Khung Typographic Truyện Ngắn Dưới Tán Cây Bàng Sân Trường Hiệp Thạnh */}
               <div
                 onClick={() => onSelectSection('truyen-ngan')}
-                className="mt-4 relative cursor-pointer group"
+                className="mt-4 relative cursor-pointer overflow-hidden rounded-2xl border-2 border-emerald-700/60 bg-gradient-to-b from-[#FAFDF6] to-[#E6F4D7] p-4 sm:p-5 shadow-md"
               >
-                <div className="overflow-hidden rounded-2xl border-2 border-emerald-500 bg-emerald-100 shadow-md transition group-hover:shadow-lg group-hover:scale-[1.01]">
-                  <img
-                    src="/sections/sec-truyen-ngan.jpg"
-                    alt="2. Truyện ngắn - Người gieo hạt lặng lẽ"
-                    className="w-full h-auto block select-none object-cover"
-                    loading="lazy"
-                  />
+                {/* Tán cây xanh góc phải trên */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-6 -right-6 h-24 w-28 rounded-full bg-emerald-600/20 blur-md"
+                />
+
+                <div className="flex items-center justify-between gap-2 border-b border-emerald-700/20 pb-2 text-xs font-bold text-emerald-900">
+                  <span>🌳 Bối cảnh: Gốc bàng sân trường Hiệp Thạnh</span>
+                  <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] text-white">
+                    Khăn quàng đỏ 9A3
+                  </span>
                 </div>
-                <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-stone-700">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-200/80 px-2.5 py-1 text-[11px] font-bold text-emerald-950">
-                    🌳 Dưới gốc bàng sân trường
-                  </span>
-                  <span className="font-serif italic text-emerald-900 font-semibold">
-                    Bấm để đọc truyện ngắn →
-                  </span>
+
+                {/* Trích đoạn Typographic nổi bật của Truyện ngắn */}
+                <blockquote className="mt-3 font-serif text-sm sm:text-base italic text-stone-900 leading-relaxed">
+                  “Người trồng cây ngoài đồng hiểu rõ nhất mà Minh: có những hạt giống nảy mầm chậm hơn một chút, nhưng khi đã bám rễ sâu vào đất thì sẽ vươn lên bền bỉ nhất...”
+                </blockquote>
+
+                <p className="mt-2.5 text-xs text-stone-700 leading-relaxed line-clamp-2">
+                  {truyenNgan.summary}
+                </p>
+
+                {/* Thảm cỏ xanh dưới chân khung truyện */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-emerald-800/90 px-3 py-1.5 text-[11px] font-bold text-emerald-50">
+                  <span>✍️ Sáng tác: Nhóm Văn học Chi đội 9A3</span>
+                  <span>📖 7 đoạn văn cảm xúc</span>
                 </div>
               </div>
             </div>
@@ -199,14 +248,14 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           </motion.article>
 
           {/* =========================================================
-              MỤC 3: 3. THƠ (Tranh minh họa cuộn thư hoa phượng "Ơn thầy")
+              MỤC 3: 3. THƠ - Ơn thầy nâng cánh (Cuộn giấy da cổ điển + Hoa phượng + Bút máy)
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.14 }}
-            className="flex flex-col justify-between rounded-3xl border-2 border-red-300/80 bg-gradient-to-b from-rose-50/70 via-amber-50/60 to-orange-50/60 p-5 sm:p-6 shadow-md"
+            className="flex flex-col justify-between rounded-3xl border-2 border-red-300/80 bg-gradient-to-b from-rose-50/60 via-amber-50/60 to-orange-50/60 p-5 sm:p-6 shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between gap-2">
@@ -233,27 +282,45 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 </p>
               </div>
 
-              {/* Khung tranh minh họa nghệ thuật từ Poster gốc */}
+              {/* Cuộn Giấy Da Thư Pháp (Parchment Scroll) + Chữ "Ơn thầy" + Bút máy */}
               <div
                 onClick={() => onSelectSection('tho')}
-                className="mt-4 relative cursor-pointer group"
+                className="mt-4 relative cursor-pointer"
               >
-                <div className="overflow-hidden rounded-2xl border-2 border-rose-400 bg-rose-100 shadow-md transition group-hover:shadow-lg group-hover:scale-[1.01]">
-                  <img
-                    src="/sections/sec-tho.jpg"
-                    alt="3. Thơ - Ơn thầy nâng cánh"
-                    className="w-full h-auto block select-none object-cover"
-                    loading="lazy"
-                  />
+                {/* Dải ruy băng đỏ uốn lượn phía trên cuộn giấy */}
+                <div className="mx-auto mb-1 flex items-center justify-center gap-2 text-xs font-bold text-red-700">
+                  <span>🌺 Tuyển tập Thơ nổi tiếng về Tuổi học trò & Người thầy</span>
                 </div>
-                <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-stone-700">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-rose-200/80 px-2.5 py-1 text-[11px] font-bold text-rose-950">
-                    <Volume2 className="h-3.5 w-3.5 text-rose-700" />
-                    Có Audio giọng đọc ngâm thơ
-                  </span>
-                  <span className="font-serif italic text-red-900 font-semibold">
-                    Bấm để ngâm thơ & đọc bài →
-                  </span>
+
+                <div className="parchment-scroll-surface relative rounded-2xl border-y-2 border-x-8 border-[#B47B38] p-5 shadow-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-800/20 pb-3">
+                    {/* Chữ thư pháp lớn "Ơn thầy" giống hệt giữa cuộn giấy trên ảnh mẫu */}
+                    <div>
+                      <span className="font-script text-4xl sm:text-5xl font-bold text-[#5C2D16] drop-shadow-sm">
+                        Ơn thầy
+                      </span>
+                      <span className="ml-2 inline-block text-lg text-sky-800">✒️</span>
+                    </div>
+
+                    <div className="text-left sm:text-right text-xs font-serif italic text-stone-800 space-y-0.5">
+                      <p>“Khi thầy viết bảng, bụi phấn rơi rơi</p>
+                      <p>Có hạt bụi nào vương trên tóc thầy...”</p>
+                      <p className="font-sans text-[11px] font-bold not-italic text-red-800">
+                        — Trần Đăng Khoa • Nguyễn Nhất Ánh • Xuân Định
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Thanh báo hiệu có trình phát Audio giọng đọc học sinh 9A3 */}
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#4A2511]">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-700 px-3 py-1 text-[11px] text-white">
+                      <Volume2 className="h-3.5 w-3.5" />
+                      Nghe Audio Học Sinh 9A3 Ngâm Thơ + Nhạc Nền
+                    </span>
+                    <span className="text-[11px] text-amber-950">
+                      03 Bài thơ kinh điển →
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,14 +329,14 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           </motion.article>
 
           {/* =========================================================
-              MỤC 4: 4. MV (Tranh minh họa màn hình video ca nhạc 9A3)
+              MỤC 4: 4. MV (Video ca nhạc) - Người gieo mầm xanh (Khung trình phát Video + Khuông nhạc)
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.2 }}
-            className="flex flex-col justify-between rounded-3xl border-2 border-sky-400/80 bg-gradient-to-b from-sky-50/70 via-amber-50/50 to-orange-50/60 p-5 sm:p-6 shadow-md"
+            className="flex flex-col justify-between rounded-3xl border-2 border-sky-400/80 bg-gradient-to-b from-sky-50/70 via-amber-50/50 to-orange-50/60 p-5 sm:p-6 shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between gap-2">
@@ -296,27 +363,52 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 </p>
               </div>
 
-              {/* Khung tranh minh họa nghệ thuật từ Poster gốc */}
+              {/* Khung Trình Phát Video Ca Nhạc (Giống hệt khung Player trên Poster mẫu) */}
               <div
                 onClick={() => onSelectSection('mv')}
-                className="mt-4 relative cursor-pointer group"
+                className="mt-4 relative cursor-pointer rounded-2xl border-4 border-stone-800 bg-[#FFF8EB] p-4 shadow-lg"
               >
-                <div className="overflow-hidden rounded-2xl border-2 border-sky-400 bg-sky-100 shadow-md transition group-hover:shadow-lg group-hover:scale-[1.01]">
-                  <img
-                    src="/sections/sec-mv.jpg"
-                    alt="4. Âm nhạc: Bài ca tri ân - MV Người gieo mầm xanh"
-                    className="w-full h-auto block select-none object-cover"
-                    loading="lazy"
-                  />
+                {/* Màn hình xanh nhỏ ở góc trên phải giống hệt Poster gốc */}
+                <div className="absolute -top-3 -right-2 z-20 flex h-11 w-16 items-center justify-center rounded-lg border-2 border-stone-800 bg-sky-300 shadow">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white">
+                    <Play className="h-3 w-3 fill-current ml-0.5" />
+                  </div>
                 </div>
-                <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-stone-700">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-sky-200/80 px-2.5 py-1 text-[11px] font-bold text-sky-950">
-                    <Play className="h-3.5 w-3.5 fill-current text-sky-700" />
-                    Trình phát Video MV 9A3
-                  </span>
-                  <span className="font-serif italic text-sky-900 font-semibold">
-                    Bấm để xem video ca nhạc →
-                  </span>
+
+                {/* Khuông nhạc + Khóa Sol + Nút Play Đỏ ở giữa + Typography bài hát */}
+                <div className="flex items-center gap-4">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-md transition group-hover:scale-105">
+                    <Play className="h-8 w-8 fill-current ml-1" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-red-700">
+                      <span>🎼 Ca khúc chủ đề MV:</span>
+                    </div>
+                    <h3 className="font-display text-xl sm:text-2xl font-extrabold text-stone-900 truncate">
+                      Người Gieo Mầm Xanh
+                    </h3>
+                    <p className="text-xs font-bold text-stone-700">
+                      Sáng tác: <span className="text-poster-orange">Hứa Kim Tuyền</span> • Trình bày:{' '}
+                      <span className="text-sky-800">Hoàng Dũng</span>
+                    </p>
+                    <p className="mt-1 text-[11px] font-semibold text-emerald-800">
+                      📍 Quay thực tế: Lớp 9A3 & Sân trường TH&THCS Hiệp Thạnh
+                    </p>
+                  </div>
+                </div>
+
+                {/* Thanh tua Video Player màu đen ở đáy khung giống hệt Poster gốc */}
+                <div className="mt-4 rounded-xl bg-stone-900 px-3 py-2 text-white">
+                  <div className="h-1.5 w-full rounded-full bg-stone-700 overflow-hidden">
+                    <div className="h-full w-2/5 rounded-full bg-red-600" />
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between text-[10px] font-mono text-stone-300">
+                    <span>▶ ⏸ 🔊 01:28 / 03:45</span>
+                    <span className="text-amber-300 font-sans font-bold">
+                      04 Phân cảnh sân trường ⛶
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -326,7 +418,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
         </div>
 
         {/* =========================================================
-            MỤC 5: 5. BÀI TRI ÂN (Tranh minh họa tặng hoa cô giáo & phong thư)
+            MỤC 5: 5. BÀI TRI ÂN (Thẻ Trải Rộng Toàn Chiều Ngang Dưới Đáy + Phong Thư Trái Tim)
            ========================================================= */}
         <motion.article
           initial={{ opacity: 0, y: 24 }}
@@ -364,27 +456,38 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
             </p>
           </div>
 
-          {/* Khung tranh minh họa nghệ thuật từ Poster gốc */}
+          {/* Bố cục Bức Thư Tri Ân + Phong Thư Dán Tim Đỏ (Giống góc dưới phải Poster gốc) */}
           <div
             onClick={() => onSelectSection('tri-an')}
-            className="mt-5 cursor-pointer group"
+            className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-12 items-center cursor-pointer rounded-2xl border-2 border-dashed border-amber-400 bg-amber-50/50 p-5 sm:p-6"
           >
-            <div className="overflow-hidden rounded-2xl border-2 border-amber-400 bg-amber-100 shadow-md transition group-hover:shadow-lg group-hover:scale-[1.01]">
-              <img
-                src="/sections/sec-tri-an.jpg"
-                alt="5. Bài tri ân - Tri ân thầy cô ngày 20/11"
-                className="w-full h-auto block select-none object-cover"
-                loading="lazy"
-              />
+            <div className="lg:col-span-8 space-y-2.5">
+              <p className="font-serif text-base sm:text-lg italic font-semibold text-stone-900 leading-relaxed">
+                {triAn.pullQuote}
+              </p>
+              <p className="font-serif text-xs sm:text-sm text-stone-700 leading-relaxed">
+                “Mỗi viên phấn trắng mòn đi trên bảng đen là một hạt mầm tri thức được gieo vào tâm hồn chúng em. Những sợi tóc pha sương trên mái đầu thầy, những nếp nhăn nơi khóe mắt cô sau mỗi mùa thi chuyển cấp chính là minh chứng lặng thầm cho sự cống hiến cao cả của nghề dạy học...”
+              </p>
             </div>
-            <div className="mt-3 flex flex-wrap items-center justify-between px-1 text-xs text-stone-700 gap-2">
-              <div className="flex items-center gap-1.5 text-rose-600 font-bold">
+
+            {/* Cụm Phong Thư Tri Ân gắn Trái Tim Đỏ giống hệt góc phải dưới của Poster mẫu */}
+            <div className="lg:col-span-4 flex flex-col items-center justify-center rounded-2xl border-2 border-amber-300 bg-white p-4 text-center shadow-sm relative">
+              <div className="flex items-center gap-1.5 text-rose-600 mb-1">
                 <Heart className="h-4 w-4 fill-current" />
-                <span>Gửi gắm lòng biết ơn sâu sắc tới quý thầy cô trường TH&THCS Hiệp Thạnh</span>
+                <Heart className="h-5 w-5 fill-current -mt-2" />
+                <Heart className="h-4 w-4 fill-current" />
               </div>
-              <span className="font-serif italic text-amber-900 font-semibold">
-                Bấm để đọc toàn văn bức tâm thư →
-              </span>
+              <div className="w-full rounded-xl border-2 border-amber-400 bg-amber-100/80 px-4 py-3 shadow-inner">
+                <p className="font-script text-2xl font-bold text-red-800">
+                  Gửi Thầy Cô Kính Yêu!
+                </p>
+                <p className="mt-0.5 text-xs font-bold text-stone-800">
+                  Tập thể học sinh Chi đội 9A3
+                </p>
+                <p className="text-[11px] text-stone-600">
+                  Trường TH&THCS Hiệp Thạnh • 20/11
+                </p>
+              </div>
             </div>
           </div>
 

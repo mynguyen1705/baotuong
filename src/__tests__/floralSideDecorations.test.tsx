@@ -4,33 +4,44 @@ import { describe, expect, it } from 'vitest';
 import { SchoolSideDecorations } from '../components/SchoolDecorations';
 import { App } from '../App';
 
-describe('SchoolSideDecorations (Cành hoa phượng đỏ rực rỡ & máy bay giấy hai bên trang chủ chuẩn Poster)', () => {
-  it('đã xoá toàn bộ bình thí nghiệm, công thức toán và hiển thị cành hoa phượng đỏ cùng phi đội máy bay giấy', () => {
+describe('SchoolSideDecorations (Sách vở, đồ dùng học tập, kí hiệu Toán & Hoá học hai bên trang chủ)', () => {
+  it('đã xoá toàn bộ hoa và hiển thị sách vở, đồ dùng học tập, kí hiệu toán - hoá hai bên trái phải cùng máy bay giấy', () => {
     render(<SchoolSideDecorations />);
 
     const container = screen.getByTestId('school-side-decorations');
     expect(container).toBeInTheDocument();
 
-    // 1. Cành hoa phượng đỏ hai bên trái & phải chuẩn phong cách Poster
-    const leftBranch = screen.getByTestId('flamboyant-branch-left');
-    const rightBranch = screen.getByTestId('flamboyant-branch-right');
-    expect(leftBranch).toBeInTheDocument();
-    expect(rightBranch).toBeInTheDocument();
+    // 1. Tuyệt đối không còn hoa (hoa phượng, hoa hướng dương)
+    expect(screen.queryByTestId('flamboyant-branch-left')).toBeNull();
+    expect(screen.queryByTestId('flamboyant-branch-right')).toBeNull();
+    expect(screen.queryByTestId('sunflower-bouquet-left')).toBeNull();
+    expect(screen.queryByTestId('sunflower-bouquet-right')).toBeNull();
+    expect(document.querySelector('img[src*="hoa-phuong"]')).toBeNull();
+    expect(document.querySelector('img[src*="hoa-huong-duong"]')).toBeNull();
 
-    // 2. Tuyệt đối không còn bình thí nghiệm, nguyên tử, công thức toán học cũ
-    expect(screen.queryByTestId('chemistry-lab-decor')).toBeNull();
-    expect(screen.queryByTestId('atom-model-decor')).toBeNull();
-    expect(screen.queryByTestId('math-formulas-decor')).toBeNull();
+    // 2. Sách vở và đồ dùng học tập hai bên trái & phải
+    const leftSupplies = screen.getByTestId('school-supplies-left');
+    const rightSupplies = screen.getByTestId('school-supplies-right');
+    expect(leftSupplies).toBeInTheDocument();
+    expect(rightSupplies).toBeInTheDocument();
 
-    // 3. Phi đội máy bay giấy bay lượn
+    // 3. Kí hiệu & dụng cụ Hoá Học: Bình tam giác sủi bọt, ống nghiệm, vòng benzen, nguyên tử
+    expect(screen.getAllByTestId('chemistry-lab-decor').length).toBeGreaterThan(0);
+    expect(screen.getAllByTestId('atom-model-decor').length).toBeGreaterThan(0);
+
+    // 4. Kí hiệu & công thức Toán Học: pi, căn x, sigma, tích phân, a^2+b^2=c^2
+    expect(screen.getAllByTestId('math-formulas-decor').length).toBeGreaterThan(0);
+
+    // 5. Phi đội máy bay giấy bay lượn
     expect(screen.getByTestId('flying-paper-airplanes')).toBeInTheDocument();
   });
 
-  it('tích hợp trực tiếp SchoolSideDecorations vào trang chủ chính (App) với cành phượng và máy bay giấy', () => {
+  it('tích hợp trực tiếp SchoolSideDecorations vào trang chủ chính (App) và không còn hoa trên trang chủ', () => {
     render(<App />);
     expect(screen.getByTestId('school-side-decorations')).toBeInTheDocument();
-    expect(screen.getByTestId('flamboyant-branch-left')).toBeInTheDocument();
-    expect(screen.getByTestId('flamboyant-branch-right')).toBeInTheDocument();
-    expect(screen.queryByTestId('chemistry-lab-decor')).toBeNull();
+    expect(screen.getByTestId('school-supplies-left')).toBeInTheDocument();
+    expect(screen.getByTestId('school-supplies-right')).toBeInTheDocument();
+    expect(document.querySelector('img[src*="hoa-phuong"]')).toBeNull();
+    expect(document.querySelector('img[src*="hoa-huong-duong"]')).toBeNull();
   });
 });
