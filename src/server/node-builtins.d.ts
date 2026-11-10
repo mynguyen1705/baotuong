@@ -84,3 +84,11 @@ declare module 'http' {
 declare module 'node:http' {
   export { IncomingMessage, ServerResponse } from 'http';
 }
+
+declare module 'node:child_process' {
+  export function exec(
+    command: string,
+    options: { env?: Record<string, string | undefined> },
+    callback?: (error: Error | null, stdout: string, stderr: string) => void
+  ): void;
+}
