@@ -73,6 +73,51 @@ function normalizeTraits(traits: unknown, badgeText: string): string[] {
   return badgeText ? [badgeText] : ['Tận tâm & nhiệt huyết'];
 }
 
+const CLOUD_IMPRESSIONS_URL = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1c10cd3967210';
+
+async function fetchCloudImpressions(): Promise<Record<string, TeacherImpression[]> | null> {
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    return null;
+  }
+  try {
+    const res = await fetch(CLOUD_IMPRESSIONS_URL, {
+      headers: { Accept: 'application/json' },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data?.data?.impressionsByTeacher || null;
+    }
+  } catch {
+    // Bỏ qua lỗi mạng
+  }
+  return null;
+}
+
+async function pushCloudImpressions(teachers: TeacherProfile[]): Promise<boolean> {
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    return false;
+  }
+  try {
+    const impressionsByTeacher: Record<string, TeacherImpression[]> = {};
+    for (const t of teachers) {
+      if (Array.isArray(t.impressions) && t.impressions.length > 0) {
+        impressionsByTeacher[t.id] = t.impressions;
+      }
+    }
+    const res = await fetch(CLOUD_IMPRESSIONS_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'baotuong_impressions',
+        data: { impressionsByTeacher },
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function createTeachersStore(options?: TeachersStoreOptions): TeachersStore {
   const storageFilePath =
     options?.storageFilePath ||
@@ -100,6 +145,7 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
         // Bỏ qua lỗi ghi file tĩnh
       }
 
+      pushCloudImpressions(records).catch(() => {});
       triggerAutoGitPush();
     }
   }
@@ -143,7 +189,42 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
 
   return {
     async listTeachers(): Promise<TeacherProfile[]> {
-      return readRecords();
+      const records = await readRecords();
+
+      // Đồng bộ hai chiều các cảm nhận thầy cô từ Cloud Store về Local
+      if (!isCustomStorage) {
+        try {
+          const cloudImpressions = await fetchCloudImpressions();
+          if (cloudImpressions && typeof cloudImpressions === 'object') {
+            let hasNew = false;
+            for (const teacher of records) {
+              const cloudList = cloudImpressions[teacher.id];
+              if (Array.isArray(cloudList) && cloudList.length > 0) {
+                const map = new Map<string, TeacherImpression>();
+                for (const imp of teacher.impressions || []) {
+                  map.set(imp.id, imp);
+                }
+                for (const cImp of cloudList) {
+                  if (!map.has(cImp.id)) {
+                    map.set(cImp.id, cImp);
+                    hasNew = true;
+                  }
+                }
+                teacher.impressions = Array.from(map.values()).sort(
+                  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+              }
+            }
+            if (hasNew) {
+              await writeRecords(records);
+            }
+          }
+        } catch {
+          // Bỏ qua lỗi mạng
+        }
+      }
+
+      return records;
     },
 
     async addTeacher(input: CreateTeacherInput): Promise<TeacherProfile> {
