@@ -68,7 +68,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       id: 'truyen-ngan',
       orderNumber: 2,
       badgeTitle: '2. TRUYỆN NGẮN',
-      title: 'Người Gieo Hạt Lặng Lẽ',
+      title: 'Người Gieo Mầm Lặng Lẽ',
       subtitle: 'Chuyện về cuốn sổ nhỏ bìa nâu và ước mơ của cậu học trò lớp 9A3',
       categoryLabel: 'Sản phẩm Truyện ngắn / Ký học đường',
       scoringWeight: 'Tiêu chí 2: Nội dung Truyện & Bài Lời tri ân (20 điểm)',

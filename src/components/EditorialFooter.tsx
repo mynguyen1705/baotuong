@@ -134,7 +134,7 @@ export const EditorialFooter: React.FC<EditorialFooterProps> = ({
               className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-700 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-sky-800"
             >
               <QrCode className="h-4 w-4" />
-              <span>Mở Bảng Mã QR Toàn Tờ Báo & 5 Sản Phẩm</span>
+              <span>Mở Bảng Mã QR Toàn Tờ Báo </span>
             </button>
           </div>
         </div>
