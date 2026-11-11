@@ -234,7 +234,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         composer: 'Hứa Kim Tuyền',
         artist: 'Hoàng Dũng (kết hợp phần minh họa của tập thể học sinh 9A3)',
         videoUrl: '/media/mv-nguoi-gieo-mam-xanh-9a3.mp4',
-        youtubeEmbedUrl: 'https://youtu.be/sj_UDyfoo-A?si=JQioKGrJFnleuGRi',
+        youtubeEmbedUrl: 'https://www.youtube.com/embed/sj_UDyfoo-A',
         schoolContextNote:
           'Khoảnh khắc sinh hoạt, học tập và tri ân thầy cô của học sinh lớp 9A3.',
         scenes: [
