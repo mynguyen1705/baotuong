@@ -95,7 +95,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Truyện ngắn 2: Nét chữ ngày xưa (Tác giả: Đoàn Ngọc Toại)',
         'Nếu ai hỏi tôi sợ nhất là môn gì thì tôi liền trả lời môn hóa là nỗi ám ảnh lớn nhất đối với tôi, đến mức không nhớ nổi tên các chất hay hoá trị. Sau nhiều lần bị điểm dưới trung bình, cô Liên – giáo viên chủ nhiệm của tôi đã tặng tôi một bài thơ giúp tôi dễ dàng ghi nhớ.',
         'Nhờ vậy, điểm số môn hóa của tôi cải thiện dần. Vì thế, cho dù mai sau có rời khỏi trường đi nữa, những ân tình và sự dìu dắt của cô vẫn mãi lưu lại trong tôi như một kỷ niệm đẹp khó thể quên.',
-        'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
         'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Sưu tầm)',
         'Gia cảnh khó khăn từng khiến Nam định bỏ học sau lớp chín. Biết chuyện, cô Hoa lặng lẽ mua tặng cậu tập vở mới cùng bộ thước kẻ, rồi giữ cậu ở lại mỗi chiều để phụ đạo miễn phí.',
         'Thấy cậu ngập ngừng vì tự ti, cô chỉ dịu dàng: "Đừng để hoàn cảnh ghì chặt đôi chân em. Học tập chính là đôi cánh vững nhất để bay qua giông bão."',
