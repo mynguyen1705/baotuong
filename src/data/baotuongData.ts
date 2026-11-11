@@ -59,8 +59,8 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       },
       paragraphs: [
         'Tháng Mười Một lại về trong làn gió se lạnh của vùng đất Hiệp Thạnh thân thương, mang theo sắc nắng vàng dịu dàng và những cánh phượng cuối mùa còn vương trên vòm lá. Giữa nhịp sống rộn ràng của những ngày hội trường hướng về Ngày Nhà giáo Việt Nam 20/11, tập thể học sinh Chi đội 9A3 chúng em cùng nhau ngồi lại, gói trọn lòng biết ơn vào tờ báo tường điện tử mang tên “Chắp cánh ước mơ”.',
-        'Với chúng em – những cô cậu học trò lớp 9 đang đi qua năm học cuối cấp dưới mái trường TH&THCS Hiệp Thạnh – mùa 20/11 năm nay mang một ý nghĩa thật đặc biệt. Nhìn lại chặng đường từ ngày đầu bỡ ngỡ bước vào lớp 6 đến khi trưởng thành trong màu khăn quàng đỏ thắm, mỗi nét chữ, mỗi bài học làm người đều in đậm bóng dáng tận tụy của thầy cô.',
-        'Hưởng ứng chủ đề “Tôn sư trọng đạo - Nét bút tri ân”, tờ báo tường số của lớp 9A3 là sự kết hợp giữa tình cảm mộc mạc của tuổi học trò và nghệ thuật trình bày Typographic hiện đại. Qua từng trang truyện ngắn, những vần thơ tuổi học trò ngân vang giọng đọc của chính các bạn trong lớp, từng thước phim MV “Người gieo mầm xanh” rạng rỡ trên sân trường Hiệp Thạnh và bức thư tri ân chân thành, chúng em xin kính dâng lên quý thầy cô đóa hoa tri ân tươi thắm nhất!',
+        'Với chúng em – những cô cậu học trò lớp 9 đang đi qua năm học cuối cấp dưới mái trường TH&THCS Hiệp Thạnh – mùa 20/11 năm nay mang một ý nghĩa thật đặc biệt. Nhìn lại chặng đường từ ngày đầu bỡ ngỡ bước vào lớp 6 đến khi trưởng thành trong màu khăn quàng đỏ thắm, mỗi nét chữ, mỗi bài học làm người vẫn in đậm bóng dáng tận tụy của thầy cô.',
+        'Và để hưởng ứng chủ đề “Tôn sư trọng đạo - Nét bút tri ân”, tờ báo tường số của lớp 9A3 là sự kết hợp giữa tình cảm mộc mạc của tuổi học trò và nghệ thuật trình bày Typographic hiện đại. Qua từng trang truyện ngắn, những vần thơ tuổi học trò ngân vang giọng đọc của chính các bạn trong lớp, từng thước phim MV “Người gieo mầm xanh” rạng rỡ trên sân trường Hiệp Thạnh và bức thư tri ân chân thành, chúng em xin kính dâng lên quý thầy cô đóa hoa tri ân tươi thắm nhất!',
       ],
     },
     {
