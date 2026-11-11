@@ -308,7 +308,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       title: 'Bức Thư Tháng Mười Một Từ Mùa Phượng Cuối Cấp 9A3',
       subtitle: 'Bài viết cảm nghĩ tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11 (~600 chữ)',
       categoryLabel: 'Sản phẩm Bài Lời tri ân (Chuẩn ~600 chữ theo thể lệ)',
-      scoringWeight: 'Tiêu chí 2: Nội dung Truyện & Bài Lời tri ân (20 điểm)',
       summary:
         'Tấm lòng biết ơn sâu sắc của tập thể học sinh lớp 9A3 gửi tới các thầy cô giáo Trường TH&THCS Hiệp Thạnh qua bức thư cảm nghĩ tròn 600 chữ.',
       authorCredit: 'Tập thể học sinh Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh',
