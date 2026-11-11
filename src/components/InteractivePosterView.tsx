@@ -171,7 +171,11 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
                 onClick={() => onSelectSection(section.id)}
                 className="inline-flex items-center gap-1.5 rounded-full border-2 border-amber-400 bg-white px-3.5 py-1.5 text-xs font-extrabold text-stone-900 shadow-sm transition hover:bg-amber-100 hover:border-amber-500"
               >
-                <Eye className="h-3.5 w-3.5 text-poster-orange" />
+                {section.id === 'loi-ngo' && <BookOpen className="h-3.5 w-3.5 text-amber-700" />}
+                {section.id === 'truyen-ngan' && <BookText className="h-3.5 w-3.5 text-emerald-700" />}
+                {section.id === 'tho' && <Scroll className="h-3.5 w-3.5 text-red-700" />}
+                {section.id === 'mv' && <Film className="h-3.5 w-3.5 text-sky-700" />}
+                {section.id === 'tri-an' && <Heart className="h-3.5 w-3.5 text-rose-700" />}
                 <span>{section.badgeTitle}</span>
               </button>
               <button

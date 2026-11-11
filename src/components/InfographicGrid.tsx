@@ -7,6 +7,10 @@ import {
   Feather,
   Sparkles,
   Heart,
+  BookOpen,
+  BookText,
+  Scroll,
+  Film,
 } from 'lucide-react';
 import { SectionData, SectionId } from '../types/baotuong';
 import { countVietnameseWords } from '../utils/wordCount';

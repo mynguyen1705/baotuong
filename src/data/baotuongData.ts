@@ -69,7 +69,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       badgeTitle: '2. TRUYỆN NGẮN',
       title: 'Tuyển Tập Truyện Ngắn Tuổi Học Trò',
       subtitle: 'Chiếc lá mùa thu & Nét chữ ngày xưa',
-      categoryLabel: 'Truyện ngắn học đường',
+      categoryLabel: 'Truyện ngắn',
       summary:
         'Tuyển tập truyện ngắn về người thầy và ký ức tuổi học trò: bài học kiên nhẫn bên bức tranh mùa thu và những nét chữ đầu đời được uốn nắn ân cần.',
       authorCredit: 'Khuyết danh, Đoàn Ngọc Toại',
