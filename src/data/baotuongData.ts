@@ -185,7 +185,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           id: 'co-thay-toi',
           title: 'Cô Thầy Tôi',
           author: 'Tứ Gia',
-          source: 'Thơ thất ngôn bát cú',
+          source: 'Internet',
           yearOrContext: 'Thơ tri ân',
           stanzas: [
             [
