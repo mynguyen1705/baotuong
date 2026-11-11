@@ -105,7 +105,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       title: 'Ơn Thầy Nâng Cánh – Thơ Tuổi Học Trò',
       subtitle: 'Tuyển tập thơ nổi tiếng về người thầy & ký ức tuổi học trò kèm giọng đọc học sinh 9A3',
       categoryLabel: 'Sản phẩm Thơ đa phương tiện (Thơ + Typographic + Audio ngâm thơ)',
-      scoringWeight: 'Tiêu chí chấm 3:20 điểm',
       summary:
         'Sự giao hòa giữa những vần thơ kinh điển về người thầy, tuổi học trò của các tác giả nổi tiếng Việt Nam và giọng đọc truyền cảm của học sinh Chi đội 9A3 lồng nhạc nền.',
       authorCredit: 'Trần Đăng Khoa, Nguyễn Nhất Ánh, Xuân Định',
@@ -117,7 +116,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Giọng đọc & ngâm thơ: Học sinh đại diện Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh (Thu âm giọng thật của học sinh lồng nhạc nền Acoustic nhẹ nhàng – Cam kết đúng thể lệ không sử dụng giọng đọc AI).',
       typoTheme: {
         displayNumeral: '03',
-        kicker: 'THƠ ĐA PHƯƠNG TIỆN & AUDIO NGÂM THƠ • 20 ĐIỂM',
+        kicker: 'THƠ ĐA PHƯƠNG TIỆN & AUDIO NGÂM THƠ',
         accentWord: 'THƠ',
         featuredLines: [
           'Khi thầy viết bảng / Bụi phấn rơi rơi',
