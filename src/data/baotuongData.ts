@@ -22,7 +22,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
     {
       role: 'Ban Thơ & Thu âm diễn cảm',
       name: 'Tổ 3 – Chi đội 9A3',
-      task: 'Tuyển chọn thơ tuổi học trò nổi tiếng & thu âm giọng đọc học sinh lồng nhạc nền',
+      task: 'Tuyển chọn thơ tuổi học trò nổi tiếng & thu âm giọng đọc và lồng nhạc nền',
     },
     {
       role: 'Ban Sản xuất MV & Kỹ thuật số',
