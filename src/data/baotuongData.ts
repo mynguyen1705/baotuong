@@ -7,7 +7,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
   className: 'Chi đội 9A3',
   schoolName: 'Trường TH&THCS Hiệp Thạnh',
   schoolYear: 'Năm học 2026 – 2027',
-  homeroomTeacher: 'Giáo viên chủ nhiệm & Tập thể thầy cô bộ môn Lớp 9A3',
+  homeroomTeacher: 'Giáo viên chủ nhiệm',
   editorialBoard: [
     {
       role: 'Tổng biên tập',
