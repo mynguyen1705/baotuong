@@ -133,6 +133,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           author: 'Nguyễn Quốc Đạt',
           source: 'Internet',
           yearOrContext: 'Thơ tri ân',
+          audioUrl: '/media/ngam-tho-bai-1.mp3',
           stanzas: [
             [
               'Lặng xuôi năm tháng êm trôi',
@@ -160,6 +161,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           author: 'Hải Đăng 9A3',
           source: 'Bài làm học sinh',
           yearOrContext: 'Thơ tuổi học trò',
+          audioUrl: '/media/ngam-tho-bai-2.mp3',
           stanzas: [
             [
               'Thu về nghiêng bóng sân trường,',
@@ -187,6 +189,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           author: 'Tứ Gia',
           source: 'Internet',
           yearOrContext: 'Thơ tri ân',
+          audioUrl: '/media/ngam-tho-bai-3.mp3',
           stanzas: [
             [
               'Trong trường vất vả dạy đàn con',
