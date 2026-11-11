@@ -27,7 +27,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
     {
       role: 'Ban Sản xuất MV & Kỹ thuật số',
       name: 'Tổ 4 – Chi đội 9A3',
-      task: 'Quay dựng MV “Người gieo mầm xanh” tại sân trường Hiệp Thạnh & thiết kế Infographic Typographic',
+      task: 'Quay dựng MV “Người gieo mầm xanh” tại sân trường Hiệp Thạnh',
     },
   ],
   sections: [
