@@ -243,8 +243,8 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
             <Volume2 className="h-4 w-4 text-emerald-600" />
             <span>
               {audioStatus === 'playing-file'
-                ? `Đang phát bản thu âm giọng ngâm: “${activePoem.title}” (${currentAudioUrl})`
-                : `Đang phát giai điệu nhạc nền đọc thơ trực tiếp (Bạn có thể chép file thu âm vào public${currentAudioUrl} để phát giọng đọc thật)`}
+                ? `Đang phát bản thu âm giọng ngâm: “${activePoem.title}”`
+                : 'Đang phát giai điệu nhạc nền ngâm thơ'}
             </span>
           </p>
         )}
