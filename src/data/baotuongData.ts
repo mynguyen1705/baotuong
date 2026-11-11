@@ -38,7 +38,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       title: 'Khúc Dạo Đầu Của Những Cánh Chim Cuối Cấp',
       subtitle: 'Chắp cánh ước mơ từ mái trường TH&THCS Hiệp Thạnh',
       categoryLabel: 'Mở đầu tờ báo tường số',
-      scoringWeight: 'Thuộc Tiêu chí 1 & 2 (Bố cục & Cảm xúc mở đầu)',
       summary:
         'Những dòng tâm tình mở đầu tờ báo tường số “Chắp cánh ước mơ” của tập thể học sinh lớp 9A3 nhân mùa hiến chương 20/11 cuối cùng dưới mái trường THCS.',
       authorCredit: 'Ban Biên tập Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh',

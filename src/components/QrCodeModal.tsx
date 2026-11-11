@@ -56,7 +56,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
               <div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
                   <QrCode className="h-3.5 w-3.5" />
-                  Đáp ứng Tiêu chí 1 (20 điểm): Mã QR & Đường link truy cập trực tiếp
+                  Mã QR & Đường link truy cập trực tiếp
                 </span>
                 <h2 className="mt-2 font-display text-2xl font-extrabold text-stone-900">
                   Mã QR Tệp Sản Phẩm Báo Tường Số – {config.className}
