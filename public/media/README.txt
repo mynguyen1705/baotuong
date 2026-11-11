@@ -16,3 +16,4 @@ HƯỚNG DẪN ĐẶT FILE ÂM THANH & VIDEO TRONG THƯ MỤC NÀY (public/media
    - Định dạng: .mp4
    - Chức năng: Phát trong trình phát Video của Mục 4 khi chọn chế độ "Video MV Lớp 9A3 (.MP4)".
    - Link YouTube: Có thể sửa link YouTube trong file `src/data/baotuongData.ts` (mục `mv` -> `mvData` -> `youtubeEmbedUrl`).
+
