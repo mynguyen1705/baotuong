@@ -7,7 +7,6 @@ import {
   Clock,
   FileText,
   Type,
-  Award,
 } from 'lucide-react';
 import { SectionData, SectionId } from '../types/baotuong';
 import { countVietnameseWords, estimateReadingMinutes } from '../utils/wordCount';
@@ -78,12 +77,6 @@ export const SectionReaderModal: React.FC<SectionReaderModalProps> = ({
               <span className="rounded-xl bg-poster-orange px-3 py-1 font-display text-xs sm:text-sm font-extrabold text-white">
                 {section.badgeTitle}
               </span>
-              {section.scoringWeight && (
-                <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-stone-700 border border-amber-200">
-                  <Award className="h-3.5 w-3.5 text-amber-600" />
-                  {section.scoringWeight}
-                </span>
-              )}
             </div>
 
             <div className="flex items-center gap-2">

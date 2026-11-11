@@ -45,7 +45,6 @@ export interface SectionData {
   title: string;
   subtitle: string;
   categoryLabel: string;
-  scoringWeight?: string;
   summary: string;
   authorCredit: string;
   sourceNote: string;
