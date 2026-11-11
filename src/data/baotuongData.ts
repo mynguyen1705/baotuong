@@ -17,7 +17,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
     {
       role: 'Ban Văn học & Biên kịch',
       name: 'Tổ 1 & Tổ 2 – Chi đội 9A3',
-      task: 'Biên soạn Lời ngỏ, Truyện ngắn “Người gieo hạt lặng lẽ” & Bài Lời tri ân',
+      task: 'Biên soạn Lời ngỏ, Truyện ngắn & Bài Lời tri ân',
     },
     {
       role: 'Ban Thơ & Thu âm diễn cảm',
