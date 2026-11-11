@@ -2,10 +2,6 @@ import React from 'react';
 import { motion } from 'motion/react';
 import {
   BookOpen,
-  BookText,
-  Scroll,
-  Film,
-  Heart,
   LayoutGrid,
   QrCode,
   Volume2,
@@ -15,7 +11,7 @@ import {
   BookHeart,
   GraduationCap,
 } from 'lucide-react';
-import { BaoTuongConfig, SectionId } from '../types/baotuong';
+import { BaoTuongConfig } from '../types/baotuong';
 import { WishesModalMode } from '../types/wishes';
 import { TeacherModalMode } from '../types/teachers';
 import {
@@ -32,7 +28,6 @@ export interface HeroMastheadProps {
   onOpenQrModal: () => void;
   onOpenWishes?: (mode: WishesModalMode) => void;
   onOpenTeacherBoard?: (mode: TeacherModalMode) => void;
-  onSelectSection?: (id: SectionId) => void;
   isBgMusicPlaying?: boolean;
   onToggleBgMusic?: () => void;
 }
@@ -44,7 +39,6 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
   onOpenQrModal,
   onOpenWishes,
   onOpenTeacherBoard,
-  onSelectSection,
   isBgMusicPlaying = false,
   onToggleBgMusic,
 }) => {
@@ -273,30 +267,6 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               </div>
             )}
           </div>
-
-          {/* Menu Điều Hướng Nhanh 5 Chuyên Mục Với Icon Chuẩn */}
-          {onSelectSection && (
-            <nav
-              aria-label="Menu các chuyên mục báo tường số"
-              className="mt-5 flex flex-wrap items-center justify-center gap-2"
-            >
-              {config.sections.map((sec) => (
-                <button
-                  key={sec.id}
-                  type="button"
-                  onClick={() => onSelectSection(sec.id)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/90 bg-white/90 px-3.5 py-1.5 text-xs font-bold text-stone-800 shadow-sm backdrop-blur-sm transition hover:bg-amber-100 hover:border-amber-500 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                >
-                  {sec.id === 'loi-ngo' && <BookOpen className="h-3.5 w-3.5 text-amber-700" />}
-                  {sec.id === 'truyen-ngan' && <BookText className="h-3.5 w-3.5 text-emerald-700" />}
-                  {sec.id === 'tho' && <Scroll className="h-3.5 w-3.5 text-red-700" />}
-                  {sec.id === 'mv' && <Film className="h-3.5 w-3.5 text-sky-700" />}
-                  {sec.id === 'tri-an' && <Heart className="h-3.5 w-3.5 text-rose-700" />}
-                  <span>{sec.badgeTitle}</span>
-                </button>
-              ))}
-            </nav>
-          )}
         </div>
       </div>
     </header>
