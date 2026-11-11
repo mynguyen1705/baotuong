@@ -22,6 +22,20 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   const activePoem = poems.find((p) => p.id === selectedPoemId) ?? poems[0];
+  const currentAudioUrl = activePoem?.audioUrl || defaultAudioUrl;
+
+  const handleSelectPoem = (poemId: string) => {
+    if (poemId === selectedPoemId) return;
+    if (isPlaying) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      stopAmbientMelody();
+      setIsPlaying(false);
+      setAudioStatus('idle');
+    }
+    setSelectedPoemId(poemId);
+  };
 
   const stopAmbientMelody = () => {
     if (synthTimerRef.current !== null) {
@@ -83,7 +97,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
     }
 
     setIsPlaying(true);
-    if (audioRef.current && defaultAudioUrl) {
+    if (audioRef.current && currentAudioUrl) {
       setAudioStatus('playing-file');
       const playPromise = audioRef.current.play();
       if (playPromise && typeof playPromise.catch === 'function') {
@@ -166,10 +180,11 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
           </div>
         </div>
 
-        {defaultAudioUrl && (
+        {currentAudioUrl && (
           <audio
+            key={currentAudioUrl}
             ref={audioRef}
-            src={defaultAudioUrl}
+            src={currentAudioUrl}
             onEnded={() => {
               setIsPlaying(false);
               setAudioStatus('idle');
@@ -185,8 +200,8 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
             <Volume2 className="h-4 w-4 text-emerald-600" />
             <span>
               {audioStatus === 'playing-file'
-                ? `Đang phát bản thu âm giọng đọc học sinh 9A3 (${defaultAudioUrl})`
-                : `Đang phát giai điệu nhạc nền đọc thơ trực tiếp (Bạn có thể chép file thu âm của lớp vào public${defaultAudioUrl} để phát giọng đọc thực tế)`}
+                ? `Đang phát bản thu âm giọng ngâm: “${activePoem.title}” (${currentAudioUrl})`
+                : `Đang phát giai điệu nhạc nền đọc thơ trực tiếp (Bạn có thể chép file thu âm vào public${currentAudioUrl} để phát giọng đọc thật)`}
             </span>
           </p>
         )}
@@ -205,7 +220,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
               <button
                 key={poem.id}
                 type="button"
-                onClick={() => setSelectedPoemId(poem.id)}
+                onClick={() => handleSelectPoem(poem.id)}
                 className={`rounded-2xl border px-4 py-2.5 text-left text-xs sm:text-sm font-bold transition ${isSelected
                   ? 'border-2 border-poster-orange bg-poster-orange text-white shadow-sm'
                   : 'border-amber-300 bg-white text-stone-800 hover:bg-amber-50'
