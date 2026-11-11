@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Film, Music2, MapPin, PlayCircle } from 'lucide-react';
+import { Film, Music2, MapPin, PlayCircle, ExternalLink } from 'lucide-react';
 import { MvData } from '../types/baotuong';
 
 export interface MvVideoShowcaseProps {
@@ -7,11 +7,64 @@ export interface MvVideoShowcaseProps {
   posterImageUrl?: string;
 }
 
+/**
+ * Tự động phân tích và chuyển đổi mọi định dạng link YouTube (youtu.be, watch?v=, shorts/, embed)
+ * sang định dạng chuẩn embed/ có thể phát được trong thẻ <iframe> trên trình duyệt.
+ */
+function parseYouTubeUrls(rawUrl?: string): { embedUrl: string; watchUrl: string } {
+  if (!rawUrl) return { embedUrl: '', watchUrl: '' };
+  const trimmed = rawUrl.trim();
+
+  // Dạng 1: youtu.be/<id>
+  const shortMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (shortMatch && shortMatch[1]) {
+    const id = shortMatch[1];
+    return {
+      embedUrl: `https://www.youtube.com/embed/${id}`,
+      watchUrl: `https://www.youtube.com/watch?v=${id}`,
+    };
+  }
+
+  // Dạng 2: youtube.com/watch?v=<id>
+  const watchMatch = trimmed.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (watchMatch && watchMatch[1]) {
+    const id = watchMatch[1];
+    return {
+      embedUrl: `https://www.youtube.com/embed/${id}`,
+      watchUrl: `https://www.youtube.com/watch?v=${id}`,
+    };
+  }
+
+  // Dạng 3: youtube.com/shorts/<id>
+  const shortsMatch = trimmed.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+  if (shortsMatch && shortsMatch[1]) {
+    const id = shortsMatch[1];
+    return {
+      embedUrl: `https://www.youtube.com/embed/${id}`,
+      watchUrl: `https://www.youtube.com/watch?v=${id}`,
+    };
+  }
+
+  // Dạng 4: youtube.com/embed/<id>
+  const embedMatch = trimmed.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+  if (embedMatch && embedMatch[1]) {
+    const id = embedMatch[1];
+    return {
+      embedUrl: `https://www.youtube.com/embed/${id}`,
+      watchUrl: `https://www.youtube.com/watch?v=${id}`,
+    };
+  }
+
+  return { embedUrl: trimmed, watchUrl: trimmed };
+}
+
 export const MvVideoShowcase: React.FC<MvVideoShowcaseProps> = ({
   mvData,
 }) => {
   const [videoSourceMode, setVideoSourceMode] = useState<'local' | 'youtube'>('local');
   const [localVideoError, setLocalVideoError] = useState(false);
+
+  const { embedUrl, watchUrl } = parseYouTubeUrls(mvData.youtubeEmbedUrl);
 
   return (
     <div className="space-y-6">
@@ -77,14 +130,29 @@ export const MvVideoShowcase: React.FC<MvVideoShowcaseProps> = ({
             <source src={mvData.videoUrl} type="video/mp4" />
             Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
           </video>
-        ) : videoSourceMode === 'youtube' && mvData.youtubeEmbedUrl ? (
-          <iframe
-            title={`MV ${mvData.songTitle} - ${mvData.composer} & ${mvData.artist}`}
-            src={mvData.youtubeEmbedUrl}
-            className="aspect-video w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        ) : videoSourceMode === 'youtube' && embedUrl ? (
+          <div className="relative">
+            <iframe
+              title={`MV ${mvData.songTitle} - ${mvData.composer} & ${mvData.artist}`}
+              src={embedUrl}
+              className="aspect-video w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+            {watchUrl && (
+              <div className="bg-stone-900 px-4 py-2 text-center border-t border-stone-800">
+                <a
+                  href={watchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 transition"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>Nếu gặp lỗi từ chối kết nối, bấm vào đây để mở xem trực tiếp trên YouTube ↗</span>
+                </a>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="relative aspect-video w-full overflow-hidden bg-stone-900 text-white flex flex-col items-center justify-center p-6 text-center">
             <div className="relative z-10 max-w-lg space-y-3">
@@ -100,7 +168,7 @@ export const MvVideoShowcase: React.FC<MvVideoShowcaseProps> = ({
                 </code>{' '}
                 hoặc bấm nút bên dưới để mở trình phát YouTube:
               </p>
-              {mvData.youtubeEmbedUrl && (
+              {embedUrl && (
                 <button
                   type="button"
                   onClick={() => setVideoSourceMode('youtube')}
