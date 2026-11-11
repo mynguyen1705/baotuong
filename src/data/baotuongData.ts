@@ -97,7 +97,8 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
         'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
         'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Sưu tầm)',
-        'Năm tôi lên 6 tuổi, ngoại cầm tay tôi tô những nét chữ đầu tiên, từ cỡ chữ 1 ly đến 4 ly, các kiểu chữ hoa…. Từ cái bút chì Gilbert được gọt nhọn, ruột chì vừa đen vừa mềm đến cái bút mực ngòi lá lúa, ngòi rộng nét thanh nét đậm được cắm chặt nơi đầu quản bút bằng giấy do chính tay ngoại xé rất chặt. Hơi thở của ngoại nhè nhẹ bên tai mỗi lần tôi tập viết.',
+        'Gia cảnh khó khăn từng khiến Nam định bỏ học sau lớp chín. Biết chuyện, cô Hoa lặng lẽ mua tặng cậu tập vở mới cùng bộ thước kẻ, rồi giữ cậu ở lại mỗi chiều để phụ đạo miễn phí.
+Thấy cậu ngập ngừng vì tự ti, cô chỉ dịu dàng: "Đừng để hoàn cảnh ghì chặt đôi chân em. Học tập chính là đôi cánh vững nhất để bay qua giông bão."',
         'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
         'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
       ],
