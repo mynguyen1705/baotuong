@@ -99,8 +99,8 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Sưu tầm)',
         'Gia cảnh khó khăn từng khiến Nam định bỏ học sau lớp chín. Biết chuyện, cô Hoa lặng lẽ mua tặng cậu tập vở mới cùng bộ thước kẻ, rồi giữ cậu ở lại mỗi chiều để phụ đạo miễn phí.',
         'Thấy cậu ngập ngừng vì tự ti, cô chỉ dịu dàng: "Đừng để hoàn cảnh ghì chặt đôi chân em. Học tập chính là đôi cánh vững nhất để bay qua giông bão."',
-        'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
-        'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
+        'Lời động viên thầm lặng ấy đã nhen nhóm lại ước mơ trở thành thầy giáo trong lòng cậu trò nghèo.',
+        'Mười năm sau, vào ngày 20/11, Nam đứng trên bục giảng nhận danh hiệu giáo viên dạy giỏi, nghẹn ngào hướng về người cô tóc đã bạc ở hàng ghế đầu: "Cảm ơn cô đã lặng lẽ nâng đỡ, chắp cánh cho ước mơ của đời em."',
       ],
     },
     {
