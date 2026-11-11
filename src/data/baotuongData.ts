@@ -92,7 +92,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Truyện ngắn 1: Chiếc lá mùa thu (Sưu tầm)',
         'Khi tiết trời bước sang thu, thầy giáo mỹ thuật đã đưa chúng tôi ra công viên để vẽ tranh. Bắt gặp tôi đang gặp khó khăn trong việc vẽ từng gân lá, thầy đã ngồi cạnh và hướng dẫn tôi một cách tỉ mỉ.',
         'Lúc đó, tôi vẫn còn nhớ như in lời thầy nói: “Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ”. Lời nói ấy của thầy không chỉ là bài học về hội họa mà còn dạy cho tôi về sự kiên nhẫn trong cuộc sống.',
-        'Truyện ngắn 2: Nét chữ ngày xưa (Tác giả: Đoàn Ngọc Toại)',
+        'Truyện ngắn 2: Cô giáo em (Nguyễn Trà My / 9A3)',
         'Nếu ai hỏi tôi sợ nhất là môn gì thì tôi liền trả lời môn hóa là nỗi ám ảnh lớn nhất đối với tôi, đến mức không nhớ nổi tên các chất hay hoá trị. Sau nhiều lần bị điểm dưới trung bình, cô Liên – giáo viên chủ nhiệm của tôi đã tặng tôi một bài thơ giúp tôi dễ dàng ghi nhớ.',
         'Nhờ vậy, điểm số môn hóa của tôi cải thiện dần. Vì thế, cho dù mai sau có rời khỏi trường đi nữa, những ân tình và sự dìu dắt của cô vẫn mãi lưu lại trong tôi như một kỷ niệm đẹp khó thể quên.',
         'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Sưu tầm)',
