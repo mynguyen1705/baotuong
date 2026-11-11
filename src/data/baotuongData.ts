@@ -85,7 +85,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           'khi không biết nên bắt đầu thế nào',
           'thì hãy cứ làm từ từ...”',
         ],
-        metaTags: ['Chiếc lá mùa thu', 'Nét chữ ngày xưa', 'Ánh đèn chiếu muộn'],
+        metaTags: ['Chiếc lá mùa thu', 'Cô giáo em', 'Ánh đèn chiếu muộn'],
         palette: 'emerald',
       },
       paragraphs: [
