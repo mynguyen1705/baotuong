@@ -58,7 +58,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         palette: 'amber',
       },
       paragraphs: [
-        'Tháng Mười Một lại về trong làn gió se lạnh của vùng đất Hiệp Thạnh thân thương, mang theo sắc nắng vàng dịu dàng và những cánh phượng cuối mùa còn vương trên vòm lá. Giữa nhịp sống rộn ràng của những ngày hội trường hướng về Ngày Nhà giáo Việt Nam 20/11, tập thể học sinh 9A3 chúng em lại cùng nhau ngồi lại, gói trọn lòng biết ơn vào tờ báo tường điện tử mang tên “Chắp cánh ước mơ”.',
+        'Tháng Mười Một lại về trong làn gió se lạnh của vùng đất Hiệp Thạnh thân thương, mang theo sắc nắng vàng dịu dàng và những cánh phượng cuối mùa còn vương trên vòm lá. Giữa nhịp sống rộn ràng của những ngày hội trường hướng về Ngày Nhà giáo Việt Nam 20/11, tập thể học sinh 9A3 chúng em lại cùng nhau ngồi lại, gói trọn lòng biết ơn và sự kính trọng vô bờ bến với thầy cô vào tờ báo tường điện tử mang tên “Chắp cánh ước mơ”.',
         'Với chúng em – những cô cậu học trò lớp 9 đang đi qua năm học cuối cấp dưới mái trường TH&THCS Hiệp Thạnh – mùa 20/11 năm nay mang một ý nghĩa vô cùng đặc biệt. Nhìn lại chặng đường từ ngày đầu bỡ ngỡ bước vào lớp 6 cho đến khi trưởng thành trong màu khăn quàng đỏ thắm, cùng với mỗi nét chữ, mỗi bài học làm người vẫn in đậm bóng dáng tận tụy của thầy cô.',
         'Và để hưởng ứng chủ đề “Tôn sư trọng đạo - Nét bút tri ân”, tờ báo tường mang tên “Chắp cánh ước mơ” ra đời. Trong đó là những vần thơ còn vụng dại, những trang văn đong đầy cảm xúc, hay những nét vẽ đơn sơ gói trọn lòng biết ơn sâu sắc. Nhưng đó là tiếng lòng chân thành, mộc mạc nhất mà tập thể chúng em muốn gửi gắm đến những người thầy, người cô kính yêu!',
       ],
