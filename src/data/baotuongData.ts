@@ -89,7 +89,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         palette: 'emerald',
       },
       paragraphs: [
-        'Truyện ngắn 1: Chiếc lá mùa thu (Tác giả: Khuyết danh)',
+        'Truyện ngắn 1: Chiếc lá mùa thu (Sưu tầm)',
         'Khi tiết trời bước sang thu, thầy giáo mỹ thuật đã đưa chúng tôi ra công viên để vẽ tranh. Bắt gặp tôi đang gặp khó khăn trong việc vẽ từng gân lá, thầy đã ngồi cạnh và hướng dẫn tôi một cách tỉ mỉ.',
         'Lúc đó, tôi vẫn còn nhớ như in lời thầy nói: “Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ”. Lời nói ấy của thầy không chỉ là bài học về hội họa mà còn dạy cho tôi về sự kiên nhẫn trong cuộc sống.',
         'Truyện ngắn 2: Nét chữ ngày xưa (Tác giả: Đoàn Ngọc Toại)',
