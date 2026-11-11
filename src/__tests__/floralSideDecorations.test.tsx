@@ -5,18 +5,20 @@ import { FallingPetals } from '../components/FallingPetals';
 import { App } from '../App';
 
 describe('FallingPetals & Loại bỏ hoàn toàn chồng sách, lọ thuốc trên trang chủ', () => {
-  it('hiển thị hiệu ứng những cánh hoa sen và lá phong rơi nhẹ nhàng khắp trang', () => {
+  it('hiển thị hiệu ứng nhiều cánh hoa phượng đỏ thắm, hoa sen và lá phong rơi nhẹ nhàng khắp trang', () => {
     render(<FallingPetals />);
 
     const container = screen.getByTestId('falling-petals');
     expect(container).toBeInTheDocument();
 
-    // Có các cánh hoa sen và cánh lá phong rơi
+    // Có nhiều cánh hoa phượng vĩ đỏ thắm học trò, cánh hoa sen và cánh lá phong rơi
+    const phoenixPetals = screen.getAllByTestId('falling-petal-phoenix');
     const lotusPetals = screen.getAllByTestId('falling-petal-lotus');
     const mapleLeaves = screen.getAllByTestId('falling-petal-maple');
 
-    expect(lotusPetals.length).toBeGreaterThan(0);
-    expect(mapleLeaves.length).toBeGreaterThan(0);
+    expect(phoenixPetals.length).toBeGreaterThan(10);
+    expect(lotusPetals.length).toBeGreaterThan(5);
+    expect(mapleLeaves.length).toBeGreaterThan(5);
   });
 
   it('tích hợp FallingPetals vào App và đã xóa hoàn toàn mọi biểu tượng chồng sách, lọ thuốc, bình hóa học', () => {

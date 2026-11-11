@@ -34,3 +34,4 @@ Xóa bỏ hoàn toàn (không làm mờ) các biểu tượng chồng sách vở
 - [ ] Chạy `npm test -- --run` xác nhận 51/51 tests pass.
 - [ ] Chạy `npm run build` xác nhận không có lỗi build.
 - [ ] Commit và push lên nhánh `redesign-ui`.
+
