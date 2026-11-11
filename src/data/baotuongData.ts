@@ -43,7 +43,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       authorCredit: 'Ban Biên tập Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh',
       sourceNote: 'Sáng tác tập thể học sinh lớp 9A3 chào mừng ngày 20/11',
       pullQuote:
-        '“Mỗi trang vở mở ra là một bầu trời ước mơ được thầy cô thắp sáng bằng sự kiên nhẫn, bao dung và tình yêu thương lặng thầm.”',
+        '“Mỗi trang vở mở ra là một bầu trời ước mơ được thầy cô thắp sáng bằng sự kiên nhẫn, bao dung và tình yêu thương thầm lặng.”',
       typoTheme: {
         displayNumeral: '01',
         kicker: 'KHÚC DẠO ĐẦU • SỐ ĐẶC BIỆT 20/11',
