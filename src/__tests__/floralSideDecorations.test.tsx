@@ -1,47 +1,34 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SchoolSideDecorations } from '../components/SchoolDecorations';
+import { FallingPetals } from '../components/FallingPetals';
 import { App } from '../App';
 
-describe('SchoolSideDecorations (Sách vở, đồ dùng học tập, kí hiệu Toán & Hoá học hai bên trang chủ)', () => {
-  it('đã xoá toàn bộ hoa và hiển thị sách vở, đồ dùng học tập, kí hiệu toán - hoá hai bên trái phải cùng máy bay giấy', () => {
-    render(<SchoolSideDecorations />);
+describe('FallingPetals & Loại bỏ hoàn toàn chồng sách, lọ thuốc trên trang chủ', () => {
+  it('hiển thị hiệu ứng những cánh hoa sen và lá phong rơi nhẹ nhàng khắp trang', () => {
+    render(<FallingPetals />);
 
-    const container = screen.getByTestId('school-side-decorations');
+    const container = screen.getByTestId('falling-petals');
     expect(container).toBeInTheDocument();
 
-    // 1. Tuyệt đối không còn hoa (hoa phượng, hoa hướng dương)
-    expect(screen.queryByTestId('flamboyant-branch-left')).toBeNull();
-    expect(screen.queryByTestId('flamboyant-branch-right')).toBeNull();
-    expect(screen.queryByTestId('sunflower-bouquet-left')).toBeNull();
-    expect(screen.queryByTestId('sunflower-bouquet-right')).toBeNull();
-    expect(document.querySelector('img[src*="hoa-phuong"]')).toBeNull();
-    expect(document.querySelector('img[src*="hoa-huong-duong"]')).toBeNull();
+    // Có các cánh hoa sen và cánh lá phong rơi
+    const lotusPetals = screen.getAllByTestId('falling-petal-lotus');
+    const mapleLeaves = screen.getAllByTestId('falling-petal-maple');
 
-    // 2. Sách vở và đồ dùng học tập hai bên trái & phải
-    const leftSupplies = screen.getByTestId('school-supplies-left');
-    const rightSupplies = screen.getByTestId('school-supplies-right');
-    expect(leftSupplies).toBeInTheDocument();
-    expect(rightSupplies).toBeInTheDocument();
-
-    // 3. Kí hiệu & dụng cụ Hoá Học: Bình tam giác sủi bọt, ống nghiệm, vòng benzen, nguyên tử
-    expect(screen.getAllByTestId('chemistry-lab-decor').length).toBeGreaterThan(0);
-    expect(screen.getAllByTestId('atom-model-decor').length).toBeGreaterThan(0);
-
-    // 4. Kí hiệu & công thức Toán Học: pi, căn x, sigma, tích phân, a^2+b^2=c^2
-    expect(screen.getAllByTestId('math-formulas-decor').length).toBeGreaterThan(0);
-
-    // 5. Phi đội máy bay giấy bay lượn
-    expect(screen.getByTestId('flying-paper-airplanes')).toBeInTheDocument();
+    expect(lotusPetals.length).toBeGreaterThan(0);
+    expect(mapleLeaves.length).toBeGreaterThan(0);
   });
 
-  it('tích hợp trực tiếp SchoolSideDecorations vào trang chủ chính (App) và không còn hoa trên trang chủ', () => {
+  it('tích hợp FallingPetals vào App và đã xóa hoàn toàn mọi biểu tượng chồng sách, lọ thuốc, bình hóa học', () => {
     render(<App />);
-    expect(screen.getByTestId('school-side-decorations')).toBeInTheDocument();
-    expect(screen.getByTestId('school-supplies-left')).toBeInTheDocument();
-    expect(screen.getByTestId('school-supplies-right')).toBeInTheDocument();
-    expect(document.querySelector('img[src*="hoa-phuong"]')).toBeNull();
-    expect(document.querySelector('img[src*="hoa-huong-duong"]')).toBeNull();
+
+    // 1. Hiệu ứng cánh hoa rơi đang hoạt động trên App
+    expect(screen.getByTestId('falling-petals')).toBeInTheDocument();
+
+    // 2. Đã xóa hoàn toàn các biểu tượng chồng sách, lọ thuốc/bình hóa học
+    expect(screen.queryByTestId('chemistry-lab-decor')).toBeNull();
+    expect(screen.queryByTestId('school-supplies-left')).toBeNull();
+    expect(screen.queryByTestId('school-supplies-right')).toBeNull();
+    expect(screen.queryByTestId('atom-model-decor')).toBeNull();
   });
 });

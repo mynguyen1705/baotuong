@@ -16,10 +16,8 @@ import { WishesModalMode } from '../types/wishes';
 import { TeacherModalMode } from '../types/teachers';
 import {
   DreamWingSVG,
-  HotAirBalloonSVG,
   PaperAirplaneSVG,
 } from './PosterDecorations';
-import { VintageBookStackSVG } from './SchoolDecorations';
 
 export interface HeroMastheadProps {
   config: BaoTuongConfig;
@@ -44,24 +42,6 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
 }) => {
   return (
     <header className="relative overflow-hidden pt-4 pb-6 px-4 sm:px-6 lg:px-8">
-      {/* Chi tiết trang trí phía trên để hòa hợp với tranh nền lớp học (ảnh nền đã có lồng đèn & lá phong) */}
-      <motion.div
-        style={{ transformOrigin: '0% 0%' }}
-        animate={{ rotate: [-2, 3, -2], y: [0, 3, 0] }}
-        transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute -top-2 left-1 sm:left-4 z-10 hidden"
-      >
-        <VintageBookStackSVG className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-md" />
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute top-4 right-3 sm:right-8 z-10 hidden"
-      >
-        <HotAirBalloonSVG className="w-14 sm:w-20 h-auto" />
-      </motion.div>
-
       <div className="mx-auto max-w-5xl relative z-20">
         {/* Thanh công cụ gọn gàng phía trên (Trường, Lớp 9A3, Nhạc nền, Mã QR) */}
         <motion.div

@@ -18,7 +18,6 @@ import {
   PaperAirplaneSVG,
   PointerHandIcon,
 } from './PosterDecorations';
-import { StationerySetSVG, VintageBookStackSVG } from './SchoolDecorations';
 
 export interface InfographicGridProps {
   sections: SectionData[];
@@ -70,14 +69,6 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
     >
       {/* Khung Poster Giấy Màu Nước Ấm Áp Chứa Đủ 5 Mục (2x2 + 1 Đáy) */}
       <div className="relative rounded-[2.25rem] border-4 border-amber-300/90 bg-gradient-to-b from-[#FFFDF6] via-[#FDF5E2] to-[#F9E8C8] p-5 sm:p-8 md:p-10 shadow-2xl overflow-hidden">
-        {/* Đồ dùng học tập và sách vở trang trí bên sườn giống báo tường học trò */}
-        <div className="pointer-events-none absolute top-[43%] -left-5 z-10 hidden sm:block opacity-75">
-          <StationerySetSVG className="w-24 h-24" />
-        </div>
-        <div className="pointer-events-none absolute bottom-4 -right-4 z-10 hidden sm:block opacity-75">
-          <VintageBookStackSVG className="w-28 h-28" />
-        </div>
-
         {/* LƯỚI 2 CỘT CHO MỤC 1, 2, 3, 4 */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-9 relative z-20">
           {/* =========================================================

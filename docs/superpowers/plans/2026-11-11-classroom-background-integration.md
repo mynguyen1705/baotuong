@@ -31,3 +31,4 @@ Thiết lập bức tranh lớp học 20/11 (`media_1794409304185_85b3e051.jpg`)
 - [ ] Chạy `npm test -- --run` kiểm tra toàn bộ 51 tests.
 - [ ] Chạy `npm run build` xác nhận build production thành công.
 - [ ] Commit thay đổi và push lên nhánh `redesign-ui`.
+

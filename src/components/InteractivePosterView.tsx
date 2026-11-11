@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { BaoTuongConfig, SectionData, SectionId } from '../types/baotuong';
 import { PointerHandIcon } from './PosterDecorations';
-import { VintageBookStackSVG } from './SchoolDecorations';
 
 export interface InteractivePosterViewProps {
   config: BaoTuongConfig;
@@ -88,11 +87,6 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
       className="mx-auto max-w-5xl px-3 pb-12 sm:px-6"
     >
       <div className="relative overflow-hidden rounded-[2.25rem] border-4 border-amber-300 bg-gradient-to-b from-[#FFFDF6] via-[#FDF5E2] to-[#F9E8C8] p-4 sm:p-8 md:p-10 shadow-2xl">
-        {/* Góc trang trí sách vở */}
-        <div className="pointer-events-none absolute -top-4 -right-4 z-10 hidden sm:block opacity-75">
-          <VintageBookStackSVG className="w-24 h-24" />
-        </div>
-
         {/* Đầu Bảng Sơ Đồ */}
         <div className="border-b-2 border-amber-300 pb-5 text-center relative z-20">
           <p className="inline-flex items-center gap-2 rounded-full bg-amber-200/90 px-4 py-1 text-xs font-extrabold uppercase tracking-wider text-amber-950 border border-amber-400">
