@@ -150,7 +150,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
               'Giọt sương rơi mặn bên đời',
               'Tóc thầy bạc trắng giữa trời chiều đông',
               'Mắt thầy mòn mỏi xa trông',
-              'Cây bơ vơ đứng giữa dòng thời gian',
+              'Cây bơ vơ đứng giữa dòng thời gian.',
             ],
           ],
         },
