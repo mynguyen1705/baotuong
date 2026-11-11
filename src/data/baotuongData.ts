@@ -96,7 +96,8 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Năm tôi lên 6 tuổi, ngoại cầm tay tôi tô những nét chữ đầu tiên, từ cỡ chữ 1 ly đến 4 ly, các kiểu chữ hoa…. Từ cái bút chì Gilbert được gọt nhọn, ruột chì vừa đen vừa mềm đến cái bút mực ngòi lá lúa, ngòi rộng nét thanh nét đậm được cắm chặt nơi đầu quản bút bằng giấy do chính tay ngoại xé rất chặt. Hơi thở của ngoại nhè nhẹ bên tai mỗi lần tôi tập viết.',
         'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
         'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
-        'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Tác giả: Sưu tầm)',
+        'Truyện ngắn 3: Ánh Đèn Chiều Muộn 
+          (Tác giả: Sưu tầm)',
         'Năm tôi lên 6 tuổi, ngoại cầm tay tôi tô những nét chữ đầu tiên, từ cỡ chữ 1 ly đến 4 ly, các kiểu chữ hoa…. Từ cái bút chì Gilbert được gọt nhọn, ruột chì vừa đen vừa mềm đến cái bút mực ngòi lá lúa, ngòi rộng nét thanh nét đậm được cắm chặt nơi đầu quản bút bằng giấy do chính tay ngoại xé rất chặt. Hơi thở của ngoại nhè nhẹ bên tai mỗi lần tôi tập viết.',
         'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
         'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
