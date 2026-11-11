@@ -227,7 +227,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       title: 'MV: Người Gieo Mầm Xanh',
       subtitle: 'Sáng tác: Hứa Kim Tuyền | Trình bày: Hoàng Dũng | Minh họa thực tế: Tập thể 9A3',
       categoryLabel: 'Sản phẩm MV Ca nhạc số (Quay tại Trường TH&THCS Hiệp Thạnh)',
-      scoringWeight: 'Tiêu chí 4: Chất lượng MV Bài hát minh họa (20 điểm)',
       summary:
         'Giai điệu sâu lắng của ca khúc “Người gieo mầm xanh” (Hứa Kim Tuyền – Hoàng Dũng) hòa quyện cùng những thước phim thực tế ghi lại khoảnh khắc học tập, vui chơi và tri ân thầy cô của tập thể lớp 9A3 tại khuôn viên Trường TH&THCS Hiệp Thạnh.',
       authorCredit: 'Sáng tác: Hứa Kim Tuyền – Ca sĩ: Hoàng Dũng | Thực hiện MV: Chi đội 9A3',
@@ -236,7 +235,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         '“Một người thầy tốt như cánh rừng già / Dạy em biết yêu thương, dạy em biết bao dung, dạy em vươn tới những vì sao...”',
       typoTheme: {
         displayNumeral: '04',
-        kicker: 'MV CA NHẠC SỐ MINH HỌA THỰC TẾ • 20 ĐIỂM',
+        kicker: 'MV CA NHẠC SỐ MINH HỌA THỰC TẾ',
         accentWord: 'NHẠC',
         featuredLines: [
           '♪ NGƯỜI GIEO MẦM XANH',
