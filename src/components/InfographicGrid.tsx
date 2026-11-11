@@ -432,8 +432,8 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
               {triAn.typoTheme.displayNumeral} • TÂM THƯ NGÀY NHÀ GIÁO VIỆT NAM 20/11
             </span>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-extrabold text-emerald-900 border border-emerald-300">
-                ✓ {triAnWords} chữ (Chuẩn ~600 chữ)
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900 border border-amber-300">
+                Tâm thư tri ân
               </span>
               <button
                 type="button"

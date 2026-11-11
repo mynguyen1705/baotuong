@@ -30,9 +30,9 @@ describe('Báo tường số 9A3 App Interactions (Typographic Poster Style)', (
   it('mở đúng chuyên mục Thơ với các bài thơ nổi tiếng về tuổi học trò và trình phát Audio khi truy cập #tho', () => {
     window.location.hash = '#tho';
     render(<App />);
-    expect(screen.getAllByText(/Khi Thầy Viết Bảng/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Trần Đăng Khoa/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Nguyễn Nhất Ánh/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Thầy Và Chuyến Đò Xưa/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Nguyễn Quốc Đạt/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Hải Đăng/i).length).toBeGreaterThan(0);
     const playBtn = screen.getByRole('button', { name: /Phát thu âm ngâm thơ và nhạc nền/i });
     fireEvent.click(playBtn);
     expect(screen.getByRole('button', { name: /Tạm dừng nghe ngâm thơ/i })).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe('Báo tường số 9A3 App Interactions (Typographic Poster Style)', (
     window.location.hash = '#tri-an';
     render(<App />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getAllByText(/622 chữ/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Bức Thư Tháng Mười Một/i).length).toBeGreaterThan(0);
 
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(window.location.hash).toBe('#loi-ngo');

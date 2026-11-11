@@ -152,18 +152,10 @@ export const SectionReaderModal: React.FC<SectionReaderModalProps> = ({
                 <span className="font-semibold text-stone-800">
                   ✍️ {section.authorCredit}
                 </span>
-                <span>•</span>
-                <span className="italic">{section.sourceNote}</span>
-                {wordCount > 0 && (
+                {section.sourceNote && (
                   <>
                     <span>•</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 font-bold text-amber-900">
-                      <FileText className="h-3.5 w-3.5" />
-                      {wordCount} chữ
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-stone-500">
-                      <Clock className="h-3.5 w-3.5" />~{readingMinutes} phút đọc
-                    </span>
+                    <span className="italic">{section.sourceNote}</span>
                   </>
                 )}
               </div>
@@ -198,18 +190,31 @@ export const SectionReaderModal: React.FC<SectionReaderModalProps> = ({
               <div
                 className={`space-y-4 font-serif text-stone-800 ${FONT_SCALE_CLASSES[fontScale]}`}
               >
-                {section.paragraphs.map((para, idx) => (
-                  <p
-                    key={idx}
-                    className={
-                      idx === 0
-                        ? 'first-letter:float-left first-letter:mr-3 first-letter:font-serif first-letter:text-5xl first-letter:font-bold first-letter:text-poster-orange'
-                        : ''
-                    }
-                  >
-                    {para}
-                  </p>
-                ))}
+                {section.paragraphs.map((para, idx) => {
+                  const isStoryHeading = para.startsWith('Truyện ngắn');
+                  if (isStoryHeading) {
+                    return (
+                      <h3
+                        key={idx}
+                        className="pt-4 pb-1 font-display text-lg sm:text-xl font-bold text-red-800 border-b border-amber-200"
+                      >
+                        {para}
+                      </h3>
+                    );
+                  }
+                  return (
+                    <p
+                      key={idx}
+                      className={
+                        idx === 0 || (idx > 0 && section.paragraphs?.[idx - 1]?.startsWith('Truyện ngắn'))
+                          ? 'first-letter:float-left first-letter:mr-3 first-letter:font-serif first-letter:text-4xl first-letter:font-bold first-letter:text-poster-orange'
+                          : ''
+                      }
+                    >
+                      {para}
+                    </p>
+                  );
+                })}
               </div>
             )}
 

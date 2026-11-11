@@ -7,7 +7,7 @@ export interface PoemItem {
   source: string;
   yearOrContext: string;
   stanzas: string[][];
-  commentary: string;
+  commentary?: string;
 }
 
 export interface MvScene {

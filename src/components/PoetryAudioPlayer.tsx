@@ -245,7 +245,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
           <p className="mt-1 text-sm font-bold text-stone-800">
             Tác giả: <span className="text-poster-orange">{activePoem.author}</span>
           </p>
-          <p className="text-xs italic text-stone-600">Nguồn: {activePoem.source}</p>
+          {activePoem.source && <p className="text-xs italic text-stone-600">Nguồn: {activePoem.source}</p>}
         </div>
 
         {/* Các khổ thơ */}
@@ -267,11 +267,13 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
           ))}
         </div>
 
-        {/* Lời bình của tập thể lớp 9A3 */}
-        <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-100/60 p-4 text-xs sm:text-sm text-stone-800 leading-relaxed">
-          <strong className="text-red-800">Lời bình & Cảm nhận của Chi đội 9A3: </strong>
-          {activePoem.commentary}
-        </div>
+        {/* Lời bình nếu có */}
+        {activePoem.commentary && (
+          <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-100/60 p-4 text-xs sm:text-sm text-stone-800 leading-relaxed">
+            <strong className="text-red-800">Lời bình & Cảm nhận: </strong>
+            {activePoem.commentary}
+          </div>
+        )}
       </motion.div>
     </div>
   );
