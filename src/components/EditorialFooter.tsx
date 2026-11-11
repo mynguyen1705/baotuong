@@ -1,5 +1,19 @@
 import React from 'react';
-import { Users, QrCode, CheckCircle2, School, Sparkles, Send, BookHeart, GraduationCap } from 'lucide-react';
+import {
+  Users,
+  QrCode,
+  CheckCircle2,
+  School,
+  Sparkles,
+  Send,
+  BookHeart,
+  GraduationCap,
+  BookOpen,
+  BookText,
+  Scroll,
+  Film,
+  Heart,
+} from 'lucide-react';
 import { BaoTuongConfig, SectionId } from '../types/baotuong';
 import { WishesModalMode } from '../types/wishes';
 import { TeacherModalMode } from '../types/teachers';
@@ -74,8 +88,15 @@ export const EditorialFooter: React.FC<EditorialFooterProps> = ({
                       onClick={() => onSelectSection(section.id)}
                       className="flex w-full items-center justify-between rounded-xl border border-amber-200 bg-paper-50 px-3.5 py-2 text-left text-xs sm:text-sm font-semibold text-stone-800 transition hover:border-poster-orange hover:bg-amber-100/70"
                     >
-                      <span>
-                        <strong>{section.badgeTitle}:</strong> {section.title}
+                      <span className="inline-flex items-center gap-2">
+                        {section.id === 'loi-ngo' && <BookOpen className="h-4 w-4 text-amber-700 shrink-0" />}
+                        {section.id === 'truyen-ngan' && <BookText className="h-4 w-4 text-emerald-700 shrink-0" />}
+                        {section.id === 'tho' && <Scroll className="h-4 w-4 text-red-700 shrink-0" />}
+                        {section.id === 'mv' && <Film className="h-4 w-4 text-sky-700 shrink-0" />}
+                        {section.id === 'tri-an' && <Heart className="h-4 w-4 text-rose-700 shrink-0" />}
+                        <span>
+                          <strong>{section.badgeTitle}:</strong> {section.title}
+                        </span>
                       </span>
                       <span className="ml-2 shrink-0 text-xs font-bold text-poster-orange">
                         Xem →

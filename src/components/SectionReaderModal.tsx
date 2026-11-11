@@ -7,6 +7,11 @@ import {
   Clock,
   FileText,
   Type,
+  BookText,
+  Scroll,
+  BookOpen,
+  Film,
+  Heart,
 } from 'lucide-react';
 import { SectionData, SectionId } from '../types/baotuong';
 import { countVietnameseWords, estimateReadingMinutes } from '../utils/wordCount';
@@ -74,8 +79,13 @@ export const SectionReaderModal: React.FC<SectionReaderModalProps> = ({
           {/* Thanh tiêu đề cố định trên cùng */}
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-100/90 px-4 py-3 sm:px-6">
             <div className="flex items-center gap-2">
-              <span className="rounded-xl bg-poster-orange px-3 py-1 font-display text-xs sm:text-sm font-extrabold text-white">
-                {section.badgeTitle}
+              <span className="inline-flex items-center gap-1.5 rounded-xl bg-poster-orange px-3 py-1 font-display text-xs sm:text-sm font-extrabold text-white shadow-sm">
+                {section.id === 'loi-ngo' && <BookOpen className="h-4 w-4" />}
+                {section.id === 'truyen-ngan' && <BookText className="h-4 w-4" />}
+                {section.id === 'tho' && <Scroll className="h-4 w-4" />}
+                {section.id === 'mv' && <Film className="h-4 w-4" />}
+                {section.id === 'tri-an' && <Heart className="h-4 w-4" />}
+                <span>{section.badgeTitle}</span>
               </span>
             </div>
 

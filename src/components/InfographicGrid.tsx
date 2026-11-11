@@ -179,7 +179,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           </motion.article>
 
           {/* =========================================================
-              MỤC 2: 2. TRUYỆN NGẮN - Người gieo hạt lặng lẽ (Dưới tán cây xanh sân trường)
+              MỤC 2: 2. TRUYỆN NGẮN - Chiếc lá mùa thu & Nét chữ ngày xưa
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
@@ -190,8 +190,9 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-serif text-xs font-extrabold uppercase tracking-widest text-emerald-800">
-                  {truyenNgan.typoTheme.displayNumeral} • VĂN HỌC HỌC ĐƯỜNG
+                <span className="inline-flex items-center gap-1.5 font-serif text-xs font-extrabold uppercase tracking-widest text-emerald-800">
+                  <BookText className="h-3.5 w-3.5 text-emerald-700" />
+                  <span>{truyenNgan.typoTheme.displayNumeral} • TRUYỆN NGẮN</span>
                 </span>
                 <button
                   type="button"
@@ -205,15 +206,16 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
               </div>
 
               <div className="mt-1 text-center">
-                <h2 className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#4A2511]">
-                  {truyenNgan.badgeTitle}
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#4A2511] flex items-center justify-center gap-2">
+                  <BookText className="h-6 w-6 text-emerald-700 shrink-0" />
+                  <span>{truyenNgan.badgeTitle}</span>
                 </h2>
                 <p className="font-script text-2xl sm:text-3xl font-bold text-[#4A2511]">
-                  Người gieo hạt lặng lẽ
+                  {truyenNgan.subtitle}
                 </p>
               </div>
 
-              {/* Khung Typographic Truyện Ngắn Dưới Tán Cây Bàng Sân Trường Hiệp Thạnh */}
+              {/* Khung Typographic Truyện Ngắn */}
               <div
                 onClick={() => onSelectSection('truyen-ngan')}
                 className="mt-4 relative cursor-pointer overflow-hidden rounded-2xl border-2 border-emerald-700/60 bg-gradient-to-b from-[#FAFDF6] to-[#E6F4D7] p-4 sm:p-5 shadow-md"
@@ -225,15 +227,18 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 />
 
                 <div className="flex items-center justify-between gap-2 border-b border-emerald-700/20 pb-2 text-xs font-bold text-emerald-900">
-                  <span>🌳 Bối cảnh: Gốc bàng sân trường Hiệp Thạnh</span>
+                  <span className="inline-flex items-center gap-1">
+                    <BookText className="h-3.5 w-3.5 text-emerald-700" />
+                    Tuyển tập truyện ngắn tuổi học trò
+                  </span>
                   <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] text-white">
-                    Khăn quàng đỏ 9A3
+                    Chi đội 9A3
                   </span>
                 </div>
 
                 {/* Trích đoạn Typographic nổi bật của Truyện ngắn */}
                 <blockquote className="mt-3 font-serif text-sm sm:text-base italic text-stone-900 leading-relaxed">
-                  “Người trồng cây ngoài đồng hiểu rõ nhất mà Minh: có những hạt giống nảy mầm chậm hơn một chút, nhưng khi đã bám rễ sâu vào đất thì sẽ vươn lên bền bỉ nhất...”
+                  {truyenNgan.pullQuote}
                 </blockquote>
 
                 <p className="mt-2.5 text-xs text-stone-700 leading-relaxed line-clamp-2">
@@ -242,8 +247,8 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
 
                 {/* Thảm cỏ xanh dưới chân khung truyện */}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-emerald-800/90 px-3 py-1.5 text-[11px] font-bold text-emerald-50">
-                  <span>✍️ Sáng tác: Nhóm Văn học Chi đội 9A3</span>
-                  <span>📖 7 đoạn văn cảm xúc</span>
+                  <span>✍️ {truyenNgan.authorCredit}</span>
+                  <span>🍂 02 truyện ngắn giàu ý nghĩa</span>
                 </div>
               </div>
             </div>
@@ -252,7 +257,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           </motion.article>
 
           {/* =========================================================
-              MỤC 3: 3. THƠ - Ơn thầy nâng cánh (Cuộn giấy da cổ điển + Hoa phượng + Bút máy)
+              MỤC 3: 3. THƠ - Ơn thầy nâng cánh (Cuộn giấy da cổ điển + Bút máy)
              ========================================================= */}
           <motion.article
             initial={{ opacity: 0, y: 20 }}
@@ -263,8 +268,9 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-serif text-xs font-extrabold uppercase tracking-widest text-red-800">
-                  {tho.typoTheme.displayNumeral} • THƠ & AUDIO NGÂM THƠ
+                <span className="inline-flex items-center gap-1.5 font-serif text-xs font-extrabold uppercase tracking-widest text-red-800">
+                  <Scroll className="h-3.5 w-3.5 text-red-700" />
+                  <span>{tho.typoTheme.displayNumeral} • THƠ TRI ÂN</span>
                 </span>
                 <button
                   type="button"
@@ -278,11 +284,12 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
               </div>
 
               <div className="mt-1 text-center">
-                <h2 className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#4A2511]">
-                  {tho.badgeTitle}
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#4A2511] flex items-center justify-center gap-2">
+                  <Scroll className="h-6 w-6 text-red-700 shrink-0" />
+                  <span>{tho.badgeTitle}</span>
                 </h2>
                 <p className="font-script text-2xl sm:text-3xl font-bold text-[#4A2511]">
-                  Ơn thầy nâng cánh
+                  {tho.subtitle}
                 </p>
               </div>
 
@@ -293,7 +300,8 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
               >
                 {/* Dải ruy băng đỏ uốn lượn phía trên cuộn giấy */}
                 <div className="mx-auto mb-1 flex items-center justify-center gap-2 text-xs font-bold text-red-700">
-                  <span>🌺 Tuyển tập Thơ nổi tiếng về Tuổi học trò & Người thầy</span>
+                  <Scroll className="h-3.5 w-3.5 text-red-700" />
+                  <span>Tuyển tập Thơ tri ân thầy cô và ký ức mái trường</span>
                 </div>
 
                 <div className="parchment-scroll-surface relative rounded-2xl border-y-2 border-x-8 border-[#B47B38] p-5 shadow-md">
@@ -307,10 +315,10 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                     </div>
 
                     <div className="text-left sm:text-right text-xs font-serif italic text-stone-800 space-y-0.5">
-                      <p>“Khi thầy viết bảng, bụi phấn rơi rơi</p>
-                      <p>Có hạt bụi nào vương trên tóc thầy...”</p>
+                      <p>“Lặng xuôi năm tháng êm trôi</p>
+                      <p>Con đò kể chuyện một thời rất xưa...”</p>
                       <p className="font-sans text-[11px] font-bold not-italic text-red-800">
-                        — Trần Đăng Khoa • Nguyễn Nhất Ánh • Xuân Định
+                        — Nguyễn Quốc Đạt • Hải Đăng 9A3 • Tứ Gia
                       </p>
                     </div>
                   </div>
@@ -322,7 +330,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                       Nghe Audio Học Sinh 9A3 Ngâm Thơ + Nhạc Nền
                     </span>
                     <span className="text-[11px] text-amber-950">
-                      03 Bài thơ kinh điển →
+                      03 Bài thơ tri ân →
                     </span>
                   </div>
                 </div>

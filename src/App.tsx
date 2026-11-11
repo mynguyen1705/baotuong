@@ -377,7 +377,6 @@ export const App: React.FC = () => {
         onSelectSection={openSection}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
-        onSelectSection={openSection}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);

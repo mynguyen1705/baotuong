@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { QRCodeSVG } from 'qrcode.react';
-import { X, QrCode, Copy, Check, ExternalLink } from 'lucide-react';
+import {
+  X,
+  QrCode,
+  Copy,
+  Check,
+  ExternalLink,
+  BookOpen,
+  BookText,
+  Scroll,
+  Film,
+  Heart,
+} from 'lucide-react';
 import { BaoTuongConfig, SectionId } from '../types/baotuong';
 
 export interface QrCodeModalProps {
@@ -130,8 +141,13 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
                     }`}
                   >
                     <QRCodeSVG value={sectionUrl} size={96} level="M" />
-                    <p className="mt-2.5 font-display text-sm font-extrabold text-stone-900">
-                      {sec.badgeTitle}
+                    <p className="mt-2.5 font-display text-sm font-extrabold text-stone-900 inline-flex items-center justify-center gap-1.5">
+                      {sec.id === 'loi-ngo' && <BookOpen className="h-4 w-4 text-amber-700" />}
+                      {sec.id === 'truyen-ngan' && <BookText className="h-4 w-4 text-emerald-700" />}
+                      {sec.id === 'tho' && <Scroll className="h-4 w-4 text-red-700" />}
+                      {sec.id === 'mv' && <Film className="h-4 w-4 text-sky-700" />}
+                      {sec.id === 'tri-an' && <Heart className="h-4 w-4 text-rose-700" />}
+                      <span>{sec.badgeTitle}</span>
                     </p>
                     <p className="line-clamp-1 text-xs text-stone-600">
                       {sec.title}
