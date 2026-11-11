@@ -17,18 +17,44 @@
   }
 }
 
-/* Hiệu ứng chữ 3D Cam Vàng CHẮP CÁNH ƯỚC MƠ giống hệt Poster mẫu */
-.title-3d-orange {
-  font-family: "Baloo 2", sans-serif;
+/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ có viền trắng bọc ngoài theo ảnh thiết kế mẫu */
+.title-2d-orange {
+  font-family: "Baloo 2", cursive, sans-serif;
   font-weight: 800;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #FFF078 0%, #FBBF24 35%, #F97316 75%, #EA580C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0px 2px 0px #9A3412)
-          drop-shadow(0px 4px 0px #7C2D12)
-          drop-shadow(0px 6px 0px #5C200D)
-          drop-shadow(0px 10px 14px rgba(124, 45, 18, 0.35));
+  color: #EA580C;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 8px #FFFFFF;
+  text-shadow:
+    -3px -3px 0 #FFFFFF,
+     3px -3px 0 #FFFFFF,
+    -3px  3px 0 #FFFFFF,
+     3px  3px 0 #FFFFFF,
+     0px  4px 0 #FFFFFF,
+     0px -4px 0 #FFFFFF,
+     4px  0px 0 #FFFFFF,
+    -4px  0px 0 #FFFFFF,
+     0px  3px 8px rgba(194, 65, 12, 0.28);
+}
+
+/* Tiêu đề 2D phẳng không viền đùn khối dành cho phần Sơ đồ phía dưới */
+.title-2d-flat {
+  font-family: "Baloo 2", cursive, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #C2410C;
+  letter-spacing: 0.025em;
+}
+
+/* Hỗ trợ tương thích ngược cho class cũ */
+.title-3d-orange {
+  font-family: "Baloo 2", cursive, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #EA580C;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 6px #FFFFFF;
+  filter: drop-shadow(0px 3px 5px rgba(194, 65, 12, 0.2));
 }
 
 /* Nút bấm Cam Viền Xanh Ngọc + Đổ bóng đậm đúng style Poster gốc */

@@ -144,17 +144,19 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.55 }}
           >
-            {/* Dòng 1: BÁO TƯỜNG SỐ */}
-            <p className="font-display text-2xl sm:text-4xl font-extrabold uppercase tracking-wider text-stone-900">
-              BÁO TƯỜNG SỐ
-            </p>
+            {/* Dòng 1: Badge BÁO TƯỜNG SỐ bo góc nền cam đào ấm áp theo ảnh thiết kế */}
+            <div className="inline-block rounded-2xl sm:rounded-full bg-[#FED7AA]/80 border border-[#FDBA74] px-5 py-1 sm:py-1.5 shadow-sm">
+              <span className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wider text-amber-950">
+                BÁO TƯỜNG SỐ
+              </span>
+            </div>
 
             {/* Dòng 2: chào mừng Ngày nhà giáo Việt Nam 20/11 */}
-            <p className="mt-0.5 font-script text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900">
+            <p className="mt-1 font-script text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900">
               chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ + Chữ 3D Cam Vàng CHẮP CÁNH / ƯỚC MƠ */}
+            {/* Dòng 3: Đôi cánh Ước Mơ + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
             <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2">
               <motion.div
                 animate={{ rotate: [-2, 3, -2] }}
@@ -167,11 +169,20 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                 />
               </motion.div>
 
-              <h1 className="relative z-10 leading-[0.92] select-none">
-                <span className="title-3d-orange block text-4xl sm:text-6xl md:text-7xl tracking-wide">
-                  CHẮP CÁNH
+              <h1 className="relative z-10 leading-[0.92] select-none text-center">
+                <span className="relative inline-block">
+                  <span className="title-2d-orange block text-4xl sm:text-6xl md:text-7xl tracking-wide">
+                    CHẮP CÁNH
+                  </span>
+                  {/* Ngôi sao lấp lánh 2D hai bên tiêu đề theo ảnh mẫu */}
+                  <span className="pointer-events-none absolute -left-5 sm:-left-7 top-1/2 -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                    ✦
+                  </span>
+                  <span className="pointer-events-none absolute -right-5 sm:-right-7 top-1/2 -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                    ✦
+                  </span>
                 </span>
-                <span className="title-3d-orange block text-5xl sm:text-7xl md:text-8xl tracking-wide mt-0.5">
+                <span className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl tracking-wide mt-1">
                   ƯỚC MƠ
                 </span>
               </h1>

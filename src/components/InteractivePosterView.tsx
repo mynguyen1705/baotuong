@@ -24,12 +24,7 @@ export interface InteractivePosterViewProps {
 }
 
 /**
- * Tọa độ phần trăm chính xác của 5 nút bấm chuyên mục trên ảnh poster gốc:
- * 1. Lời ngỏ: "Lật mở trang viết →"
- * 2. Truyện ngắn: "Đọc câu chuyện 📝"
- * 3. Thơ: "Thưởng thức thơ ca"
- * 4. Âm nhạc: "Lắng nghe khúc ca ▶"
- * 5. Bài tri ân: "Xem lời chúc & tri ân ➔"
+ * Tọa độ phần trăm chính xác của 5 nút "NHẤP VÀO ĐÂY ĐỂ XEM" trên ảnh poster gốc
  */
 const POSTER_HOTSPOTS: {
   id: SectionId;
@@ -42,42 +37,42 @@ const POSTER_HOTSPOTS: {
   {
     id: 'loi-ngo',
     name: '1. Lời ngỏ',
-    left: '10.5%',
-    top: '38.8%',
-    width: '32.0%',
-    height: '3.3%',
+    left: '8.5%',
+    top: '38.6%',
+    width: '33.5%',
+    height: '3.2%',
   },
   {
     id: 'truyen-ngan',
     name: '2. Truyện ngắn',
-    left: '58.0%',
-    top: '47.0%',
-    width: '32.5%',
-    height: '3.3%',
+    left: '57.0%',
+    top: '46.8%',
+    width: '34.0%',
+    height: '3.2%',
   },
   {
     id: 'tho',
     name: '3. Thơ',
-    left: '10.0%',
-    top: '66.4%',
-    width: '33.0%',
-    height: '3.4%',
+    left: '8.0%',
+    top: '67.0%',
+    width: '33.5%',
+    height: '3.2%',
   },
   {
     id: 'mv',
     name: '4. Âm nhạc',
-    left: '58.2%',
-    top: '78.0%',
-    width: '33.0%',
-    height: '3.3%',
+    left: '58.0%',
+    top: '77.2%',
+    width: '34.0%',
+    height: '3.2%',
   },
   {
     id: 'tri-an',
     name: '5. Bài tri ân',
-    left: '34.0%',
-    top: '93.9%',
-    width: '36.0%',
-    height: '3.4%',
+    left: '32.5%',
+    top: '96.0%',
+    width: '42.5%',
+    height: '3.2%',
   },
 ];
 
@@ -104,14 +99,14 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
             <Compass className="h-3.5 w-3.5 text-poster-orange" />
             Sơ Đồ Cấu Trúc Tệp Sản Phẩm Báo Tường Số 9A3
           </p>
-          <h2 className="mt-2.5 title-3d-orange text-3xl sm:text-5xl tracking-wide">
+          <h2 className="mt-2.5 font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#C2410C]">
             {config.newspaperTitle}
           </h2>
           <p className="mt-1 font-script text-2xl sm:text-3xl font-bold text-[#4A2511]">
             “{config.competitionTheme}” — {config.className} • {config.schoolName}
           </p>
           <p className="mt-2 text-xs sm:text-sm font-semibold text-amber-950/80">
-            👉 <em>Nhấp trực tiếp vào các nút chuyên mục trên tranh poster dưới đây để mở từng nội dung</em>
+            👉 <em>Nhấp trực tiếp vào bất kỳ nút <strong>“NHẤP VÀO ĐÂY ĐỂ XEM”</strong> trên tranh poster dưới đây để mở từng chuyên mục</em>
           </p>
         </div>
 
@@ -121,20 +116,16 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
         <div className="mt-8 flex justify-center relative z-20">
           <div className="relative w-full max-w-xl md:max-w-2xl rounded-3xl border-4 border-amber-400 bg-amber-100 p-2 sm:p-3 shadow-2xl overflow-hidden">
             <div className="relative w-full overflow-hidden rounded-2xl shadow-inner bg-[#fff9ed]">
-              {/* Ảnh minh họa poster gốc với tối ưu độ sắc nét và chống vỡ hình */}
+              {/* Ảnh minh họa poster gốc với tối ưu độ sắc nét */}
               <img
                 data-testid="interactive-poster-image"
                 src="/posters/poster-toan-canh.jpg"
                 alt="Báo tường số Chắp Cánh Ước Mơ - Chi đội 9A3"
                 className="w-full h-auto block select-none"
                 style={{
-                  aspectRatio: '506 / 1024',
                   imageRendering: '-webkit-optimize-contrast',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transform: 'translateZ(0)',
                 }}
                 loading="eager"
-                decoding="async"
               />
 
               {/* 5 Vùng Nút Bấm Tương Tác: Hoàn toàn trong suốt (Không dùng backdrop-blur hay màng màu gây mờ ảnh) */}
