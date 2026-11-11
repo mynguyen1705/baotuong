@@ -126,7 +126,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
                   Audio Thơ Đa Phương Tiện
                 </span>
                 <span className="text-xs font-semibold text-amber-900">
-
+    
                 </span>
               </div>
               <h3 className="mt-1 font-display text-lg font-extrabold text-stone-900">
