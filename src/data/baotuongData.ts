@@ -71,11 +71,11 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       subtitle: 'Chiếc lá mùa thu & Nét chữ ngày xưa',
       categoryLabel: 'Truyện ngắn học đường',
       summary:
-      'Tuyển tập truyện ngắn về người thầy và ký ức tuổi học trò: bài học kiên nhẫn bên bức tranh mùa thu và những nét chữ đầu đời được uốn nắn ân cần.',
+        'Tuyển tập truyện ngắn về người thầy và ký ức tuổi học trò: bài học kiên nhẫn bên bức tranh mùa thu và những nét chữ đầu đời được uốn nắn ân cần.',
       authorCredit: 'Khuyết danh, Đoàn Ngọc Toại',
       sourceNote: 'Tuyển tập truyện ngắn tuổi học trò',
       pullQuote:
-      '“Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ.”',
+        '“Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ.”',
       typoTheme: {
         displayNumeral: '02',
         kicker: 'TRUYỆN NGẮN HỌC ĐƯỜNG',
@@ -106,14 +106,14 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       subtitle: 'Tuyển tập thơ tri ân thầy cô và ký ức mái trường',
       categoryLabel: 'Thơ ca tri ân',
       summary:
-      'Những vần thơ tri ân sâu lắng kính dâng quý thầy cô: nỗi niềm con đò xưa, lời chưa nói của học trò và sự tần tảo của người lái đò tri thức.',
+        'Những vần thơ tri ân sâu lắng kính dâng quý thầy cô: nỗi niềm con đò xưa, lời chưa nói của học trò và sự tần tảo của người lái đò tri thức.',
       authorCredit: 'Nguyễn Quốc Đạt, Hải Đăng 9A3, Tứ Gia',
       sourceNote: 'Thơ tri ân 20/11',
       pullQuote:
-      '“Lặng xuôi năm tháng êm trôi / Con đò kể chuyện một thời rất xưa / Rằng người chèo chống đón đưa / Mặc cho bụi phấn giữa trưa rơi nhiều...”',
+        '“Lặng xuôi năm tháng êm trôi / Con đò kể chuyện một thời rất xưa / Rằng người chèo chống đón đưa / Mặc cho bụi phấn giữa trưa rơi nhiều...”',
       audioRecitationUrl: '/media/ngam-tho-9a3.mp3',
       studentVoiceNote:
-      'Giọng đọc & ngâm thơ: Học sinh đại diện Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh.',
+        'Giọng đọc & ngâm thơ: Học sinh đại diện Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh.',
       typoTheme: {
         displayNumeral: '03',
         kicker: 'THƠ TRI ÂN THẦY CÔ',
@@ -158,7 +158,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
           id: 'loi-chua-noi',
           title: 'Lời Chưa Nói',
           author: 'Hải Đăng 9A3',
-          source: 'Thơ học sinh',
+          source: 'Bài làm học sinh',
           yearOrContext: 'Thơ tuổi học trò',
           stanzas: [
             [
@@ -212,7 +212,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       subtitle: 'Sáng tác: Hứa Kim Tuyền | Trình bày: Hoàng Dũng | Minh họa thực tế: Tập thể 9A3',
       categoryLabel: 'Sản phẩm MV Ca nhạc số',
       summary:
-      'Giai điệu sâu lắng của ca khúc “Người gieo mầm xanh” (Hứa Kim Tuyền – Hoàng Dũng) hòa quyện cùng những thước phim ghi lại khoảnh khắc học tập, vui chơi và tri ân thầy cô của tập thể lớp 9A3.',
+        'Giai điệu sâu lắng của ca khúc “Người gieo mầm xanh” (Hứa Kim Tuyền – Hoàng Dũng) hòa quyện cùng những thước phim ghi lại khoảnh khắc học tập, vui chơi và tri ân thầy cô của tập thể lớp 9A3.',
       authorCredit: 'Sáng tác: Hứa Kim Tuyền – Ca sĩ: Hoàng Dũng | Thực hiện MV: Chi đội 9A3',
       sourceNote: 'Âm nhạc: Hứa Kim Tuyền & Hoàng Dũng',
       pullQuote:
@@ -236,7 +236,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         videoUrl: '/media/mv-nguoi-gieo-mam-xanh-9a3.mp4',
         youtubeEmbedUrl: 'https://www.youtube.com/embed/j8U06veqxdU',
         schoolContextNote:
-        'Khoảnh khắc sinh hoạt, học tập và tri ân thầy cô của học sinh lớp 9A3.',
+          'Khoảnh khắc sinh hoạt, học tập và tri ân thầy cô của học sinh lớp 9A3.',
         scenes: [
           {
             timeRange: '00:00 – 00:45',
@@ -293,7 +293,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       subtitle: 'Bài viết cảm nghĩ tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11',
       categoryLabel: 'Bài Lời tri ân',
       summary:
-      'Tấm lòng biết ơn sâu sắc của tập thể học sinh lớp 9A3 gửi tới các thầy cô giáo Trường TH&THCS Hiệp Thạnh qua bức thư cảm nghĩ chân thành.',
+        'Tấm lòng biết ơn sâu sắc của tập thể học sinh lớp 9A3 gửi tới các thầy cô giáo Trường TH&THCS Hiệp Thạnh qua bức thư cảm nghĩ chân thành.',
       authorCredit: 'Tập thể học sinh Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh',
       sourceNote: 'Bài viết cảm nghĩ tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11',
       pullQuote:
