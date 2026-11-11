@@ -93,7 +93,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         'Khi tiết trời bước sang thu, thầy giáo mỹ thuật đã đưa chúng tôi ra công viên để vẽ tranh. Bắt gặp tôi đang gặp khó khăn trong việc vẽ từng gân lá, thầy đã ngồi cạnh và hướng dẫn tôi một cách tỉ mỉ.',
         'Lúc đó, tôi vẫn còn nhớ như in lời thầy nói: “Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ”. Lời nói ấy của thầy không chỉ là bài học về hội họa mà còn dạy cho tôi về sự kiên nhẫn trong cuộc sống.',
         'Truyện ngắn 2: Nét chữ ngày xưa (Tác giả: Đoàn Ngọc Toại)',
-        'Nếu ai hỏi tôi sợ nhất là môn gì thì tôi liền trả lời môn hóa là nỗi ám ảnh lớn nhất đối với tôi, đến mức không nhớ nổi tên các chất hay hoá trị. Sau nhiều lần bị điểm dưới trung bình, cô Liên – giáo viên chủ nhiệm của tôi đã tặng tôi một bài thơ giúp tôi dễ dàng ghi nhớ',
+        'Nếu ai hỏi tôi sợ nhất là môn gì thì tôi liền trả lời môn hóa là nỗi ám ảnh lớn nhất đối với tôi, đến mức không nhớ nổi tên các chất hay hoá trị. Sau nhiều lần bị điểm dưới trung bình, cô Liên – giáo viên chủ nhiệm của tôi đã tặng tôi một bài thơ giúp tôi dễ dàng ghi nhớ.',
         'Nhớ một lần đi học về, thấy vở tôi chữ viết không đều, ngoại bắt tôi viết lại ba lần sau khi đã ngửa bàn tay phải lãnh đủ 3 roi đũa cả.',
         'Nghĩ đến lũ trẻ bây giờ mà buồn: bút đủ loại đắt tiền, toàn đồ ngoại. Vậy mà càng lớn, chữ càng xấu.',
         'Truyện ngắn 3: Ánh Đèn Chiều Muộn (Sưu tầm)',
