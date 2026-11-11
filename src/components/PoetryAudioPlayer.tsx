@@ -29,7 +29,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
       synthTimerRef.current = null;
     }
     if (audioCtxRef.current) {
-      audioCtxRef.current.close().catch(() => {});
+      audioCtxRef.current.close().catch(() => { });
       audioCtxRef.current = null;
     }
   };
@@ -126,7 +126,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
                   Audio Thơ Đa Phương Tiện
                 </span>
                 <span className="text-xs font-semibold text-amber-900">
-                  • Giọng thật học sinh 9A3 (Không dùng AI)
+
                 </span>
               </div>
               <h3 className="mt-1 font-display text-lg font-extrabold text-stone-900">
@@ -154,10 +154,10 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
                 transition={
                   isPlaying
                     ? {
-                        duration: 0.9 + bar * 0.1,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }
+                      duration: 0.9 + bar * 0.1,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }
                     : { duration: 0.2 }
                 }
                 className="w-1.5 rounded-full bg-poster-orange"
@@ -206,19 +206,17 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
                 key={poem.id}
                 type="button"
                 onClick={() => setSelectedPoemId(poem.id)}
-                className={`rounded-2xl border px-4 py-2.5 text-left text-xs sm:text-sm font-bold transition ${
-                  isSelected
-                    ? 'border-2 border-poster-orange bg-poster-orange text-white shadow-sm'
-                    : 'border-amber-300 bg-white text-stone-800 hover:bg-amber-50'
-                }`}
+                className={`rounded-2xl border px-4 py-2.5 text-left text-xs sm:text-sm font-bold transition ${isSelected
+                  ? 'border-2 border-poster-orange bg-poster-orange text-white shadow-sm'
+                  : 'border-amber-300 bg-white text-stone-800 hover:bg-amber-50'
+                  }`}
               >
                 <span>
                   Bài {index + 1}: {poem.title}
                 </span>
                 <span
-                  className={`block text-[11px] font-normal ${
-                    isSelected ? 'text-amber-100' : 'text-stone-500'
-                  }`}
+                  className={`block text-[11px] font-normal ${isSelected ? 'text-amber-100' : 'text-stone-500'
+                    }`}
                 >
                   {poem.author}
                 </span>
