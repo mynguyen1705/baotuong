@@ -24,19 +24,6 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
   const activePoem = poems.find((p) => p.id === selectedPoemId) ?? poems[0];
   const currentAudioUrl = activePoem?.audioUrl || defaultAudioUrl;
 
-  const handleSelectPoem = (poemId: string) => {
-    if (poemId === selectedPoemId) return;
-    if (isPlaying) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      stopAmbientMelody();
-      setIsPlaying(false);
-      setAudioStatus('idle');
-    }
-    setSelectedPoemId(poemId);
-  };
-
   const stopAmbientMelody = () => {
     if (synthTimerRef.current !== null) {
       window.clearInterval(synthTimerRef.current);
@@ -47,6 +34,64 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
       audioCtxRef.current = null;
     }
   };
+
+  const handleAudioError = () => {
+    if (!audioRef.current) {
+      if (isPlaying) startAmbientMelody();
+      return;
+    }
+    const currentSrc = audioRef.current.src || '';
+    // Thử đuôi .MP3 nếu .mp3 không tải được (hoặc ngược lại) do phân biệt hoa thường
+    if (currentSrc.endsWith('.mp3')) {
+      const altSrc = currentSrc.slice(0, -4) + '.MP3';
+      audioRef.current.src = altSrc;
+      audioRef.current
+        .play()
+        .then(() => {
+          setAudioStatus('playing-file');
+        })
+        .catch(() => {
+          if (isPlaying) startAmbientMelody();
+        });
+      return;
+    }
+    if (currentSrc.endsWith('.MP3')) {
+      const altSrc = currentSrc.slice(0, -4) + '.mp3';
+      audioRef.current.src = altSrc;
+      audioRef.current
+        .play()
+        .then(() => {
+          setAudioStatus('playing-file');
+        })
+        .catch(() => {
+          if (isPlaying) startAmbientMelody();
+        });
+      return;
+    }
+    if (isPlaying) startAmbientMelody();
+  };
+
+  const handleSelectPoem = (poemId: string) => {
+    if (poemId === selectedPoemId) return;
+    stopAmbientMelody();
+    setSelectedPoemId(poemId);
+  };
+
+  // Tự động phát tiếp bài mới nếu đang trong trạng thái nghe ngâm thơ
+  useEffect(() => {
+    if (isPlaying && currentAudioUrl) {
+      setAudioStatus('playing-file');
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        const p = audioRef.current.play();
+        if (p && typeof p.catch === 'function') {
+          p.catch(() => {
+            handleAudioError();
+          });
+        }
+      }
+    }
+  }, [selectedPoemId]);
 
   const startAmbientMelody = () => {
     try {
@@ -189,9 +234,7 @@ export const PoetryAudioPlayer: React.FC<PoetryAudioPlayerProps> = ({
               setIsPlaying(false);
               setAudioStatus('idle');
             }}
-            onError={() => {
-              if (isPlaying) startAmbientMelody();
-            }}
+            onError={handleAudioError}
           />
         )}
 
