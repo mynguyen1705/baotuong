@@ -323,6 +323,7 @@ export const App: React.FC = () => {
         onToggleBgMusic={() => setIsBgMusicPlaying((prev) => !prev)}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
+        onSelectSection={openSection}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);
@@ -376,6 +377,7 @@ export const App: React.FC = () => {
         onSelectSection={openSection}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
+        onSelectSection={openSection}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);

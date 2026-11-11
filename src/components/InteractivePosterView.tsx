@@ -6,6 +6,11 @@ import {
   QrCode,
   Users,
   Eye,
+  BookOpen,
+  BookText,
+  Scroll,
+  Film,
+  Heart,
 } from 'lucide-react';
 import { BaoTuongConfig, SectionData, SectionId } from '../types/baotuong';
 import { PointerHandIcon } from './PosterDecorations';

@@ -78,7 +78,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         '“Cuộc sống đôi khi cũng giống như vẽ tranh, khi không biết nên bắt đầu thế nào thì hãy cứ làm từ từ.”',
       typoTheme: {
         displayNumeral: '02',
-        kicker: 'TRUYỆN NGẮN HỌC ĐƯỜNG',
+        kicker: 'TRUYỆN NGẮN',
         accentWord: 'TRUYỆN',
         featuredLines: [
           '“Cuộc sống đôi khi cũng giống như vẽ tranh,',
