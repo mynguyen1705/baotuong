@@ -71,7 +71,6 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       title: 'Người Gieo Mầm Lặng Lẽ',
       subtitle: 'Chuyện về cuốn sổ nhỏ bìa nâu và ước mơ của cậu học trò lớp 9A3',
       categoryLabel: 'Sản phẩm Truyện ngắn / Ký học đường',
-      scoringWeight: 'Tiêu chí 2: Nội dung Truyện & Bài Lời tri ân (20 điểm)',
       summary:
         'Câu chuyện xúc động dưới tán bàng sân trường Hiệp Thạnh về cô giáo chủ nhiệm và cậu học trò rụt rè từng muốn bỏ cuộc trước kỳ thi chuyển cấp.',
       authorCredit: 'Tập thể nhóm Văn học Chi đội 9A3 (Biên soạn & Sáng tác)',
