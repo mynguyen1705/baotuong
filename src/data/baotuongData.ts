@@ -113,7 +113,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         '“Lặng xuôi năm tháng êm trôi / Con đò kể chuyện một thời rất xưa / Rằng người chèo chống đón đưa / Mặc cho bụi phấn giữa trưa rơi nhiều...”',
       audioRecitationUrl: '/media/ngam-tho-9a3.mp3',
       studentVoiceNote:
-        'Giọng đọc & ngâm thơ: Học sinh đại diện Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh.',
+        'Giọng đọc & ngâm thơ: Nguyễn Trà My - 9A3.',
       typoTheme: {
         displayNumeral: '03',
         kicker: 'THƠ TRI ÂN THẦY CÔ',
