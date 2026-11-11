@@ -76,9 +76,9 @@ const POSTER_HOTSPOTS: {
     id: 'tri-an',
     name: '5. Bài tri ân',
     left: '34.0%',
-    top: '93.9%',
-    width: '36.0%',
-    height: '3.4%',
+    top: '96.0%',
+    width: '35.5%',
+    height: '3.1%',
   },
 ];
 
@@ -168,7 +168,7 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     aria-label={`Xem chuyên mục: ${section?.badgeTitle || hotspot.name}`}
-                    className="group absolute cursor-pointer rounded-lg border border-teal-500/30 bg-transparent transition-all hover:border-2 hover:border-emerald-400 hover:bg-emerald-400/10 hover:shadow-[0_0_12px_rgba(16,185,129,0.7)] focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    className="group absolute cursor-pointer rounded-full border border-amber-500/20 bg-transparent transition-all hover:border-2 hover:border-amber-400 hover:bg-amber-400/15 hover:shadow-[0_0_12px_rgba(245,158,11,0.7)] focus:outline-none focus:ring-2 focus:ring-amber-400"
                   >
                     {/* Bàn tay chỉ dẫn trôi nhẹ khi hover */}
                     <span className="absolute -bottom-2 -right-3 pointer-events-none drop-shadow-md transition-transform group-hover:scale-110">
