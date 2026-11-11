@@ -144,7 +144,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
               'Bay lên tựa những cánh diều',
               'Khách ngày xưa đó ít nhiều lãng quên',
               'Rời xa bến nước quên tên',
-              'Giờ song vắng lặng buồn tênh tiếng cười',
+              'Giờ sông vắng lặng buồn tênh tiếng cười',
             ],
             [
               'Giọt sương rơi mặn bên đời',
