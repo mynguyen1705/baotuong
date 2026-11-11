@@ -210,23 +210,23 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       badgeTitle: '4. MV (Video ca nhạc)',
       title: 'MV: Người Gieo Mầm Xanh',
       subtitle: 'Sáng tác: Hứa Kim Tuyền | Trình bày: Hoàng Dũng | Minh họa thực tế: Tập thể 9A3',
-      categoryLabel: 'Sản phẩm MV Ca nhạc số (Quay tại Trường TH&THCS Hiệp Thạnh)',
+      categoryLabel: 'Sản phẩm MV Ca nhạc số',
       summary:
-        'Giai điệu sâu lắng của ca khúc “Người gieo mầm xanh” (Hứa Kim Tuyền – Hoàng Dũng) hòa quyện cùng những thước phim thực tế ghi lại khoảnh khắc học tập, vui chơi và tri ân thầy cô của tập thể lớp 9A3 tại khuôn viên Trường TH&THCS Hiệp Thạnh.',
+        'Giai điệu sâu lắng của ca khúc “Người gieo mầm xanh” (Hứa Kim Tuyền – Hoàng Dũng) hòa quyện cùng những thước phim ghi lại khoảnh khắc học tập, vui chơi và tri ân thầy cô của tập thể lớp 9A3.',
       authorCredit: 'Sáng tác: Hứa Kim Tuyền – Ca sĩ: Hoàng Dũng | Thực hiện MV: Chi đội 9A3',
-      sourceNote: 'Âm nhạc bản quyền tác giả Hứa Kim Tuyền & Hoàng Dũng; hình ảnh quay tại Trường TH&THCS Hiệp Thạnh',
+      sourceNote: 'Âm nhạc: Hứa Kim Tuyền & Hoàng Dũng',
       pullQuote:
         '“Một người thầy tốt như cánh rừng già / Dạy em biết yêu thương, dạy em biết bao dung, dạy em vươn tới những vì sao...”',
       typoTheme: {
         displayNumeral: '04',
-        kicker: 'MV CA NHẠC SỐ MINH HỌA THỰC TẾ',
+        kicker: 'MV CA NHẠC SỐ',
         accentWord: 'NHẠC',
         featuredLines: [
           '♪ NGƯỜI GIEO MẦM XANH',
           'Sáng tác: Hứa Kim Tuyền • Trình bày: Hoàng Dũng',
-          'Bối cảnh quay: Lớp 9A3 & Sân trường TH&THCS Hiệp Thạnh',
+          'Tập thể Chi đội 9A3',
         ],
-        metaTags: ['Hứa Kim Tuyền', 'Hoàng Dũng', '04 Phân cảnh sân trường', 'Full HD 16:9'],
+        metaTags: ['Hứa Kim Tuyền', 'Hoàng Dũng', 'Tập thể 9A3'],
         palette: 'cobalt',
       },
       mvData: {
@@ -236,7 +236,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
         videoUrl: '/media/mv-nguoi-gieo-mam-xanh-9a3.mp4',
         youtubeEmbedUrl: 'https://www.youtube.com/embed/j8U06veqxdU',
         schoolContextNote:
-          'Bối cảnh quay thực tế 100% tại phòng học lớp 9A3, hành lang dãy phòng học, gốc bàng cổ thụ và sân trường TH&THCS Hiệp Thạnh đúng theo quy định của Ban tổ chức.',
+          'Khoảnh khắc sinh hoạt, học tập và tri ân thầy cô của học sinh lớp 9A3.',
         scenes: [
           {
             timeRange: '00:00 – 00:45',
