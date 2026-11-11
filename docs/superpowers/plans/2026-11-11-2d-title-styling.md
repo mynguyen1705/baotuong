@@ -33,3 +33,4 @@ Chuyển đổi tiêu đề báo tường "CHẮP CÁNH ƯỚC MƠ" ở cả **p
 - [ ] Chạy `npm test -- --run` đảm bảo 51/51 tests pass.
 - [ ] Chạy `npm run build` xác nhận không có lỗi TypeScript / CSS.
 - [ ] Commit thay đổi với thông điệp rõ ràng và push lên git.
+

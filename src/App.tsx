@@ -341,6 +341,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden selection:bg-amber-200 selection:text-amber-950">
+      {/* Lớp phủ sáng nhẹ ở vùng trung tâm giữ độ tương phản tốt nhất cho văn bản */}
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-amber-50/10 via-transparent to-amber-900/10 z-0" />
       <FloatingAcademicSparkles />
       <SchoolSideDecorations />
 

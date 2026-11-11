@@ -583,7 +583,7 @@ export const SchoolSideDecorations: React.FC = () => {
   return (
     <div
       data-testid="school-side-decorations"
-      className="pointer-events-none absolute inset-0 overflow-hidden z-10 select-none"
+      className="pointer-events-none absolute inset-0 overflow-hidden z-10 select-none opacity-25 hover:opacity-60 transition-opacity duration-300"
       aria-hidden="true"
     >
       {/* ==================== BÊN TRÁI TRANG CHỦ ==================== */}
