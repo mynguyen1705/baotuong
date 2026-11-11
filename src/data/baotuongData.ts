@@ -67,7 +67,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       id: 'truyen-ngan',
       orderNumber: 2,
       badgeTitle: '2. TRUYỆN NGẮN',
-      title: 'Tuyển Tập Truyện Ngắn Tuổi Học Trò',
+      title: 'Tuyển Tập Truyện Ngắn',
       subtitle: 'Chiếc lá mùa thu & Nét chữ ngày xưa',
       categoryLabel: 'Truyện ngắn',
       summary:
