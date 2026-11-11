@@ -223,42 +223,71 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [fetchTeachers]);
 
-  // Phát giai điệu nhạc nền nhẹ nhàng khi bật isBgMusicPlaying
+  // Phát nhạc nền: Ưu tiên file mp3 tại /media/nhac-nen.mp3 (nếu có), fallback giai điệu acoustic du dương
   useEffect(() => {
     if (!isBgMusicPlaying || typeof window === 'undefined') return;
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
 
+    let audio: HTMLAudioElement | null = null;
     let ctx: AudioContext | null = null;
     let timer: number | null = null;
+    let isCancelled = false;
+
+    const startSynthMelody = () => {
+      if (isCancelled || ctx) return;
+      try {
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!AudioContextClass) return;
+        ctx = new AudioContextClass();
+        const notes = [261.63, 329.63, 392.0, 523.25, 440.0, 392.0, 329.63, 293.66];
+        let step = 0;
+        const playTone = () => {
+          if (!ctx) return;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(notes[step % notes.length], ctx.currentTime);
+          gain.gain.setValueAtTime(0.001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.035, ctx.currentTime + 0.2);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 1.35);
+          step += 1;
+        };
+        playTone();
+        timer = window.setInterval(playTone, 1500);
+      } catch {
+        // Ignore AudioContext restriction errors in headless/test environments
+      }
+    };
+
     try {
-      ctx = new AudioContextClass();
-      const notes = [261.63, 329.63, 392.0, 523.25, 440.0, 392.0, 329.63, 293.66];
-      let step = 0;
-      const playTone = () => {
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(notes[step % notes.length], ctx.currentTime);
-        gain.gain.setValueAtTime(0.001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.035, ctx.currentTime + 0.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.3);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 1.35);
-        step += 1;
+      audio = new Audio('/media/nhac-nen.mp3');
+      audio.loop = true;
+      audio.volume = 0.6;
+      audio.onerror = () => {
+        if (!isCancelled) startSynthMelody();
       };
-      playTone();
-      timer = window.setInterval(playTone, 1500);
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          if (!isCancelled) startSynthMelody();
+        });
+      }
     } catch {
-      // Ignore AudioContext restriction errors in headless/test environments
+      startSynthMelody();
     }
 
     return () => {
+      isCancelled = true;
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+        audio = null;
+      }
       if (timer !== null) window.clearInterval(timer);
       if (ctx) ctx.close().catch(() => {});
     };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Film, Music2, MapPin, PlayCircle, Sparkles } from 'lucide-react';
+import { Film, Music2, MapPin, PlayCircle } from 'lucide-react';
 import { MvData } from '../types/baotuong';
 
 export interface MvVideoShowcaseProps {
@@ -113,58 +113,6 @@ export const MvVideoShowcase: React.FC<MvVideoShowcaseProps> = ({
             </div>
           </div>
         )}
-      </div>
-
-      {/* Kịch bản phân cảnh quay thực tế tại Trường TH&THCS Hiệp Thạnh & Lời bài hát */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-7 rounded-3xl border border-amber-300 bg-white p-5 shadow-sm">
-          <h4 className="flex items-center gap-2 font-display text-lg font-extrabold text-stone-900">
-            <Film className="h-5 w-5 text-poster-orange" />
-            <span>Các Phân Cảnh Quay Tại Trường TH&THCS Hiệp Thạnh</span>
-          </h4>
-          <div className="mt-4 space-y-3">
-            {mvData.scenes.map((scene, index) => (
-              <div
-                key={index}
-                className="rounded-2xl border border-amber-200 bg-amber-50/50 p-3.5"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="rounded-lg bg-poster-orange px-2.5 py-0.5 text-xs font-bold text-white">
-                    Cảnh {index + 1} ({scene.timeRange})
-                  </span>
-                  <span className="text-xs font-bold text-sky-900">
-                    📍 {scene.location}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs sm:text-sm text-stone-700 leading-relaxed">
-                  {scene.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="lg:col-span-5 rounded-3xl border border-amber-300 bg-amber-50/70 p-5 shadow-sm">
-          <h4 className="flex items-center gap-2 font-display text-lg font-extrabold text-stone-900">
-            <Sparkles className="h-5 w-5 text-amber-600" />
-            <span>Cảm Hứng Ca Từ “{mvData.songTitle}”</span>
-          </h4>
-          <p className="mt-1 text-xs text-stone-600">
-            Tác giả: {mvData.composer} • Thể hiện: {mvData.artist}
-          </p>
-          <div className="mt-4 space-y-4 font-serif text-sm sm:text-base italic text-stone-800">
-            {mvData.lyricsExcerpt.map((verse, vIdx) => (
-              <div
-                key={vIdx}
-                className="rounded-2xl border border-amber-200 bg-white/90 p-3.5 space-y-1"
-              >
-                {verse.map((line, lIdx) => (
-                  <p key={lIdx}>{line}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
