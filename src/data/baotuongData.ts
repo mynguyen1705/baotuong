@@ -103,7 +103,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       orderNumber: 3,
       badgeTitle: '3. THƠ',
       title: 'Ơn Thầy Nâng Cánh – Thơ Tuổi Học Trò',
-      subtitle: 'Tuyển tập thơ tri ân thầy cô và ký ức mái trường',
+      subtitle: 'Tuyển tập thơ tri ân thầy cô',
       categoryLabel: 'Thơ ca tri ân',
       summary:
         'Những vần thơ tri ân sâu lắng kính dâng quý thầy cô: nỗi niềm con đò xưa, lời chưa nói của học trò và sự tần tảo của người lái đò tri thức.',
