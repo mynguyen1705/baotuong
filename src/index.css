@@ -34,17 +34,18 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #EA580C;
+  letter-spacing: 0.08em;
   paint-order: stroke fill;
-  -webkit-text-stroke: 8px #FFFFFF;
+  -webkit-text-stroke: 4.5px #FFFFFF;
   text-shadow:
-    -3px -3px 0 #FFFFFF,
-     3px -3px 0 #FFFFFF,
-    -3px  3px 0 #FFFFFF,
-     3px  3px 0 #FFFFFF,
-     0px  4px 0 #FFFFFF,
-     0px -4px 0 #FFFFFF,
-     4px  0px 0 #FFFFFF,
-    -4px  0px 0 #FFFFFF,
+    -2px -2px 0 #FFFFFF,
+     2px -2px 0 #FFFFFF,
+    -2px  2px 0 #FFFFFF,
+     2px  2px 0 #FFFFFF,
+     0px  3px 0 #FFFFFF,
+     0px -3px 0 #FFFFFF,
+     3px  0px 0 #FFFFFF,
+    -3px  0px 0 #FFFFFF,
      0px  3px 8px rgba(194, 65, 12, 0.28);
 }
 
@@ -54,7 +55,7 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #C2410C;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.08em;
 }
 
 /* Hỗ trợ tương thích ngược cho class cũ */
@@ -63,8 +64,9 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #EA580C;
+  letter-spacing: 0.08em;
   paint-order: stroke fill;
-  -webkit-text-stroke: 6px #FFFFFF;
+  -webkit-text-stroke: 4.5px #FFFFFF;
   filter: drop-shadow(0px 3px 5px rgba(194, 65, 12, 0.2));
 }
 
