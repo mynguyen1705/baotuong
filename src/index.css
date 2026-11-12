@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Praise';
+  src: url('/fonts/Praise-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -20,10 +28,10 @@
   }
 }
 
-/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ có viền trắng bọc ngoài theo ảnh thiết kế mẫu ban đầu */
+/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ theo font Praise có viền trắng bọc ngoài */
 .title-2d-orange {
-  font-family: "Baloo 2", cursive, sans-serif;
-  font-weight: 800;
+  font-family: "Praise", cursive, sans-serif;
+  font-weight: 700;
   text-transform: uppercase;
   color: #EA580C;
   paint-order: stroke fill;
@@ -42,8 +50,8 @@
 
 /* Tiêu đề 2D phẳng không viền đùn khối dành cho phần Sơ đồ phía dưới */
 .title-2d-flat {
-  font-family: "Baloo 2", cursive, sans-serif;
-  font-weight: 800;
+  font-family: "Praise", cursive, sans-serif;
+  font-weight: 700;
   text-transform: uppercase;
   color: #C2410C;
   letter-spacing: 0.025em;
@@ -51,8 +59,8 @@
 
 /* Hỗ trợ tương thích ngược cho class cũ */
 .title-3d-orange {
-  font-family: "Baloo 2", cursive, sans-serif;
-  font-weight: 800;
+  font-family: "Praise", cursive, sans-serif;
+  font-weight: 700;
   text-transform: uppercase;
   color: #EA580C;
   paint-order: stroke fill;
