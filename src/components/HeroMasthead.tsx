@@ -130,9 +130,9 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               </span>
             </div>
 
-            {/* Dòng 2: chào mừng Ngày nhà giáo Việt Nam 20/11 với hiệu ứng bóng nổi đa tầng chống chìm nền */}
-            <p className="mt-1 font-script text-2xl sm:text-4xl md:text-5xl font-bold celebration-title-white">
-              chào mừng Ngày nhà giáo Việt Nam 20/11
+            {/* Dòng 2: Chào mừng Ngày nhà giáo Việt Nam 20/11 theo font Neon 80s với hiệu ứng bóng nổi đa tầng */}
+            <p className="mt-1.5 text-2xl sm:text-4xl md:text-5xl font-bold celebration-title-white">
+              Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
             {/* Dòng 3: Đôi cánh Ước Mơ + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}

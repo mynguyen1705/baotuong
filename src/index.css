@@ -10,6 +10,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Neon80s';
+  src: url('/fonts/Neon80s.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -49,9 +57,11 @@
      0px  4px 10px rgba(194, 65, 12, 0.32);
 }
 
-/* Hiệu ứng chữ thư pháp trắng nổi bật đa tầng chống chìm trên mọi nền */
+/* Hiệu ứng chữ trắng nổi bật đa tầng chống chìm trên mọi nền (sử dụng font Neon 80s) */
 .celebration-title-white {
+  font-family: 'Neon80s', 'Be Vietnam Pro', sans-serif;
   color: #FFFFFF;
+  letter-spacing: 0.05em;
   text-shadow:
     -1.5px -1.5px 0 rgba(45, 20, 5, 0.75),
      1.5px -1.5px 0 rgba(45, 20, 5, 0.75),
