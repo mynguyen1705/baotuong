@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Valky';
-  src: local('MTD Valky Bold'), local('MTD Valky'), local('Valky Bold'), local('Valky'),
-       url('/fonts/valkyrie.ttf') format('truetype');
-  font-weight: 400 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -29,9 +20,9 @@
   }
 }
 
-/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ theo font Valky có viền trắng bọc ngoài */
+/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ có viền trắng bọc ngoài theo ảnh thiết kế mẫu ban đầu */
 .title-2d-orange {
-  font-family: "Valky", "MTD Valky", "Valkyrie Regular", "Playfair Display", "Lora", serif;
+  font-family: "Baloo 2", cursive, sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   color: #EA580C;
@@ -51,7 +42,7 @@
 
 /* Tiêu đề 2D phẳng không viền đùn khối dành cho phần Sơ đồ phía dưới */
 .title-2d-flat {
-  font-family: "Valky", "MTD Valky", "Valkyrie Regular", "Playfair Display", "Lora", serif;
+  font-family: "Baloo 2", cursive, sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   color: #C2410C;
@@ -60,7 +51,7 @@
 
 /* Hỗ trợ tương thích ngược cho class cũ */
 .title-3d-orange {
-  font-family: "Valky", "MTD Valky", "Valkyrie Regular", "Playfair Display", "Lora", serif;
+  font-family: "Baloo 2", cursive, sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   color: #EA580C;
