@@ -131,7 +131,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
             </div>
 
             {/* Dòng 2: chào mừng Ngày nhà giáo Việt Nam 20/11 */}
-            <p className="mt-1 font-script text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900">
+            <p className="mt-1 font-script text-2xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
