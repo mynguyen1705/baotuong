@@ -1,0 +1,119 @@
+import { MemoryItem, MemoryStationData } from '../types/memories';
+
+/**
+ * 11 Khung Ảnh Kỷ Niệm Ghép Thành Hình Trái Tim Hoàn Chỉnh:
+ * - Hàng 1 (2 ảnh): Hai vòm cong trên đỉnh trái tim (Slot 1 & 2)
+ * - Hàng 2 (3 ảnh): Slot 3 (trái), Slot 4 (Tâm giữa lớn nhất), Slot 5 (phải)
+ * - Hàng 3 (3 ảnh): Ba ảnh nhỏ xếp ngang (Slot 6, 7, 8)
+ * - Hàng 4 (2 ảnh): Hai ảnh thu hẹp dần (Slot 9, 10)
+ * - Hàng 5 (1 ảnh): Một ảnh nhỏ tạo chóp đáy trái tim (Slot 11)
+ */
+export const DEFAULT_MEMORIES_LIST: MemoryItem[] = [
+  // Hàng 1: 2 ảnh hai bên vòm tim
+  {
+    id: 1,
+    row: 1,
+    photoUrl: '/sections/sec-loi-ngo.jpg',
+    caption: 'Tiết sinh hoạt đầu năm tràn ngập tiếng cười và ước mơ mới của tập thể 9A3',
+    date: '05/09/2026',
+    tag: 'Khai giảng',
+  },
+  {
+    id: 2,
+    row: 1,
+    photoUrl: '/sections/sec-truyen-ngan.jpg',
+    caption: 'Những buổi chiều cùng nhau ôn bài bên hành lang lớp học ngập nắng vàng',
+    date: '20/09/2026',
+    tag: 'Giờ học',
+  },
+
+  // Hàng 2: 3 ảnh (Slot 4 ở giữa là tâm trái tim - lớn nhất)
+  {
+    id: 3,
+    row: 2,
+    photoUrl: '/sections/sec-tho.jpg',
+    caption: 'Tiết đọc thơ và ngâm khúc ca tri ân thầy cô giáo thân thương',
+    date: '10/10/2026',
+    tag: 'Văn nghệ',
+  },
+  {
+    id: 4,
+    row: 2,
+    photoUrl: '/backgrounds/bg-classroom-20-11.jpg',
+    caption: 'Bức ảnh kỷ niệm trọn vẹn của lớp 9A3 cùng thầy cô dưới mái trường TH&THCS Hiệp Thạnh',
+    date: '20/11/2026',
+    tag: 'Trọng tâm',
+    isCenterpiece: true,
+  },
+  {
+    id: 5,
+    row: 2,
+    photoUrl: '/sections/sec-mv.jpg',
+    caption: 'Cùng nhau tập luyện giai điệu “Người gieo mầm xanh” chuẩn bị biểu diễn',
+    date: '25/10/2026',
+    tag: 'Giai điệu',
+  },
+
+  // Hàng 3: 3 ảnh ngang nhỏ
+  {
+    id: 6,
+    row: 3,
+    photoUrl: '/sections/sec-tri-an.jpg',
+    caption: 'Những tấm thiệp thủ công tự tay chúng em nắn nót viết từng dòng kính dâng',
+    date: '01/11/2026',
+    tag: 'Tri ân',
+  },
+  {
+    id: 7,
+    row: 3,
+    photoUrl: '/decorations/hoa-phuong.jpg',
+    caption: 'Cành hoa phượng đỏ thắm gắn liền với kỷ niệm mùa hè và những chuyến đò xưa',
+    date: '05/11/2026',
+    tag: 'Kỷ niệm',
+  },
+  {
+    id: 8,
+    row: 3,
+    photoUrl: '/decorations/hoa-huong-duong.jpg',
+    caption: 'Những đóa hoa hướng dương rực rỡ tượng trưng cho lòng biết ơn sâu sắc',
+    date: '08/11/2026',
+    tag: 'Hướng dương',
+  },
+
+  // Hàng 4: 2 ảnh
+  {
+    id: 9,
+    row: 4,
+    photoUrl: '/posters/poster-toan-canh.jpg',
+    caption: 'Tập thể 9A3 hoàn thành bức báo tường số “Chắp Cánh Ước Mơ”',
+    date: '12/11/2026',
+    tag: 'Báo tường',
+  },
+  {
+    id: 10,
+    row: 4,
+    photoUrl: '/backgrounds/bg-main.jpg',
+    caption: 'Góc sân trường rợp bóng cây xanh mát – nơi lưu dấu bao tiếng cười tuổi học trò',
+    date: '15/11/2026',
+    tag: 'Sân trường',
+  },
+
+  // Hàng 5: 1 ảnh đáy tim
+  {
+    id: 11,
+    row: 5,
+    photoUrl: '/sections/sec-tri-an.jpg',
+    caption: 'Mãi khắc ghi công ơn dưỡng dục của thầy cô dưới mái trường mến yêu',
+    date: '20/11/2026',
+    tag: 'Mãi nhớ ơn',
+  },
+];
+
+export const DEFAULT_MEMORIES_DATA: MemoryStationData = {
+  title: 'Trạm ký ức',
+  subtitle: 'Album ảnh lưu giữ khoảnh khắc thanh xuân Chi đội 9A3',
+  quote: 'Nơi lưu trữ tình yêu thương, sự đồng hành.',
+  authorNote: 'Chi đội 9A3 – Niên khóa 2026-2027',
+  lastUpdated: '2026-11-12T00:00:00.000Z',
+  memories: DEFAULT_MEMORIES_LIST,
+};
