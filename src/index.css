@@ -8,10 +8,10 @@
   }
 
   body {
-    background-color: #EBF5EE;
+    background-color: #F4FAF8;
     background-image: url('/backgrounds/bg-main.jpg');
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center top;
     background-size: cover;
     background-attachment: fixed;
     color: #3E2412;
