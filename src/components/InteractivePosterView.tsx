@@ -11,7 +11,6 @@ import {
   Scroll,
   Film,
   Heart,
-  ZoomIn,
   X,
 } from 'lucide-react';
 import { BaoTuongConfig, SectionData, SectionId } from '../types/baotuong';
@@ -43,42 +42,42 @@ const POSTER_HOTSPOTS: {
   {
     id: 'loi-ngo',
     name: '1. Lời ngỏ',
-    left: '10.5%',
+    left: '9.1%',
     top: '38.8%',
-    width: '32.0%',
-    height: '3.3%',
+    width: '32.8%',
+    height: '2.8%',
   },
   {
     id: 'truyen-ngan',
     name: '2. Truyện ngắn',
-    left: '58.0%',
-    top: '47.0%',
-    width: '32.5%',
-    height: '3.3%',
+    left: '58.7%',
+    top: '47.3%',
+    width: '33.8%',
+    height: '2.9%',
   },
   {
     id: 'tho',
     name: '3. Thơ',
-    left: '10.0%',
-    top: '66.4%',
-    width: '33.0%',
-    height: '3.4%',
+    left: '8.3%',
+    top: '68.0%',
+    width: '33.4%',
+    height: '2.4%',
   },
   {
     id: 'mv',
     name: '4. Âm nhạc',
-    left: '58.2%',
-    top: '78.0%',
-    width: '33.0%',
-    height: '3.3%',
+    left: '59.3%',
+    top: '78.2%',
+    width: '34.2%',
+    height: '2.4%',
   },
   {
     id: 'tri-an',
     name: '5. Bài tri ân',
-    left: '34.0%',
-    top: '96.0%',
-    width: '35.5%',
-    height: '3.1%',
+    left: '33.2%',
+    top: '96.3%',
+    width: '37.1%',
+    height: '2.4%',
   },
 ];
 
@@ -116,24 +115,9 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
             BỨC TRANH POSTER TOÀN CẢNH MINH HỌA GỐC TƯƠNG TÁC
            ======================================================== */}
         <div className="mt-8 flex flex-col items-center justify-center relative z-20">
-          {/* Thanh công cụ phụ: Nút phóng to xem ảnh siêu nét */}
-          <div className="mb-2.5 flex items-center justify-between w-full max-w-md sm:max-w-lg md:max-w-xl px-1">
-            <span className="text-xs font-bold text-amber-950/80 flex items-center gap-1.5">
-              <span>🖼️</span> Sơ đồ tương tác 5 chuyên mục
-            </span>
-            <button
-              type="button"
-              onClick={() => setIsZoomModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-white/95 px-3 py-1 text-xs font-bold text-stone-800 shadow-sm transition hover:bg-amber-100 hover:border-amber-500"
-            >
-              <ZoomIn className="h-3.5 w-3.5 text-poster-orange" />
-              <span>Phóng to xem HD</span>
-            </button>
-          </div>
-
           <div className="relative w-full max-w-md sm:max-w-lg md:max-w-xl rounded-3xl border-4 border-amber-400 bg-amber-100 p-2 sm:p-3 shadow-2xl overflow-hidden">
             <div className="relative w-full overflow-hidden rounded-2xl shadow-inner bg-[#fff9ed]">
-              {/* Ảnh minh họa poster với độ phân giải cao 2x sắc nét */}
+              {/* Ảnh minh họa poster với độ phân giải cao 2x sắc nét (đã cân chỉnh giảm độ chói sáng hài hòa) */}
               <img
                 data-testid="interactive-poster-image"
                 src="/posters/poster-toan-canh.jpg"
@@ -141,7 +125,7 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
                 alt="Báo tường số Chắp Cánh Ước Mơ - Chi đội 9A3"
                 className="w-full h-auto block select-none"
                 style={{
-                  aspectRatio: '506 / 1024',
+                  aspectRatio: '482 / 1024',
                   imageRendering: 'auto',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'translateZ(0)',

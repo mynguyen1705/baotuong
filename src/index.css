@@ -8,10 +8,10 @@
   }
 
   body {
-    background-color: #F8ECD2;
-    background-image: url('/backgrounds/bg-classroom-20-11.jpg');
+    background-color: #FFFDF8;
+    background-image: url('/backgrounds/bg-main.jpg');
     background-repeat: no-repeat;
-    background-position: center top;
+    background-position: center center;
     background-size: cover;
     background-attachment: fixed;
     color: #3E2412;
