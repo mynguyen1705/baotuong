@@ -1,8 +1,8 @@
-export type MemorySlotId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type MemorySlotId = number;
 
 export interface MemoryItem {
   id: MemorySlotId;
-  row: 1 | 2 | 3 | 4 | 5;
+  row?: number;
   photoUrl: string;
   caption?: string;
   date?: string;
@@ -39,3 +39,4 @@ export interface MemoriesApiResponse {
   isOwner: boolean;
   error?: string;
 }
+

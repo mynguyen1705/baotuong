@@ -58,39 +58,26 @@ export const MemoryLightboxModal: React.FC<MemoryLightboxModalProps> = ({ item, 
             />
           </div>
 
-          {/* Phần thông tin chân ảnh dạng bưu thiếp ấm áp */}
-          <div className="border-t border-rose-100 bg-gradient-to-b from-[#FFF7F9] to-white p-4 sm:p-5">
+          {/* Phần thông tin chân ảnh tối giản, tinh tế */}
+          <div className="border-t border-rose-100 bg-gradient-to-b from-[#FFF7F9] to-white px-4 py-3 sm:px-5">
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-rose-800">
-              <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-0.5 text-rose-800">
-                <Heart className="h-3 w-3 fill-rose-500 text-rose-500" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100/90 px-3 py-1 text-rose-800">
+                <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
                 <span>Khoảnh khắc #{item.id}</span>
                 {item.isCenterpiece && <span className="ml-1 text-amber-600 font-extrabold">• Tâm điểm</span>}
               </span>
 
               {item.date && (
-                <span className="inline-flex items-center gap-1 text-stone-500">
+                <span className="inline-flex items-center gap-1 text-stone-500 font-medium">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>{item.date}</span>
                 </span>
               )}
             </div>
-
-            {/* Lời nhắn / Chú thích kỷ niệm */}
-            <p className="mt-2.5 font-serif text-sm sm:text-base font-medium leading-relaxed text-stone-800 italic">
-              “{item.caption || 'Một khoảnh khắc đong đầy cảm xúc của tập thể Chi đội 9A3.'}”
-            </p>
-
-            {item.tag && (
-              <div className="mt-3 flex items-center gap-1.5 text-xs text-rose-700">
-                <Tag className="h-3.5 w-3.5" />
-                <span className="rounded-md bg-white border border-rose-200 px-2 py-0.5 font-semibold">
-                  {item.tag}
-                </span>
-              </div>
-            )}
           </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
   );
 };
+

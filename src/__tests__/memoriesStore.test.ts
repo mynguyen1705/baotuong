@@ -26,10 +26,10 @@ describe('MemoriesStore Backend Unit Tests', () => {
   it('khởi tạo dữ liệu mặc định khi file chưa tồn tại', async () => {
     const data = await store.getStationData();
     expect(data.title).toContain('Trạm ký ức');
-    expect(data.memories.length).toBe(11);
+    expect(data.memories.length).toBe(12);
   });
 
-  it('cho phép Owner cập nhật ảnh và lời nhắn cho từng slot (1..11)', async () => {
+  it('cho phép Owner cập nhật ảnh và lời nhắn cho từng slot (1..12)', async () => {
     const updated = await store.updateSlot(4, {
       photoUrl: 'data:image/jpeg;base64,mockphoto',
       caption: 'Ảnh mới chụp ngày 20/11 lớp 9A3',
@@ -47,9 +47,8 @@ describe('MemoriesStore Backend Unit Tests', () => {
     expect(slot4?.caption).toBe('Ảnh mới chụp ngày 20/11 lớp 9A3');
   });
 
-  it('báo lỗi khi cập nhật slot không hợp lệ (ngoài khoảng 1..11)', async () => {
+  it('báo lỗi khi cập nhật slot không hợp lệ (ngoài khoảng 1..12)', async () => {
     await expect(
-      // @ts-expect-error test invalid slot id
       store.updateSlot(99, { photoUrl: 'test' })
     ).rejects.toThrow(/không hợp lệ/i);
   });
@@ -67,3 +66,4 @@ describe('MemoriesStore Backend Unit Tests', () => {
     expect(current.title).toBe('Khoảnh Khắc Đẹp Nhất 9A3');
   });
 });
+

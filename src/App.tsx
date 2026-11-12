@@ -25,7 +25,7 @@ import { QrCodeModal } from './components/QrCodeModal';
 import { WishesModal } from './components/WishesModal';
 import { TeacherSummaryBoardSection } from './components/TeacherSummaryBoardSection';
 import { TeacherBoardModal } from './components/TeacherBoardModal';
-import { MemoryStationSection } from './components/MemoryStationSection';
+import { MemoryStationModal } from './components/MemoryStationModal';
 import { isLocalhostClient } from './utils/isLocalhostClient';
 import { mergeAllTeachersWithLocal } from './utils/impressionsClient';
 
@@ -66,6 +66,9 @@ export const App: React.FC = () => {
   );
   const [memoriesData, setMemoriesData] = useState<MemoryStationData>(() =>
     structuredClone(DEFAULT_MEMORIES_DATA)
+  );
+  const [isMemoriesModalOpen, setIsMemoriesModalOpen] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.location.hash === '#tram-ky-uc' : false
   );
   const [isOwner, setIsOwner] = useState<boolean>(() => isLocalhostClient());
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
@@ -142,13 +145,20 @@ export const App: React.FC = () => {
     []
   );
 
-  const scrollToMemories = useCallback(() => {
+  const openMemoriesModal = useCallback(() => {
+    setActiveSectionId(null);
+    setWishesModalMode(null);
+    setTeacherModalMode(null);
+    setIsMemoriesModalOpen(true);
     if (typeof window !== 'undefined') {
       window.location.hash = '#tram-ky-uc';
     }
-    const el = document.getElementById('tram-ky-uc');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const closeMemoriesModal = useCallback(() => {
+    setIsMemoriesModalOpen(false);
+    if (typeof window !== 'undefined' && window.location.hash === '#tram-ky-uc') {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   }, []);
 
@@ -198,6 +208,7 @@ export const App: React.FC = () => {
   const openSection = useCallback((id: SectionId) => {
     setWishesModalMode(null);
     setTeacherModalMode(null);
+    setIsMemoriesModalOpen(false);
     setActiveSectionId(id);
     if (id === 'tho' || id === 'mv') {
       setIsBgMusicPlaying(false);
@@ -217,6 +228,7 @@ export const App: React.FC = () => {
   const openWishesModal = useCallback((mode: WishesModalMode) => {
     setActiveSectionId(null);
     setTeacherModalMode(null);
+    setIsMemoriesModalOpen(false);
     setWishesModalMode(mode);
     if (typeof window !== 'undefined') {
       window.location.hash = mode === 'view' ? '#xem-loi-chuc' : '#gui-loi-chuc';
@@ -234,6 +246,7 @@ export const App: React.FC = () => {
     (mode: TeacherModalMode, teacherId?: string) => {
       setActiveSectionId(null);
       setWishesModalMode(null);
+      setIsMemoriesModalOpen(false);
       if (teacherId) {
         setSelectedTeacherId(teacherId);
       }
@@ -265,12 +278,10 @@ export const App: React.FC = () => {
         setActiveSectionId(null);
         setWishesModalMode(null);
         setTeacherModalMode(null);
-        const el = document.getElementById('tram-ky-uc');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
+        setIsMemoriesModalOpen(true);
         return;
       }
+      setIsMemoriesModalOpen(false);
       const wishesMode = parseWishesHash(currentHash);
       if (wishesMode) {
         setActiveSectionId(null);
@@ -425,7 +436,7 @@ export const App: React.FC = () => {
         onToggleBgMusic={() => setIsBgMusicPlaying((prev) => !prev)}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
-        onOpenMemories={scrollToMemories}
+        onOpenMemories={openMemoriesModal}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);
@@ -472,14 +483,6 @@ export const App: React.FC = () => {
           onUpdateTeacherPhoto={isOwner ? handleUpdateTeacherPhotoInline : undefined}
           onDeleteTeacher={isOwner ? handleDeleteTeacherInline : undefined}
         />
-
-        {/* Phân Khu Bưu Thiếp "Trạm Ký Ức" - Lưới 11 Khung Ảnh Trái Tim */}
-        <MemoryStationSection
-          data={memoriesData}
-          isOwner={isOwner}
-          onUpdateSlot={handleUpdateMemorySlot}
-          onUpdateMeta={handleUpdateMemoryMeta}
-        />
       </main>
 
       <EditorialFooter
@@ -487,7 +490,7 @@ export const App: React.FC = () => {
         onSelectSection={openSection}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
-        onOpenMemories={scrollToMemories}
+        onOpenMemories={openMemoriesModal}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);
@@ -520,6 +523,16 @@ export const App: React.FC = () => {
         onSelectTeacher={(id) => setSelectedTeacherId(id)}
         onTeachersUpdated={(nextTeachers) => setTeachers(nextTeachers)}
         onRefreshTeachers={fetchTeachers}
+      />
+
+      {/* Cửa sổ bật lên độc lập (Modal) "Trạm Ký Ức" - Lựa chọn 2 */}
+      <MemoryStationModal
+        isOpen={isMemoriesModalOpen}
+        onClose={closeMemoriesModal}
+        data={memoriesData}
+        isOwner={isOwner}
+        onUpdateSlot={handleUpdateMemorySlot}
+        onUpdateMeta={handleUpdateMemoryMeta}
       />
 
       <QrCodeModal

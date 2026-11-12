@@ -4,7 +4,7 @@ import { MemoryStationSection } from '../components/MemoryStationSection';
 import { DEFAULT_MEMORIES_DATA } from '../data/defaultMemories';
 
 describe('MemoryStationSection Component Tests', () => {
-  it('hiển thị đầy đủ tiêu đề "Trạm ký ức", trích dẫn góc trái và 11 khung ảnh', () => {
+  it('hiển thị đầy đủ tiêu đề "Trạm ký ức", trích dẫn góc trái và 12 khung ảnh', () => {
     render(
       <MemoryStationSection
         data={DEFAULT_MEMORIES_DATA}
@@ -16,7 +16,7 @@ describe('MemoryStationSection Component Tests', () => {
 
     expect(screen.getByText(/Trạm ký ức/i)).toBeInTheDocument();
     expect(screen.getByText(/Nơi lưu trữ tình yêu thương/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(11);
+    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(12);
   });
 
   it('mở Lightbox phóng to ảnh khi nhấp vào một khung ảnh', () => {
@@ -33,7 +33,7 @@ describe('MemoryStationSection Component Tests', () => {
     fireEvent.click(slot4);
 
     expect(screen.getByRole('dialog', { name: /Ảnh kỷ niệm/i })).toBeInTheDocument();
-    expect(screen.getByText(/Bức ảnh kỷ niệm trọn vẹn của lớp 9A3/i)).toBeInTheDocument();
+    expect(screen.getByText(/Khoảnh khắc #4/i)).toBeInTheDocument();
     expect(screen.getByText(/20\/11\/2026/i)).toBeInTheDocument();
 
     // Đóng Lightbox
@@ -66,3 +66,4 @@ describe('MemoryStationSection Component Tests', () => {
     expect(screen.getByRole('button', { name: /Chỉnh sửa tiêu đề & trích dẫn/i })).toBeInTheDocument();
   });
 });
+

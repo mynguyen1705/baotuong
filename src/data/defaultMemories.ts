@@ -9,103 +9,90 @@ import { MemoryItem, MemoryStationData } from '../types/memories';
  * - Hàng 5 (1 ảnh): Một ảnh nhỏ tạo chóp đáy trái tim (Slot 11)
  */
 export const DEFAULT_MEMORIES_LIST: MemoryItem[] = [
-  // Hàng 1: 2 ảnh hai bên vòm tim
   {
     id: 1,
     row: 1,
-    photoUrl: '/sections/sec-loi-ngo.jpg',
-    caption: 'Tiết sinh hoạt đầu năm tràn ngập tiếng cười và ước mơ mới của tập thể 9A3',
+    photoUrl: '/memories/photo-1.jpg',
+    caption: 'Góc sân trường TH&THCS Hiệp Thạnh rợp bóng mát cây xanh',
     date: '05/09/2026',
-    tag: 'Khai giảng',
   },
   {
     id: 2,
     row: 1,
-    photoUrl: '/sections/sec-truyen-ngan.jpg',
-    caption: 'Những buổi chiều cùng nhau ôn bài bên hành lang lớp học ngập nắng vàng',
+    photoUrl: '/memories/photo-2.jpg',
+    caption: 'Lớp học trang trí hoa phấn rực rỡ chào mừng 20/11',
     date: '20/09/2026',
-    tag: 'Giờ học',
   },
-
-  // Hàng 2: 3 ảnh (Slot 4 ở giữa là tâm trái tim - lớn nhất)
   {
     id: 3,
     row: 2,
-    photoUrl: '/sections/sec-tho.jpg',
-    caption: 'Tiết đọc thơ và ngâm khúc ca tri ân thầy cô giáo thân thương',
+    photoUrl: '/memories/photo-3.jpg',
+    caption: 'Chùm hoa phượng đỏ thắm góc sân trường',
     date: '10/10/2026',
-    tag: 'Văn nghệ',
   },
   {
     id: 4,
     row: 2,
-    photoUrl: '/backgrounds/bg-classroom-20-11.jpg',
-    caption: 'Bức ảnh kỷ niệm trọn vẹn của lớp 9A3 cùng thầy cô dưới mái trường TH&THCS Hiệp Thạnh',
+    photoUrl: '/memories/photo-4.jpg',
+    caption: 'Đóa hoa hướng dương tươi thắm hướng về thầy cô thân thương',
     date: '20/11/2026',
-    tag: 'Trọng tâm',
     isCenterpiece: true,
   },
   {
     id: 5,
     row: 2,
-    photoUrl: '/sections/sec-mv.jpg',
-    caption: 'Cùng nhau tập luyện giai điệu “Người gieo mầm xanh” chuẩn bị biểu diễn',
+    photoUrl: '/memories/photo-5.jpg',
+    caption: 'Kỷ niệm tiết học Ngữ Văn tràn ngập tiếng cười',
     date: '25/10/2026',
-    tag: 'Giai điệu',
   },
-
-  // Hàng 3: 3 ảnh ngang nhỏ
   {
     id: 6,
     row: 3,
-    photoUrl: '/sections/sec-tri-an.jpg',
-    caption: 'Những tấm thiệp thủ công tự tay chúng em nắn nót viết từng dòng kính dâng',
+    photoUrl: '/memories/photo-6.jpg',
+    caption: 'Nụ cười dịu hiền và sự tận tâm của cô giáo',
     date: '01/11/2026',
-    tag: 'Tri ân',
   },
   {
     id: 7,
     row: 3,
-    photoUrl: '/decorations/hoa-phuong.jpg',
-    caption: 'Cành hoa phượng đỏ thắm gắn liền với kỷ niệm mùa hè và những chuyến đò xưa',
+    photoUrl: '/memories/photo-7.jpg',
+    caption: 'Những bài giảng ân cần chỉ dẫn từng học trò',
     date: '05/11/2026',
-    tag: 'Kỷ niệm',
   },
   {
     id: 8,
     row: 3,
-    photoUrl: '/decorations/hoa-huong-duong.jpg',
-    caption: 'Những đóa hoa hướng dương rực rỡ tượng trưng cho lòng biết ơn sâu sắc',
+    photoUrl: '/memories/photo-8.jpg',
+    caption: 'Khoảnh khắc thân thương bên thầy cô',
     date: '08/11/2026',
-    tag: 'Hướng dương',
   },
-
-  // Hàng 4: 2 ảnh
   {
     id: 9,
     row: 4,
-    photoUrl: '/posters/poster-toan-canh.jpg',
-    caption: 'Tập thể 9A3 hoàn thành bức báo tường số “Chắp Cánh Ước Mơ”',
+    photoUrl: '/memories/photo-9.jpg',
+    caption: 'Nhiệt huyết và niềm tin chắp cánh cho bao thế hệ học sinh',
     date: '12/11/2026',
-    tag: 'Báo tường',
   },
   {
     id: 10,
     row: 4,
-    photoUrl: '/backgrounds/bg-main.jpg',
-    caption: 'Góc sân trường rợp bóng cây xanh mát – nơi lưu dấu bao tiếng cười tuổi học trò',
+    photoUrl: '/memories/photo-10.jpg',
+    caption: 'Lời dạy bảo chân thành khắc sâu trong tâm trí chúng em',
     date: '15/11/2026',
-    tag: 'Sân trường',
   },
-
-  // Hàng 5: 1 ảnh đáy tim
   {
     id: 11,
     row: 5,
-    photoUrl: '/sections/sec-tri-an.jpg',
-    caption: 'Mãi khắc ghi công ơn dưỡng dục của thầy cô dưới mái trường mến yêu',
+    photoUrl: '/memories/photo-11.jpg',
+    caption: 'Thầy cô luôn là ngọn hải đăng soi sáng con đường tri thức',
+    date: '18/11/2026',
+  },
+  {
+    id: 12,
+    row: 5,
+    photoUrl: '/memories/photo-12.jpg',
+    caption: 'Tri ân người gieo mầm xanh thầm lặng cho đời',
     date: '20/11/2026',
-    tag: 'Mãi nhớ ơn',
   },
 ];
 
@@ -117,3 +104,4 @@ export const DEFAULT_MEMORIES_DATA: MemoryStationData = {
   lastUpdated: '2026-11-12T00:00:00.000Z',
   memories: DEFAULT_MEMORIES_LIST,
 };
+

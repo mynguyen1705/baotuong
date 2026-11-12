@@ -77,7 +77,7 @@ describe('Memories API & RBAC Endpoint Tests', () => {
     expect(getStatusCode()).toBe(200);
     const body = getBody();
     expect(body.success).toBe(true);
-    expect(body.data.memories.length).toBe(11);
+    expect(body.data.memories.length).toBe(12);
     expect(body.isOwner).toBe(false); // Guest không phải Owner
   });
 
@@ -134,3 +134,4 @@ describe('Memories API & RBAC Endpoint Tests', () => {
     expect(getBody().data.title).toBe('Trạm Kỷ Niệm 9A3');
   });
 });
+

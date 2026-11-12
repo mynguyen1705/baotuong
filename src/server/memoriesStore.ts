@@ -43,7 +43,7 @@ export class MemoriesStore {
     try {
       const content = await fs.readFile(this.filePath, 'utf-8');
       const parsed = JSON.parse(content);
-      if (parsed && Array.isArray(parsed.memories) && parsed.memories.length === 11) {
+      if (parsed && Array.isArray(parsed.memories) && parsed.memories.length >= 11) {
         this.cachedData = parsed;
         return this.cachedData!;
       }
@@ -66,8 +66,8 @@ export class MemoriesStore {
   async updateSlot(slotId: MemorySlotId, payload: UpdateMemoryPayload): Promise<MemoryItem> {
     return this.withLock(async () => {
       const numId = Number(slotId);
-      if (!Number.isInteger(numId) || numId < 1 || numId > 11) {
-        throw new Error(`Mã vị trí ảnh không hợp lệ: ${slotId} (phải từ 1 đến 11)`);
+      if (!Number.isInteger(numId) || numId < 1 || numId > 12) {
+        throw new Error(`Mã vị trí ảnh không hợp lệ: ${slotId} (phải từ 1 đến 12)`);
       }
 
       await this.loadDataInternal();

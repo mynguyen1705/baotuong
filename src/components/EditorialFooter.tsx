@@ -159,7 +159,7 @@ export const EditorialFooter: React.FC<EditorialFooterProps> = ({
                 className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-rose-300 bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2.5 text-xs sm:text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
               >
                 <Camera className="h-4 w-4" />
-                <span>Trạm Ký Ức (11 Khung Ảnh Trái Tim)</span>
+                <span>Trạm Ký Ức (Album Kỷ Niệm 9A3)</span>
               </button>
             )}
 

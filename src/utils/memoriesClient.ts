@@ -18,7 +18,7 @@ export function loadMemoriesFromLocal(): MemoryStationData | null {
     const raw = window.localStorage.getItem(MEMORIES_LOCAL_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && Array.isArray(parsed.memories) && parsed.memories.length === 11) {
+    if (parsed && Array.isArray(parsed.memories) && parsed.memories.length >= 11) {
       return parsed as MemoryStationData;
     }
   } catch {
@@ -168,3 +168,4 @@ export async function saveStationMetaClient(
 
   return { success: true, data: current };
 }
+
