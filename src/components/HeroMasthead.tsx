@@ -140,28 +140,28 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               <motion.div
                 animate={{ rotate: [-2, 3, -2] }}
                 transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-mr-3 sm:-mr-5 self-end mb-2"
+                className="-mr-3 sm:-mr-6 self-end mb-2"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-20 sm:w-32 md:w-40 h-auto drop-shadow-md"
+                  className="w-24 sm:w-36 md:w-44 h-auto drop-shadow-md"
                 />
               </motion.div>
 
               <h1 className="relative z-10 leading-tight sm:leading-snug select-none text-center">
                 <span className="relative inline-block">
-                  <span className="title-2d-orange block text-4xl sm:text-6xl md:text-7xl tracking-wider sm:tracking-[0.09em]">
+                  <span className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] tracking-wider sm:tracking-[0.09em]">
                     CHẮP CÁNH
                   </span>
                   {/* Ngôi sao lấp lánh 2D hai bên tiêu đề theo ảnh mẫu */}
-                  <span className="pointer-events-none absolute -left-5 sm:-left-7 top-1/2 -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -left-6 sm:-left-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
-                  <span className="pointer-events-none absolute -right-5 sm:-right-7 top-1/2 -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -right-6 sm:-right-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
                 </span>
-                <span className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-3.5">
+                <span className="title-2d-orange block text-6xl sm:text-8xl md:text-9xl lg:text-[6.5rem] tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-4">
                   ƯỚC MƠ
                 </span>
               </h1>
@@ -169,11 +169,11 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               <motion.div
                 animate={{ rotate: [2, -3, 2] }}
                 transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-ml-3 sm:-ml-5 self-end mb-2"
+                className="-ml-3 sm:-ml-6 self-end mb-2"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-20 sm:w-32 md:w-40 h-auto drop-shadow-md"
+                  className="w-24 sm:w-36 md:w-44 h-auto drop-shadow-md"
                 />
               </motion.div>
             </div>
