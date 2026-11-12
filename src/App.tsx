@@ -3,6 +3,18 @@ import { BAO_TUONG_DATA, getSectionById } from './data/baotuongData';
 import { SectionId } from './types/baotuong';
 import { WishesModalMode } from './types/wishes';
 import { DEFAULT_TEACHERS_SEED, TeacherModalMode, TeacherProfile } from './types/teachers';
+import { DEFAULT_MEMORIES_DATA } from './data/defaultMemories';
+import {
+  MemorySlotId,
+  MemoryStationData,
+  UpdateMemoryPayload,
+  UpdateStationMetaPayload,
+} from './types/memories';
+import {
+  fetchMemoriesClient,
+  saveMemorySlotClient,
+  saveStationMetaClient,
+} from './utils/memoriesClient';
 import { FallingPetals } from './components/FallingPetals';
 import { HeroMasthead } from './components/HeroMasthead';
 import { InfographicGrid } from './components/InfographicGrid';
@@ -13,6 +25,7 @@ import { QrCodeModal } from './components/QrCodeModal';
 import { WishesModal } from './components/WishesModal';
 import { TeacherSummaryBoardSection } from './components/TeacherSummaryBoardSection';
 import { TeacherBoardModal } from './components/TeacherBoardModal';
+import { MemoryStationSection } from './components/MemoryStationSection';
 import { isLocalhostClient } from './utils/isLocalhostClient';
 import { mergeAllTeachersWithLocal } from './utils/impressionsClient';
 
@@ -51,6 +64,9 @@ export const App: React.FC = () => {
   const [teachers, setTeachers] = useState<TeacherProfile[]>(() =>
     structuredClone(DEFAULT_TEACHERS_SEED)
   );
+  const [memoriesData, setMemoriesData] = useState<MemoryStationData>(() =>
+    structuredClone(DEFAULT_MEMORIES_DATA)
+  );
   const [isOwner, setIsOwner] = useState<boolean>(() => isLocalhostClient());
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
     DEFAULT_TEACHERS_SEED[0]?.id ?? null
@@ -86,9 +102,55 @@ export const App: React.FC = () => {
     }
   }, []);
 
+  const fetchMemories = useCallback(async () => {
+    try {
+      const res = await fetchMemoriesClient();
+      setMemoriesData(res.data);
+      if (typeof res.isOwner === 'boolean') {
+        setIsOwner(res.isOwner && isLocalhostClient());
+      }
+    } catch {
+      // Fallback
+    }
+  }, []);
+
   useEffect(() => {
     fetchTeachers();
-  }, [fetchTeachers]);
+    fetchMemories();
+  }, [fetchTeachers, fetchMemories]);
+
+  const handleUpdateMemorySlot = useCallback(
+    async (slotId: MemorySlotId, payload: UpdateMemoryPayload) => {
+      const res = await saveMemorySlotClient(slotId, payload);
+      if (res.success && res.item) {
+        setMemoriesData((prev) => {
+          const memories = prev.memories.map((m) => (m.id === slotId ? res.item! : m));
+          return { ...prev, memories, lastUpdated: new Date().toISOString() };
+        });
+      }
+    },
+    []
+  );
+
+  const handleUpdateMemoryMeta = useCallback(
+    async (payload: UpdateStationMetaPayload) => {
+      const res = await saveStationMetaClient(payload);
+      if (res.success && res.data) {
+        setMemoriesData(res.data);
+      }
+    },
+    []
+  );
+
+  const scrollToMemories = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.location.hash = '#tram-ky-uc';
+    }
+    const el = document.getElementById('tram-ky-uc');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
   const handleUpdateTeacherPhotoInline = useCallback(
     async (teacherId: string, photoDataUrl: string) => {
@@ -199,6 +261,16 @@ export const App: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const currentHash = window.location.hash;
+      if (currentHash === '#tram-ky-uc') {
+        setActiveSectionId(null);
+        setWishesModalMode(null);
+        setTeacherModalMode(null);
+        const el = document.getElementById('tram-ky-uc');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+        return;
+      }
       const wishesMode = parseWishesHash(currentHash);
       if (wishesMode) {
         setActiveSectionId(null);
@@ -353,6 +425,7 @@ export const App: React.FC = () => {
         onToggleBgMusic={() => setIsBgMusicPlaying((prev) => !prev)}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
+        onOpenMemories={scrollToMemories}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);
@@ -399,6 +472,14 @@ export const App: React.FC = () => {
           onUpdateTeacherPhoto={isOwner ? handleUpdateTeacherPhotoInline : undefined}
           onDeleteTeacher={isOwner ? handleDeleteTeacherInline : undefined}
         />
+
+        {/* Phân Khu Bưu Thiếp "Trạm Ký Ức" - Lưới 11 Khung Ảnh Trái Tim */}
+        <MemoryStationSection
+          data={memoriesData}
+          isOwner={isOwner}
+          onUpdateSlot={handleUpdateMemorySlot}
+          onUpdateMeta={handleUpdateMemoryMeta}
+        />
       </main>
 
       <EditorialFooter
@@ -406,6 +487,7 @@ export const App: React.FC = () => {
         onSelectSection={openSection}
         onOpenWishes={openWishesModal}
         onOpenTeacherBoard={(mode) => openTeacherModal(mode)}
+        onOpenMemories={scrollToMemories}
         onOpenQrModal={() => {
           setQrHighlightSectionId(null);
           setQrModalOpen(true);

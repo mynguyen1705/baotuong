@@ -91,4 +91,18 @@ describe('Báo tường số 9A3 App Interactions (Typographic Poster Style)', (
       screen.getByText(/Biểu Mẫu Thêm Giáo Viên Vào Bảng Tổng Hợp/i)
     ).toBeInTheDocument();
   });
+
+  it('hiển thị Phân Khu Trạm Ký Ức với 11 khung ảnh trái tim và hỗ trợ mở Lightbox xem cận cảnh', () => {
+    window.location.hash = '';
+    render(<App />);
+
+    expect(screen.getByRole('heading', { name: /Trạm ký ức/i })).toBeInTheDocument();
+    expect(screen.getByText(/Nơi lưu trữ tình yêu thương, sự đồng hành/i)).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(11);
+
+    // Bấm vào ảnh slot 4 để mở Lightbox
+    const slot4 = screen.getByTestId('heart-photo-slot-4');
+    fireEvent.click(slot4);
+    expect(screen.getByRole('dialog', { name: /Ảnh kỷ niệm/i })).toBeInTheDocument();
+  });
 });

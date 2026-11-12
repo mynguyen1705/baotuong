@@ -10,6 +10,7 @@ import {
   Send,
   BookHeart,
   GraduationCap,
+  Camera,
 } from 'lucide-react';
 import { BaoTuongConfig } from '../types/baotuong';
 import { WishesModalMode } from '../types/wishes';
@@ -26,6 +27,7 @@ export interface HeroMastheadProps {
   onOpenQrModal: () => void;
   onOpenWishes?: (mode: WishesModalMode) => void;
   onOpenTeacherBoard?: (mode: TeacherModalMode) => void;
+  onOpenMemories?: () => void;
   isBgMusicPlaying?: boolean;
   onToggleBgMusic?: () => void;
 }
@@ -37,6 +39,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
   onOpenQrModal,
   onOpenWishes,
   onOpenTeacherBoard,
+  onOpenMemories,
   isBgMusicPlaying = false,
   onToggleBgMusic,
 }) => {
@@ -253,6 +256,19 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                 >
                   <GraduationCap className="h-4 w-4" />
                   <span>Bảng Tổng Hợp Giáo Viên</span>
+                </button>
+              </div>
+            )}
+
+            {onOpenMemories && (
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={onOpenMemories}
+                  className="inline-flex items-center gap-1.5 rounded-full border-2 border-rose-400 bg-gradient-to-r from-rose-500 to-pink-500 px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-extrabold text-white shadow-md transition hover:brightness-105 touch-manipulation"
+                >
+                  <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                  <span>Trạm Ký Ức</span>
                 </button>
               </div>
             )}

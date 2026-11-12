@@ -144,7 +144,8 @@ export function memoriesApiPlugin(options?: { filePath?: string }): Plugin {
           }
         } catch (err) {
           console.error('[memoriesApiPlugin Error]', err);
-          if (!res.headersSent) {
+          const hasSent = Boolean((res as unknown as { headersSent?: boolean }).headersSent);
+          if (!hasSent) {
             sendJson(res, 500, {
               success: false,
               error: 'Lỗi máy chủ nội bộ khi xử lý Trạm Ký Ức',

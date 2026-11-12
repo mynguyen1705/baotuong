@@ -43,7 +43,7 @@ export const HeartCollageGrid: React.FC<HeartCollageGridProps> = ({
             onSelectMemory(item);
           }
         }}
-        aria-label={`Xem ảnh kỷ niệm ô số ${item.id}: ${item.caption || item.tag || 'Khoảnh khắc 9A3'}`}
+        aria-label={`Xem ảnh kỷ niệm ô số ${item.id}`}
         className={`group relative cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-white/95 bg-rose-50 shadow-[0_4px_16px_rgba(244,63,94,0.12)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(244,63,94,0.24)] ${sizeClasses} ${aspectClass}`}
       >
         {/* Ảnh kỷ niệm hiển thị cover sắc nét */}

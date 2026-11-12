@@ -13,6 +13,7 @@ import {
   Scroll,
   Film,
   Heart,
+  Camera,
 } from 'lucide-react';
 import { BaoTuongConfig, SectionId } from '../types/baotuong';
 import { WishesModalMode } from '../types/wishes';
@@ -24,6 +25,7 @@ export interface EditorialFooterProps {
   onOpenQrModal: () => void;
   onOpenWishes?: (mode: WishesModalMode) => void;
   onOpenTeacherBoard?: (mode: TeacherModalMode) => void;
+  onOpenMemories?: () => void;
 }
 
 export const EditorialFooter: React.FC<EditorialFooterProps> = ({
@@ -32,6 +34,7 @@ export const EditorialFooter: React.FC<EditorialFooterProps> = ({
   onOpenQrModal,
   onOpenWishes,
   onOpenTeacherBoard,
+  onOpenMemories,
 }) => {
   return (
     <footer className="mt-12 border-t-2 border-amber-300 bg-gradient-to-b from-amber-100/70 to-amber-200/50 px-4 py-10 sm:px-6 lg:px-8">
@@ -147,6 +150,17 @@ export const EditorialFooter: React.FC<EditorialFooterProps> = ({
                   <span>Biểu Mẫu Giáo Viên & Ảnh</span>
                 </button>
               </div>
+            )}
+
+            {onOpenMemories && (
+              <button
+                type="button"
+                onClick={onOpenMemories}
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-rose-300 bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2.5 text-xs sm:text-sm font-extrabold text-white shadow-sm transition hover:brightness-105"
+              >
+                <Camera className="h-4 w-4" />
+                <span>Trạm Ký Ức (11 Khung Ảnh Trái Tim)</span>
+              </button>
             )}
 
             <button
