@@ -46,36 +46,36 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
   return (
     <header className="relative overflow-hidden pt-4 pb-6 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl relative z-20">
-        {/* Thanh công cụ thông tin & tiện ích cân đối phía trên (Trường, Lớp 9A3, Chủ đề, Nhạc nền, Mã QR) */}
+        {/* Thanh công cụ thông tin & tiện ích cân đối phía trên: Hàng trên là Chủ đề, Hàng dưới là Nhạc nền & Mã QR (luôn căn giữa) */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 md:gap-4 rounded-2xl md:rounded-full border-2 border-amber-300/90 bg-white/90 px-4 md:px-5 py-2 md:py-1.5 shadow-sm backdrop-blur-sm max-w-4xl"
+          className="mx-auto flex flex-col items-center justify-center gap-2 sm:gap-2.5 rounded-2xl sm:rounded-3xl border-2 border-amber-300/90 bg-white/90 px-4 sm:px-6 py-2 sm:py-2.5 shadow-sm backdrop-blur-sm max-w-3xl text-center"
         >
-          {/* Cụm thông tin: Trường - Lớp - Chủ đề (Cân giữa khi xuống dòng trên mobile/tablet, căn trái trên desktop) */}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs sm:text-sm font-bold text-stone-800">
+          {/* HÀNG TRÊN: Trường - Lớp - Chữ Chủ đề (Căn giữa tuyệt đối) */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm font-bold text-stone-800">
             <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-extrabold text-white shadow-xs">
               <Award className="h-3.5 w-3.5 shrink-0" />
               <span>{config.schoolName}</span>
             </span>
-            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-amber-950 border border-amber-300">
+            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs sm:text-sm text-amber-950 border border-amber-300">
               {config.className}
             </span>
             <span className="text-stone-300 font-bold">•</span>
-            <span className="text-xs font-semibold text-red-800">
+            <span className="text-xs sm:text-sm font-semibold text-red-800">
               Chủ đề: “{config.competitionTheme}”
             </span>
           </div>
 
-          {/* Cụm nút bấm: Nhạc nền & Mã QR (Cân giữa khi xuống dòng trên mobile/tablet, căn phải trên desktop) */}
-          <div className="flex flex-wrap items-center justify-center md:justify-end gap-2">
+          {/* HÀNG DƯỚI: Nút Nhạc nền & Nút Mã QR (Căn giữa tuyệt đối) */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
             {onToggleBgMusic && (
               <button
                 type="button"
                 onClick={onToggleBgMusic}
                 aria-label={isBgMusicPlaying ? 'Tắt nhạc nền 20/11' : 'Bật nhạc nền 20/11'}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition shadow-xs ${
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 sm:px-3.5 py-1 text-xs font-bold transition shadow-xs ${
                   isBgMusicPlaying
                     ? 'border-amber-600 bg-amber-400 text-stone-950 shadow-inner'
                     : 'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100'
@@ -97,7 +97,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
             <button
               type="button"
               onClick={onOpenQrModal}
-              className="inline-flex items-center gap-1.5 rounded-full border-2 border-sky-500 bg-sky-600 px-3 py-1 text-xs font-extrabold text-white shadow-xs transition hover:bg-sky-700 active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-full border-2 border-sky-500 bg-sky-600 px-3 sm:px-3.5 py-1 text-xs font-extrabold text-white shadow-xs transition hover:bg-sky-700 active:scale-95"
             >
               <QrCode className="h-3.5 w-3.5" />
               <span>Mã QR & Link Nộp Bài</span>
