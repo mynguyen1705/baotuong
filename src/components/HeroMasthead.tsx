@@ -151,27 +151,100 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                 />
               </motion.div>
 
-              <h1 className="relative z-10 leading-tight sm:leading-snug select-none text-center">
-                <span className="relative inline-block">
-                  <span
-                    className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] tracking-wider sm:tracking-[0.09em]"
-                    data-text="CHẮP CÁNH"
+              <h1 className="relative z-10 select-none text-center w-full max-w-[88vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center justify-center">
+                <span className="relative w-full">
+                  <svg
+                    viewBox="0 0 900 235"
+                    className="w-full h-auto overflow-visible select-none drop-shadow-sm"
+                    role="img"
+                    aria-label="CHẮP CÁNH ƯỚC MƠ"
                   >
-                    CHẮP CÁNH
-                  </span>
-                  {/* Ngôi sao lấp lánh 2D hai bên tiêu đề theo ảnh mẫu */}
-                  <span className="pointer-events-none absolute -left-6 sm:-left-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                    <defs>
+                      {/* Gradient loang từ Màu 2 (#F88F22) ở trên xuống Màu 1 (#EA6113) rõ nét, rực rỡ */}
+                      <linearGradient id="title-grad-vivid" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#FFB338" />
+                        <stop offset="30%" stopColor="#F88F22" />
+                        <stop offset="70%" stopColor="#EA6113" />
+                        <stop offset="100%" stopColor="#BF3B02" />
+                      </linearGradient>
+                      {/* Đổ bóng ấm áp dưới viền trắng */}
+                      <filter id="title-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#5C1D06" floodOpacity="0.45" />
+                      </filter>
+
+                      {/* Khai báo text duy nhất trong defs để DOM chỉ có đúng 1 bản ghi cho mỗi cụm từ */}
+                      <text
+                        id="title-txt-chapcanh"
+                        x="450"
+                        y="90"
+                        textAnchor="middle"
+                        fontFamily="Praise, cursive, sans-serif"
+                        fontSize="90"
+                        fontWeight="bold"
+                        letterSpacing="5"
+                      >
+                        CHẮP CÁNH
+                      </text>
+                      <text
+                        id="title-txt-uocmo"
+                        x="450"
+                        y="200"
+                        textAnchor="middle"
+                        fontFamily="Praise, cursive, sans-serif"
+                        fontSize="110"
+                        fontWeight="bold"
+                        letterSpacing="6"
+                      >
+                        ƯỚC MƠ
+                      </text>
+                    </defs>
+
+                    <g filter="url(#title-shadow)">
+                      {/* Viền trắng dày dặn, bo tròn mượt mà bao quanh toàn bộ chữ */}
+                      <use
+                        href="#title-txt-chapcanh"
+                        stroke="#FFFFFF"
+                        strokeWidth="15"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        fill="#FFFFFF"
+                      />
+                      {/* Chữ loang gradient từ Màu 2 (#F88F22) xuống Màu 1 (#EA6113) phủ kín mượt mà */}
+                      <use
+                        href="#title-txt-chapcanh"
+                        fill="url(#title-grad-vivid)"
+                        stroke="url(#title-grad-vivid)"
+                        strokeWidth="3.5"
+                        strokeLinejoin="round"
+                      />
+
+                      {/* ƯỚC MƠ - Viền trắng */}
+                      <use
+                        href="#title-txt-uocmo"
+                        stroke="#FFFFFF"
+                        strokeWidth="17"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        fill="#FFFFFF"
+                      />
+                      {/* ƯỚC MƠ - Gradient */}
+                      <use
+                        href="#title-txt-uocmo"
+                        fill="url(#title-grad-vivid)"
+                        stroke="url(#title-grad-vivid)"
+                        strokeWidth="4"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                  </svg>
+
+                  {/* Ngôi sao lấp lánh 2 bên tiêu đề theo ảnh mẫu */}
+                  <span className="pointer-events-none absolute -left-4 sm:-left-7 top-[35%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
-                  <span className="pointer-events-none absolute -right-6 sm:-right-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -right-4 sm:-right-7 top-[35%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
-                </span>
-                <span
-                  className="title-2d-orange block text-6xl sm:text-8xl md:text-9xl lg:text-[6.5rem] tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-4"
-                  data-text="ƯỚC MƠ"
-                >
-                  ƯỚC MƠ
                 </span>
               </h1>
 
