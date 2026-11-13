@@ -138,16 +138,16 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
+            {/* Dòng 3: Đôi cánh Hoàng Kim Ước Mơ + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
             <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2">
               <motion.div
-                animate={{ rotate: [-2, 3, -2] }}
+                animate={{ rotate: [-2.5, 2, -2.5], y: [0, -5, 0] }}
                 transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-mr-3 sm:-mr-6 self-end mb-2"
+                className="-mr-2 sm:-mr-5 md:-mr-8 self-center select-none"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-24 sm:w-36 md:w-44 h-auto drop-shadow-md"
+                  className="w-20 sm:w-32 md:w-44 lg:w-52 h-auto"
                 />
               </motion.div>
 
@@ -170,13 +170,13 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               </h1>
 
               <motion.div
-                animate={{ rotate: [2, -3, 2] }}
+                animate={{ rotate: [2.5, -2, 2.5], y: [0, -5, 0] }}
                 transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-ml-3 sm:-ml-6 self-end mb-2"
+                className="-ml-2 sm:-ml-5 md:-ml-8 self-center select-none"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-24 sm:w-36 md:w-44 h-auto drop-shadow-md"
+                  className="w-20 sm:w-32 md:w-44 lg:w-52 h-auto"
                 />
               </motion.div>
             </div>

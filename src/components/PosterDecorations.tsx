@@ -31,41 +31,18 @@ export const PointerHandIcon: React.FC<{ className?: string }> = ({
 );
 
 /**
- * Đôi cánh ước mơ màu kem-cam ấm áp ghép hai bên chữ CHẮP CÁNH ƯỚC MƠ
+ * Đôi cánh hoàng kim ước mơ (Golden Wings) - Trích xuất từ biểu tượng cánh vàng rực rỡ, loại bỏ chi tiết thừa
  */
 export const DreamWingSVG: React.FC<{
   side: 'left' | 'right';
   className?: string;
 }> = ({ side, className = 'w-24 sm:w-36 md:w-44 h-auto' }) => (
-  <svg
-    viewBox="0 0 180 150"
-    fill="none"
-    aria-hidden="true"
-    className={`${className} ${side === 'right' ? 'scale-x-[-1]' : ''}`}
-  >
-    <defs>
-      <linearGradient id={`wingGrad-${side}`} x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#FFF7ED" />
-        <stop offset="55%" stopColor="#FED7AA" />
-        <stop offset="100%" stopColor="#FB923C" />
-      </linearGradient>
-    </defs>
-    {/* Lớp lông vũ lớn ngoài cùng */}
-    <path
-      d="M170 115 C115 122, 55 95, 16 20 C12 10, 28 8, 42 25 C20 35, 8 42, 12 56 C22 65, 45 72, 65 74 C28 76, 15 85, 24 98 C38 106, 65 108, 86 106 C48 112, 38 122, 52 130 C76 138, 128 136, 170 126 Z"
-      fill={`url(#wingGrad-${side})`}
-      stroke="#C2410C"
-      strokeWidth="3.5"
-      strokeLinejoin="round"
-    />
-    {/* Nét tách các tầng lông vũ */}
-    <path
-      d="M42 26 C72 56, 115 78, 162 88 M65 74 C98 88, 130 98, 164 102 M86 106 C115 112, 142 115, 166 116"
-      stroke="#EA580C"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-  </svg>
+  <img
+    src={side === 'left' ? '/decorations/golden-wing-left.png' : '/decorations/golden-wing-right.png'}
+    alt={side === 'left' ? 'Đôi cánh hoàng kim bên trái' : 'Đôi cánh hoàng kim bên phải'}
+    className={`${className} object-contain drop-shadow-[0_6px_20px_rgba(245,158,11,0.5)] select-none pointer-events-none transition-transform`}
+    draggable={false}
+  />
 );
 
 /**
