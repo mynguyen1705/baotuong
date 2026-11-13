@@ -146,7 +146,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                   {/* Trang phải: Trích đoạn Lời ngỏ Typographic */}
                   <div className="pl-0 sm:pl-4 pt-3 sm:pt-0 flex flex-col justify-between">
                     <p className="font-serif text-xs sm:text-sm text-stone-800 leading-relaxed first-letter:float-left first-letter:mr-1.5 first-letter:font-serif first-letter:text-3xl first-letter:font-bold first-letter:text-poster-orange">
-                      Tháng 11 lại về mang theo những cơn gió se lạnh và những xúc cảm dịu dàng của mùa tri ân. Báo tường “Chắp cánh ước mơ” là món quà tinh thần được kết nên từ tình cảm chân thành gửi đến thầy cô kính yêu...
+                      Tháng 11 lại về mang theo những cơn gió se lạnh và những xúc cảm dịu dàng của mùa tri ân...
                     </p>
                     <p className="mt-2 text-right font-script text-base font-bold text-red-800">
                       — Tập thể Lớp 9A3 —
@@ -239,7 +239,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                 {/* Thảm cỏ xanh dưới chân khung truyện */}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-emerald-800/90 px-3 py-1.5 text-[11px] font-bold text-emerald-50">
                   <span>✍️ {truyenNgan.authorCredit}</span>
-                  <span>🍂 02 truyện ngắn giàu ý nghĩa</span>
+                  <span>🍂 03 truyện ngắn giàu ý nghĩa</span>
                 </div>
               </div>
             </div>
@@ -396,7 +396,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                       <span className="text-sky-800">Hoàng Dũng</span>
                     </p>
                     <p className="mt-1 text-[11px] font-semibold text-emerald-800">
-                      📍 Quay thực tế: Lớp 9A3 & Sân trường TH&THCS Hiệp Thạnh
+                      📍 Quay thực tế
                     </p>
                   </div>
                 </div>
@@ -407,9 +407,8 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                     <div className="h-full w-2/5 rounded-full bg-red-600" />
                   </div>
                   <div className="mt-1.5 flex items-center justify-between text-[10px] font-mono text-stone-300">
-                    <span>▶ ⏸ 🔊 01:28 / 03:45</span>
+                    <span>▶ ⏸ 🔊 01:28 / 04:24</span>
                     <span className="text-amber-300 font-sans font-bold">
-                      04 Phân cảnh sân trường ⛶
                     </span>
                   </div>
                 </div>
