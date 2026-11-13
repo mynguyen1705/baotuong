@@ -55,10 +55,13 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  -webkit-text-stroke: 4.5px #FFFFFF;
-  -webkit-text-fill-color: #FFFFFF;
+  font-family: "Praise", cursive, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: #FFFFFF;
   paint-order: stroke fill;
+  -webkit-text-stroke: 5.5px #FFFFFF;
   text-shadow:
     -2px -2px 0 #FFFFFF,
      2px -2px 0 #FFFFFF,
@@ -68,7 +71,7 @@
      0px -3px 0 #FFFFFF,
      3px  0px 0 #FFFFFF,
     -3px  0px 0 #FFFFFF,
-     0px  4px 10px rgba(194, 65, 12, 0.35);
+     0px  4px 10px rgba(194, 65, 12, 0.32);
   pointer-events: none;
 }
 

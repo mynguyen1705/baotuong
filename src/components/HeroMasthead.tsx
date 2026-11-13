@@ -138,7 +138,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ Loang Gradient Cam Vàng Viền Trắng Tinh Tế */}
+            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật màu cam đất ấm áp + Chữ 2D Cam Vàng Viền Trắng CHẮP CÁNH / ƯỚC MƠ */}
             <div className="mt-2 sm:mt-3 flex items-center justify-center gap-0 sm:gap-2 relative">
               <motion.div
                 animate={{ rotate: [-4, 0, -4], y: [0, -6, 0] }}
