@@ -302,7 +302,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       summary:
         'Tấm lòng biết ơn sâu sắc của tập thể học sinh lớp 9A3 gửi tới các thầy cô giáo Trường TH&THCS Hiệp Thạnh qua bức thư cảm nghĩ chân thành.',
       authorCredit: 'Tập thể học sinh Chi đội 9A3 – Trường TH&THCS Hiệp Thạnh',
-      sourceNote: 'Bài viết cảm nghĩ tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11',
+      sourceNote: 'Bài tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11',
       pullQuote:
         '“Mai này dù đi đâu về đâu, trong hành trang trưởng thành của chúng em sẽ luôn có bóng dáng mái trường Hiệp Thạnh và giọng giảng ấm áp của thầy cô.”',
       typoTheme: {
