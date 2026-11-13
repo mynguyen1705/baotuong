@@ -296,7 +296,7 @@ export const BAO_TUONG_DATA: BaoTuongConfig = {
       id: 'tri-an',
       orderNumber: 5,
       badgeTitle: '5. BÀI TRI ÂN',
-      title: 'Bức Thư Tháng Mười Một Từ Mùa Phượng Cuối Cấp 9A3',
+      title: 'Bức Thư Tháng Mười Một',
       subtitle: 'Bài viết cảm nghĩ tri ân thầy cô nhân Ngày Nhà giáo Việt Nam 20/11',
       categoryLabel: 'Bài Lời tri ân',
       summary:
