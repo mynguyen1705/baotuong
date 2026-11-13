@@ -68,12 +68,12 @@ describe('Báo tường số 9A3 App Interactions (Typographic Poster Style)', (
     ).toBeInTheDocument();
   });
 
-  it('tự động tắt nhạc nền trang báo khi mở chuyên mục Thơ hoặc MV để tránh xung đột âm thanh', () => {
+  it('mặc định tự động bật nhạc nền và tự động tắt khi mở chuyên mục Thơ hoặc MV để tránh xung đột âm thanh', () => {
     render(<App />);
-    const musicBtn = screen.getByRole('button', { name: /Bật nhạc nền 20\/11/i });
-    fireEvent.click(musicBtn);
+    // Ban đầu vào trang, nhạc nền được tự động bật
     expect(screen.getByRole('button', { name: /Tắt nhạc nền 20\/11/i })).toBeInTheDocument();
 
+    // Mở chuyên mục MV (index 3) sẽ tự động tắt nhạc nền trang báo để phát nhạc MV
     const viewButtons = screen.getAllByText(/NHẤP VÀO ĐÂY ĐỂ XEM/i);
     fireEvent.click(viewButtons[3]);
     expect(screen.getByRole('button', { name: /Bật nhạc nền 20\/11/i })).toBeInTheDocument();

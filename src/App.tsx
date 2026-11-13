@@ -76,7 +76,8 @@ export const App: React.FC = () => {
   );
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [qrHighlightSectionId, setQrHighlightSectionId] = useState<SectionId | null>(null);
-  const [isBgMusicPlaying, setIsBgMusicPlaying] = useState(false);
+  // Mặc định tự động bật nhạc nền khi vào trang (kèm cơ chế Auto-play fallback theo chính sách trình duyệt)
+  const [isBgMusicPlaying, setIsBgMusicPlaying] = useState(true);
 
   const fetchTeachers = useCallback(async () => {
     if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
@@ -305,7 +306,7 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [fetchTeachers]);
 
-  // Phát nhạc nền: Ưu tiên file mp3 tại /media/nhac-nen.mp3 (nếu có), fallback giai điệu acoustic du dương
+  // Phát nhạc nền: Ưu tiên file mp3 tại /media/nhac-nen.mp3, tự động phát ngay hoặc kích hoạt tại lần chạm đầu tiên
   useEffect(() => {
     if (!isBgMusicPlaying || typeof window === 'undefined') return;
 
@@ -313,6 +314,21 @@ export const App: React.FC = () => {
     let ctx: AudioContext | null = null;
     let timer: number | null = null;
     let isCancelled = false;
+
+    const removeInteractionListeners = () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    const handleFirstInteraction = () => {
+      removeInteractionListeners();
+      if (!isCancelled && audio && audio.paused) {
+        audio.play().catch(() => {
+          if (!isCancelled) startSynthMelody();
+        });
+      }
+    };
 
     const startSynthMelody = () => {
       if (isCancelled || ctx) return;
@@ -356,7 +372,12 @@ export const App: React.FC = () => {
       const playPromise = audio.play();
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch(() => {
-          if (!isCancelled) startSynthMelody();
+          // Khi trình duyệt chặn Autoplay không có tương tác người dùng, lắng nghe cử chỉ đầu tiên để tự động phát
+          if (!isCancelled) {
+            window.addEventListener('click', handleFirstInteraction, { once: true });
+            window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+            window.addEventListener('keydown', handleFirstInteraction, { once: true });
+          }
         });
       }
     } catch {
@@ -365,6 +386,7 @@ export const App: React.FC = () => {
 
     return () => {
       isCancelled = true;
+      removeInteractionListeners();
       if (audio) {
         audio.pause();
         audio.src = '';
