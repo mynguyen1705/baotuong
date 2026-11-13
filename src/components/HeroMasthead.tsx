@@ -138,16 +138,16 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Hoàng Kim Ước Mơ + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
-            <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2">
+            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
+            <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2 relative">
               <motion.div
-                animate={{ rotate: [-2.5, 2, -2.5], y: [0, -5, 0] }}
-                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-mr-2 sm:-mr-5 md:-mr-8 self-center select-none"
+                animate={{ rotate: [-2, 2.5, -2], y: [0, -6, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="shrink-0 -mr-4 sm:-mr-8 md:-mr-12 lg:-mr-14 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-20 sm:w-32 md:w-44 lg:w-52 h-auto"
+                  className="w-24 sm:w-36 md:w-48 lg:w-56 h-auto drop-shadow-[0_8px_20px_rgba(0,0,0,0.22)]"
                 />
               </motion.div>
 
@@ -170,13 +170,13 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               </h1>
 
               <motion.div
-                animate={{ rotate: [2.5, -2, 2.5], y: [0, -5, 0] }}
-                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="-ml-2 sm:-ml-5 md:-ml-8 self-center select-none"
+                animate={{ rotate: [2, -2.5, 2], y: [0, -6, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="shrink-0 -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-14 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-20 sm:w-32 md:w-44 lg:w-52 h-auto"
+                  className="w-24 sm:w-36 md:w-48 lg:w-56 h-auto drop-shadow-[0_8px_20px_rgba(0,0,0,0.22)]"
                 />
               </motion.div>
             </div>

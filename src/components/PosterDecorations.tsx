@@ -31,16 +31,17 @@ export const PointerHandIcon: React.FC<{ className?: string }> = ({
 );
 
 /**
- * Đôi cánh hoàng kim ước mơ (Golden Wings) - Trích xuất từ biểu tượng cánh vàng rực rỡ, loại bỏ chi tiết thừa
+ * Đôi cánh ước mơ nét vẽ mực đen, ruột trắng mờ (Hand-drawn Sketch Wings)
+ * Nền ngoài trong suốt, ruột lông vũ trắng đục nổi bật, viền đen sắc sảo nịnh mắt
  */
 export const DreamWingSVG: React.FC<{
   side: 'left' | 'right';
   className?: string;
-}> = ({ side, className = 'w-24 sm:w-36 md:w-44 h-auto' }) => (
+}> = ({ side, className = 'w-24 sm:w-40 md:w-56 h-auto' }) => (
   <img
-    src={side === 'left' ? '/decorations/golden-wing-left.png' : '/decorations/golden-wing-right.png'}
-    alt={side === 'left' ? 'Đôi cánh hoàng kim bên trái' : 'Đôi cánh hoàng kim bên phải'}
-    className={`${className} object-contain drop-shadow-[0_6px_20px_rgba(245,158,11,0.5)] select-none pointer-events-none transition-transform`}
+    src={side === 'left' ? '/decorations/sketch-wing-left.png' : '/decorations/sketch-wing-right.png'}
+    alt={side === 'left' ? 'Đôi cánh ước mơ bên trái' : 'Đôi cánh ước mơ bên phải'}
+    className={`${className} object-contain select-none pointer-events-none drop-shadow-[0_6px_18px_rgba(0,0,0,0.2)] transition-transform`}
     draggable={false}
   />
 );
