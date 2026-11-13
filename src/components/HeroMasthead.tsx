@@ -138,23 +138,23 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ SVG Gradient Cam Vàng Viền Trắng To Đẹp */}
-            <div className="mt-1 sm:mt-2 flex items-end justify-center relative max-w-6xl mx-auto px-1">
+            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ SVG Gradient Cam Vàng Viền Trắng Tinh Tế */}
+            <div className="mt-1 sm:mt-2 flex items-end justify-center relative max-w-5xl mx-auto px-1">
               <motion.div
-                animate={{ rotate: [-6, -2, -6], y: [0, -5, 0] }}
+                animate={{ rotate: [-6, -2, -6], y: [0, -4, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -mr-12 sm:-mr-20 md:-mr-28 lg:-mr-36 self-end -mb-2 sm:-mb-3 md:-mb-4 select-none z-0"
+                className="shrink-0 -mr-16 sm:-mr-24 md:-mr-32 lg:-mr-40 self-end mb-1 sm:mb-2 select-none z-0"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-20 sm:w-28 md:w-40 lg:w-48 h-auto"
+                  className="w-18 sm:w-24 md:w-32 lg:w-40 h-auto"
                 />
               </motion.div>
 
-              <h1 className="relative z-10 select-none text-center w-full max-w-[92vw] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto flex flex-col items-center justify-center">
+              <h1 className="relative z-10 select-none text-center w-full max-w-[85vw] sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto flex flex-col items-center justify-center">
                 <span className="relative w-full">
                   <svg
-                    viewBox="0 0 920 270"
+                    viewBox="100 0 720 250"
                     className="w-full h-auto overflow-visible select-none drop-shadow-sm"
                     role="img"
                     aria-label="CHẮP CÁNH ƯỚC MƠ"
@@ -169,42 +169,42 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                       </linearGradient>
                       {/* Đổ bóng ấm áp dưới viền trắng */}
                       <filter id="title-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="5" stdDeviation="4.5" floodColor="#5C1D06" floodOpacity="0.45" />
+                        <feDropShadow dx="0" dy="4" stdDeviation="3.5" floodColor="#5C1D06" floodOpacity="0.45" />
                       </filter>
 
                       {/* Khai báo text duy nhất trong defs để DOM chỉ có đúng 1 bản ghi cho mỗi cụm từ */}
                       <text
                         id="title-txt-chapcanh"
                         x="460"
-                        y="92"
+                        y="86"
                         textAnchor="middle"
                         fontFamily="Praise, cursive, sans-serif"
-                        fontSize="102"
+                        fontSize="92"
                         fontWeight="bold"
-                        letterSpacing="7"
+                        letterSpacing="5"
                       >
                         CHẮP CÁNH
                       </text>
                       <text
                         id="title-txt-uocmo"
                         x="460"
-                        y="235"
+                        y="218"
                         textAnchor="middle"
                         fontFamily="Praise, cursive, sans-serif"
-                        fontSize="128"
+                        fontSize="114"
                         fontWeight="bold"
-                        letterSpacing="8"
+                        letterSpacing="6"
                       >
                         ƯỚC MƠ
                       </text>
                     </defs>
 
                     <g filter="url(#title-shadow)">
-                      {/* Viền trắng dày dặn, bo tròn mượt mà bao quanh chữ CHẮP CÁNH */}
+                      {/* Viền trắng thanh thoát, nhỏ gọn hơn bọc ngoài chữ CHẮP CÁNH (stroke 11px) */}
                       <use
                         href="#title-txt-chapcanh"
                         stroke="#FFFFFF"
-                        strokeWidth="16"
+                        strokeWidth="11"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                         fill="#FFFFFF"
@@ -214,15 +214,15 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                         href="#title-txt-chapcanh"
                         fill="url(#title-grad-vivid)"
                         stroke="url(#title-grad-vivid)"
-                        strokeWidth="4"
+                        strokeWidth="2.5"
                         strokeLinejoin="round"
                       />
 
-                      {/* ƯỚC MƠ - Viền trắng */}
+                      {/* ƯỚC MƠ - Viền trắng nhỏ gọn hơn (stroke 12.5px) */}
                       <use
                         href="#title-txt-uocmo"
                         stroke="#FFFFFF"
-                        strokeWidth="18"
+                        strokeWidth="12.5"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                         fill="#FFFFFF"
@@ -232,30 +232,30 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                         href="#title-txt-uocmo"
                         fill="url(#title-grad-vivid)"
                         stroke="url(#title-grad-vivid)"
-                        strokeWidth="4.5"
+                        strokeWidth="3"
                         strokeLinejoin="round"
                       />
                     </g>
                   </svg>
 
                   {/* Ngôi sao lấp lánh 2 bên chữ CHẮP CÁNH theo ảnh mẫu */}
-                  <span className="pointer-events-none absolute -left-3 sm:-left-6 top-[28%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -left-2 sm:-left-4 top-[26%] -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
                     ✦
                   </span>
-                  <span className="pointer-events-none absolute -right-3 sm:-right-6 top-[28%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -right-2 sm:-right-4 top-[26%] -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
                     ✦
                   </span>
                 </span>
               </h1>
 
               <motion.div
-                animate={{ rotate: [6, 2, 6], y: [0, -5, 0] }}
+                animate={{ rotate: [6, 2, 6], y: [0, -4, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -ml-12 sm:-ml-20 md:-ml-28 lg:-ml-36 self-end -mb-2 sm:-mb-3 md:-mb-4 select-none z-0"
+                className="shrink-0 -ml-16 sm:-ml-24 md:-ml-32 lg:-ml-40 self-end mb-1 sm:mb-2 select-none z-0"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-20 sm:w-28 md:w-40 lg:w-48 h-auto"
+                  className="w-18 sm:w-24 md:w-32 lg:w-40 h-auto"
                 />
               </motion.div>
             </div>
