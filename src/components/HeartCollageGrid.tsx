@@ -24,7 +24,7 @@ export interface CollageSlotLayout {
  * - Cột 3 (trung tâm phải): Ô 7 (ngang lớn đỉnh), Ô 8 (vuông giữa), Ô 9 (lớn góc dưới)
  * - Cột 4 (phải ngoài): Ô 10 (ngang dài), Ô 11 (nhỏ đỉnh phải), Ô 12 (vừa đáy phải), Ô 13 (mini đáy phải)
  */
-export const STAGGERED_COLLAGE_SLOTS: CollageSlotLayout[] = [
+const STAGGERED_COLLAGE_SLOTS: CollageSlotLayout[] = [
   // Cột 1 (ngoài cùng bên trái)
   { id: 1, left: 10.82, top: 14.70, width: 10.15, height: 13.12 },
   { id: 2, left: 0.00, top: 31.50, width: 20.97, height: 34.65 },
