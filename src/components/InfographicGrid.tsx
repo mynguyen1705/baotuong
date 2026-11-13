@@ -146,7 +146,7 @@ export const InfographicGrid: React.FC<InfographicGridProps> = ({
                   {/* Trang phải: Trích đoạn Lời ngỏ Typographic */}
                   <div className="pl-0 sm:pl-4 pt-3 sm:pt-0 flex flex-col justify-between">
                     <p className="font-serif text-xs sm:text-sm text-stone-800 leading-relaxed first-letter:float-left first-letter:mr-1.5 first-letter:font-serif first-letter:text-3xl first-letter:font-bold first-letter:text-poster-orange">
-                      Tháng Mười Một lại về mang theo sắc nắng vàng dịu dàng và lòng biết ơn sâu sắc của tuổi học trò cuối cấp...
+                      Tháng 11 lại về mang theo những cơn gió se lạnh và những xúc cảm dịu dàng của mùa tri ân. Báo tường “Chắp cánh ước mơ” là món quà tinh thần được kết nên từ tình cảm chân thành gửi đến thầy cô kính yêu...
                     </p>
                     <p className="mt-2 text-right font-script text-base font-bold text-red-800">
                       — Tập thể Lớp 9A3 —
