@@ -94,6 +94,13 @@ export const DEFAULT_MEMORIES_LIST: MemoryItem[] = [
     caption: 'Tri ân người gieo mầm xanh thầm lặng cho đời',
     date: '20/11/2026',
   },
+  {
+    id: 13,
+    row: 5,
+    photoUrl: '/memories/photo-13.jpg',
+    caption: 'Bóng hình người thầy kính mến theo suốt những năm tháng tuổi thơ',
+    date: '20/11/2026',
+  },
 ];
 
 export const DEFAULT_MEMORIES_DATA: MemoryStationData = {

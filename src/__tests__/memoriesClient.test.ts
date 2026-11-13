@@ -25,7 +25,7 @@ describe('memoriesClient Utility Tests', () => {
     const loaded = loadMemoriesFromLocal();
     expect(loaded).toBeDefined();
     expect(loaded?.title).toBe('Kỷ Niệm Thân Thương 9A3');
-    expect(loaded?.memories.length).toBe(12);
+    expect(loaded?.memories.length).toBe(13);
   });
 
   it('fetchMemoriesClient lấy thành công từ API server khi server online', async () => {

@@ -1,9 +1,9 @@
 {
-  "title": "Trạm Kỷ Niệm 9A3",
+  "title": "Khoảnh Khắc Đẹp Nhất 9A3",
   "subtitle": "Album ảnh lưu giữ khoảnh khắc thanh xuân Chi đội 9A3",
-  "quote": "Mãi yêu tập thể 9A3",
+  "quote": "Dẫu mai đi bốn phương trời, ơn thầy nghĩa cô chẳng phai mờ.",
   "authorNote": "Chi đội 9A3 – Niên khóa 2026-2027",
-  "lastUpdated": "2026-11-12T16:08:26.177Z",
+  "lastUpdated": "2026-11-13T05:09:14.080Z",
   "memories": [
     {
       "id": 1,
@@ -88,6 +88,13 @@
       "row": 5,
       "photoUrl": "/memories/photo-12.jpg",
       "caption": "Tri ân người gieo mầm xanh thầm lặng cho đời",
+      "date": "20/11/2026"
+    },
+    {
+      "id": 13,
+      "row": 5,
+      "photoUrl": "/memories/photo-13.jpg",
+      "caption": "Bóng hình người thầy kính mến theo suốt những năm tháng tuổi thơ",
       "date": "20/11/2026"
     }
   ]

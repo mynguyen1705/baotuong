@@ -99,7 +99,7 @@ describe('Báo tường số 9A3 App Interactions (Typographic Poster Style)', (
     expect(screen.getByRole('dialog', { name: /Trạm ký ức/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Trạm ký ức/i })).toBeInTheDocument();
     expect(screen.getByText(/Nơi lưu trữ tình yêu thương, sự đồng hành/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(12);
+    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(13);
 
     // Bấm vào ảnh slot 4 để mở Lightbox
     const slot4 = screen.getByTestId('heart-photo-slot-4');

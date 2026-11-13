@@ -77,7 +77,7 @@ describe('Memories API & RBAC Endpoint Tests', () => {
     expect(getStatusCode()).toBe(200);
     const body = getBody();
     expect(body.success).toBe(true);
-    expect(body.data.memories.length).toBe(12);
+    expect(body.data.memories.length).toBe(13);
     expect(body.isOwner).toBe(false); // Guest không phải Owner
   });
 

@@ -5,7 +5,7 @@ import { DEFAULT_MEMORIES_LIST } from '../data/defaultMemories';
 import { MemoryItem } from '../types/memories';
 
 describe('HeartCollageGrid Component Tests', () => {
-  it('hiển thị đầy đủ 12 khung ảnh xếp khít nhau lấp đầy mọi vị trí', () => {
+  it('hiển thị đầy đủ 13 khung ảnh xếp so le mosaic lấp đầy mọi vị trí', () => {
     render(
       <HeartCollageGrid
         memories={DEFAULT_MEMORIES_LIST}
@@ -15,13 +15,14 @@ describe('HeartCollageGrid Component Tests', () => {
     );
 
     const frames = screen.getAllByTestId(/^heart-photo-slot-/);
-    expect(frames.length).toBe(12);
+    expect(frames.length).toBe(13);
 
     expect(screen.getByTestId('heart-photo-slot-1')).toBeInTheDocument();
     expect(screen.getByTestId('heart-photo-slot-2')).toBeInTheDocument();
     expect(screen.getByTestId('heart-photo-slot-4')).toHaveAttribute('data-centerpiece', 'true');
     expect(screen.getByTestId('heart-photo-slot-11')).toBeInTheDocument();
     expect(screen.getByTestId('heart-photo-slot-12')).toBeInTheDocument();
+    expect(screen.getByTestId('heart-photo-slot-13')).toBeInTheDocument();
   });
 
   it('gọi callback onSelectMemory khi người dùng click vào bất kỳ khung ảnh nào để phóng to', () => {
@@ -68,7 +69,7 @@ describe('HeartCollageGrid Component Tests', () => {
     );
 
     const editBtns = screen.getAllByRole('button', { name: /Thay đổi ảnh/i });
-    expect(editBtns.length).toBe(12);
+    expect(editBtns.length).toBe(13);
   });
 });
 

@@ -26,10 +26,10 @@ describe('MemoriesStore Backend Unit Tests', () => {
   it('khởi tạo dữ liệu mặc định khi file chưa tồn tại', async () => {
     const data = await store.getStationData();
     expect(data.title).toContain('Trạm ký ức');
-    expect(data.memories.length).toBe(12);
+    expect(data.memories.length).toBe(13);
   });
 
-  it('cho phép Owner cập nhật ảnh và lời nhắn cho từng slot (1..12)', async () => {
+  it('cho phép Owner cập nhật ảnh và lời nhắn cho từng slot (1..13)', async () => {
     const updated = await store.updateSlot(4, {
       photoUrl: 'data:image/jpeg;base64,mockphoto',
       caption: 'Ảnh mới chụp ngày 20/11 lớp 9A3',

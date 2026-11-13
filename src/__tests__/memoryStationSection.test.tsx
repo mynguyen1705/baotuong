@@ -4,7 +4,7 @@ import { MemoryStationSection } from '../components/MemoryStationSection';
 import { DEFAULT_MEMORIES_DATA } from '../data/defaultMemories';
 
 describe('MemoryStationSection Component Tests', () => {
-  it('hiển thị đầy đủ tiêu đề "Trạm ký ức", trích dẫn góc trái và 12 khung ảnh', () => {
+  it('hiển thị đầy đủ tiêu đề "Trạm ký ức", trích dẫn góc trái và 13 khung ảnh', () => {
     render(
       <MemoryStationSection
         data={DEFAULT_MEMORIES_DATA}
@@ -16,7 +16,7 @@ describe('MemoryStationSection Component Tests', () => {
 
     expect(screen.getByText(/Trạm ký ức/i)).toBeInTheDocument();
     expect(screen.getByText(/Nơi lưu trữ tình yêu thương/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(12);
+    expect(screen.getAllByTestId(/^heart-photo-slot-/).length).toBe(13);
   });
 
   it('mở Lightbox phóng to ảnh khi nhấp vào một khung ảnh', () => {

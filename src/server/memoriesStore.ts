@@ -66,8 +66,8 @@ export class MemoriesStore {
   async updateSlot(slotId: MemorySlotId, payload: UpdateMemoryPayload): Promise<MemoryItem> {
     return this.withLock(async () => {
       const numId = Number(slotId);
-      if (!Number.isInteger(numId) || numId < 1 || numId > 12) {
-        throw new Error(`Mã vị trí ảnh không hợp lệ: ${slotId} (phải từ 1 đến 12)`);
+      if (!Number.isInteger(numId) || numId < 1 || numId > 15) {
+        throw new Error(`Mã vị trí ảnh không hợp lệ: ${slotId} (phải từ 1 đến 15)`);
       }
 
       await this.loadDataInternal();
