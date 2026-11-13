@@ -34,14 +34,18 @@ export const PointerHandIcon: React.FC<{ className?: string }> = ({
  * Đôi cánh ước mơ nét vẽ mực đen, ruột trắng mờ (Hand-drawn Sketch Wings)
  * Nền ngoài trong suốt, ruột lông vũ trắng đục nổi bật, viền đen sắc sảo nịnh mắt
  */
+/**
+ * Đôi cánh ước mơ phong cách đồ họa ấm áp (Warm Artistic Wings)
+ * Nền ngoài trong suốt, ruột lông vũ trắng ngà chuyển sắc hổ phách nhẹ, viền cam đất ấm áp đồng điệu với tiêu đề
+ */
 export const DreamWingSVG: React.FC<{
   side: 'left' | 'right';
   className?: string;
-}> = ({ side, className = 'w-16 sm:w-24 md:w-36 lg:w-44 h-auto' }) => (
+}> = ({ side, className = 'w-16 sm:w-26 md:w-38 lg:w-48 h-auto' }) => (
   <img
     src={side === 'left' ? '/decorations/sketch-wing-left.png' : '/decorations/sketch-wing-right.png'}
     alt={side === 'left' ? 'Đôi cánh ước mơ bên trái' : 'Đôi cánh ước mơ bên phải'}
-    className={`${className} object-contain select-none pointer-events-none drop-shadow-[0_6px_16px_rgba(0,0,0,0.2)] transition-transform`}
+    className={`${className} object-contain select-none pointer-events-none drop-shadow-[0_8px_20px_rgba(234,88,12,0.32)] transition-transform`}
     draggable={false}
   />
 );
