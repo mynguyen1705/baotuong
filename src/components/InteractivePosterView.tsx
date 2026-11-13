@@ -117,7 +117,7 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
         <div className="mt-8 flex flex-col items-center justify-center relative z-20">
           <div className="relative w-full max-w-md sm:max-w-lg md:max-w-xl rounded-3xl border-4 border-amber-400 bg-amber-100 p-2 sm:p-3 shadow-2xl overflow-hidden">
             <div className="relative w-full overflow-hidden rounded-2xl shadow-inner bg-[#fff9ed]">
-              {/* Ảnh minh họa poster với độ phân giải cao 2x sắc nét (đã cân chỉnh giảm độ chói sáng hài hòa) */}
+              {/* Ảnh minh họa poster với độ phân giải cao 2x sắc nét chuẩn HD */}
               <img
                 data-testid="interactive-poster-image"
                 src="/posters/poster-toan-canh.jpg"
@@ -126,9 +126,6 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
                 className="w-full h-auto block select-none"
                 style={{
                   aspectRatio: '482 / 1024',
-                  imageRendering: 'auto',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transform: 'translateZ(0)',
                 }}
                 loading="eager"
                 decoding="sync"
