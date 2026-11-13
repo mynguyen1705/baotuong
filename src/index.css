@@ -36,25 +36,28 @@
   }
 }
 
-/* Hiệu ứng chữ 2D Cam Vàng CHẮP CÁNH ƯỚC MƠ theo font Praise có viền trắng bọc ngoài */
+/* Hiệu ứng chữ 2D Cam Vàng Gradient CHẮP CÁNH ƯỚC MƠ: Loang từ Màu 2 (#F88F22) ở trên xuống Màu 1 (#EA6113) ở dưới */
 .title-2d-orange {
+  display: inline-block;
   font-family: "Praise", cursive, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  color: #EA580C;
   letter-spacing: 0.08em;
-  paint-order: stroke fill;
-  -webkit-text-stroke: 5.5px #FFFFFF;
-  text-shadow:
-    -2px -2px 0 #FFFFFF,
-     2px -2px 0 #FFFFFF,
-    -2px  2px 0 #FFFFFF,
-     2px  2px 0 #FFFFFF,
-     0px  3px 0 #FFFFFF,
-     0px -3px 0 #FFFFFF,
-     3px  0px 0 #FFFFFF,
-    -3px  0px 0 #FFFFFF,
-     0px  4px 10px rgba(194, 65, 12, 0.32);
+  color: #EA6113;
+  background: linear-gradient(180deg, #F88F22 0%, #EA6113 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter:
+    drop-shadow(-3.5px 0 0 #FFFFFF)
+    drop-shadow(3.5px 0 0 #FFFFFF)
+    drop-shadow(0 -3.5px 0 #FFFFFF)
+    drop-shadow(0 3.5px 0 #FFFFFF)
+    drop-shadow(-2.5px -2.5px 0 #FFFFFF)
+    drop-shadow(2.5px -2.5px 0 #FFFFFF)
+    drop-shadow(-2.5px 2.5px 0 #FFFFFF)
+    drop-shadow(2.5px 2.5px 0 #FFFFFF)
+    drop-shadow(0 4px 12px rgba(194, 65, 12, 0.45));
 }
 
 /* Hiệu ứng chữ trắng nổi bật đa tầng chống chìm trên mọi nền (sử dụng font Neon 80s) */
