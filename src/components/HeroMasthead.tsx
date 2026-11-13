@@ -138,23 +138,23 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật màu cam đất ấm áp + Chữ 2D Cam Vàng Viền Trắng CHẮP CÁNH / ƯỚC MƠ */}
-            <div className="mt-2 sm:mt-3 flex items-center justify-center gap-0 sm:gap-2 relative">
+            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ SVG Gradient Cam Vàng Viền Trắng To Đẹp */}
+            <div className="mt-1 sm:mt-2 flex items-end justify-center relative max-w-6xl mx-auto px-1">
               <motion.div
-                animate={{ rotate: [-4, 0, -4], y: [0, -6, 0] }}
+                animate={{ rotate: [-6, -2, -6], y: [0, -5, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -mr-3 sm:-mr-5 md:-mr-8 lg:-mr-10 self-center select-none z-0"
+                className="shrink-0 -mr-12 sm:-mr-20 md:-mr-28 lg:-mr-36 self-end -mb-2 sm:-mb-3 md:-mb-4 select-none z-0"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-16 sm:w-26 md:w-38 lg:w-48 h-auto"
+                  className="w-20 sm:w-28 md:w-40 lg:w-48 h-auto"
                 />
               </motion.div>
 
-              <h1 className="relative z-10 select-none text-center w-full max-w-[88vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center justify-center">
+              <h1 className="relative z-10 select-none text-center w-full max-w-[92vw] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto flex flex-col items-center justify-center">
                 <span className="relative w-full">
                   <svg
-                    viewBox="0 0 900 235"
+                    viewBox="0 0 920 270"
                     className="w-full h-auto overflow-visible select-none drop-shadow-sm"
                     role="img"
                     aria-label="CHẮP CÁNH ƯỚC MƠ"
@@ -162,59 +162,59 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                     <defs>
                       {/* Gradient loang từ Màu 2 (#F88F22) ở trên xuống Màu 1 (#EA6113) rõ nét, rực rỡ */}
                       <linearGradient id="title-grad-vivid" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFB338" />
-                        <stop offset="30%" stopColor="#F88F22" />
-                        <stop offset="70%" stopColor="#EA6113" />
-                        <stop offset="100%" stopColor="#BF3B02" />
+                        <stop offset="0%" stopColor="#FFA62B" />
+                        <stop offset="28%" stopColor="#F88F22" />
+                        <stop offset="72%" stopColor="#EA6113" />
+                        <stop offset="100%" stopColor="#C23E04" />
                       </linearGradient>
                       {/* Đổ bóng ấm áp dưới viền trắng */}
                       <filter id="title-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#5C1D06" floodOpacity="0.45" />
+                        <feDropShadow dx="0" dy="5" stdDeviation="4.5" floodColor="#5C1D06" floodOpacity="0.45" />
                       </filter>
 
                       {/* Khai báo text duy nhất trong defs để DOM chỉ có đúng 1 bản ghi cho mỗi cụm từ */}
                       <text
                         id="title-txt-chapcanh"
-                        x="450"
-                        y="90"
+                        x="460"
+                        y="92"
                         textAnchor="middle"
                         fontFamily="Praise, cursive, sans-serif"
-                        fontSize="90"
+                        fontSize="102"
                         fontWeight="bold"
-                        letterSpacing="5"
+                        letterSpacing="7"
                       >
                         CHẮP CÁNH
                       </text>
                       <text
                         id="title-txt-uocmo"
-                        x="450"
-                        y="200"
+                        x="460"
+                        y="235"
                         textAnchor="middle"
                         fontFamily="Praise, cursive, sans-serif"
-                        fontSize="110"
+                        fontSize="128"
                         fontWeight="bold"
-                        letterSpacing="6"
+                        letterSpacing="8"
                       >
                         ƯỚC MƠ
                       </text>
                     </defs>
 
                     <g filter="url(#title-shadow)">
-                      {/* Viền trắng dày dặn, bo tròn mượt mà bao quanh toàn bộ chữ */}
+                      {/* Viền trắng dày dặn, bo tròn mượt mà bao quanh chữ CHẮP CÁNH */}
                       <use
                         href="#title-txt-chapcanh"
                         stroke="#FFFFFF"
-                        strokeWidth="15"
+                        strokeWidth="16"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                         fill="#FFFFFF"
                       />
-                      {/* Chữ loang gradient từ Màu 2 (#F88F22) xuống Màu 1 (#EA6113) phủ kín mượt mà */}
+                      {/* Chữ loang gradient từ Màu 2 (#F88F22) xuống Màu 1 (#EA6113) */}
                       <use
                         href="#title-txt-chapcanh"
                         fill="url(#title-grad-vivid)"
                         stroke="url(#title-grad-vivid)"
-                        strokeWidth="3.5"
+                        strokeWidth="4"
                         strokeLinejoin="round"
                       />
 
@@ -222,7 +222,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                       <use
                         href="#title-txt-uocmo"
                         stroke="#FFFFFF"
-                        strokeWidth="17"
+                        strokeWidth="18"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                         fill="#FFFFFF"
@@ -232,30 +232,30 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                         href="#title-txt-uocmo"
                         fill="url(#title-grad-vivid)"
                         stroke="url(#title-grad-vivid)"
-                        strokeWidth="4"
+                        strokeWidth="4.5"
                         strokeLinejoin="round"
                       />
                     </g>
                   </svg>
 
-                  {/* Ngôi sao lấp lánh 2 bên tiêu đề theo ảnh mẫu */}
-                  <span className="pointer-events-none absolute -left-4 sm:-left-7 top-[35%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                  {/* Ngôi sao lấp lánh 2 bên chữ CHẮP CÁNH theo ảnh mẫu */}
+                  <span className="pointer-events-none absolute -left-3 sm:-left-6 top-[28%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
-                  <span className="pointer-events-none absolute -right-4 sm:-right-7 top-[35%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -right-3 sm:-right-6 top-[28%] -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
                 </span>
               </h1>
 
               <motion.div
-                animate={{ rotate: [4, 0, 4], y: [0, -6, 0] }}
+                animate={{ rotate: [6, 2, 6], y: [0, -5, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -ml-3 sm:-ml-5 md:-ml-8 lg:-ml-10 self-center select-none z-0"
+                className="shrink-0 -ml-12 sm:-ml-20 md:-ml-28 lg:-ml-36 self-end -mb-2 sm:-mb-3 md:-mb-4 select-none z-0"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-16 sm:w-26 md:w-38 lg:w-48 h-auto"
+                  className="w-20 sm:w-28 md:w-40 lg:w-48 h-auto"
                 />
               </motion.div>
             </div>
