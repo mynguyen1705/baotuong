@@ -141,13 +141,13 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
             {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật + Chữ 2D Cam Vàng Viền Trắng Bọc Ngoài CHẮP CÁNH / ƯỚC MƠ */}
             <div className="mt-3 flex items-center justify-center gap-0 sm:gap-2 relative">
               <motion.div
-                animate={{ rotate: [-2, 2.5, -2], y: [0, -6, 0] }}
+                animate={{ rotate: [-2, 2.5, -2], y: [0, -5, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -mr-4 sm:-mr-8 md:-mr-12 lg:-mr-14 self-center select-none z-0"
+                className="shrink-0 -mr-2 sm:-mr-4 md:-mr-6 lg:-mr-8 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-24 sm:w-36 md:w-48 lg:w-56 h-auto drop-shadow-[0_8px_20px_rgba(0,0,0,0.22)]"
+                  className="w-16 sm:w-24 md:w-36 lg:w-44 h-auto drop-shadow-[0_6px_16px_rgba(0,0,0,0.2)]"
                 />
               </motion.div>
 
@@ -170,13 +170,13 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               </h1>
 
               <motion.div
-                animate={{ rotate: [2, -2.5, 2], y: [0, -6, 0] }}
+                animate={{ rotate: [2, -2.5, 2], y: [0, -5, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-14 self-center select-none z-0"
+                className="shrink-0 -ml-2 sm:-ml-4 md:-ml-6 lg:-ml-8 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-24 sm:w-36 md:w-48 lg:w-56 h-auto drop-shadow-[0_8px_20px_rgba(0,0,0,0.22)]"
+                  className="w-16 sm:w-24 md:w-36 lg:w-44 h-auto drop-shadow-[0_6px_16px_rgba(0,0,0,0.2)]"
                 />
               </motion.div>
             </div>

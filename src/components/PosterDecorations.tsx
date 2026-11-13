@@ -37,11 +37,11 @@ export const PointerHandIcon: React.FC<{ className?: string }> = ({
 export const DreamWingSVG: React.FC<{
   side: 'left' | 'right';
   className?: string;
-}> = ({ side, className = 'w-24 sm:w-40 md:w-56 h-auto' }) => (
+}> = ({ side, className = 'w-16 sm:w-24 md:w-36 lg:w-44 h-auto' }) => (
   <img
     src={side === 'left' ? '/decorations/sketch-wing-left.png' : '/decorations/sketch-wing-right.png'}
     alt={side === 'left' ? 'Đôi cánh ước mơ bên trái' : 'Đôi cánh ước mơ bên phải'}
-    className={`${className} object-contain select-none pointer-events-none drop-shadow-[0_6px_18px_rgba(0,0,0,0.2)] transition-transform`}
+    className={`${className} object-contain select-none pointer-events-none drop-shadow-[0_6px_16px_rgba(0,0,0,0.2)] transition-transform`}
     draggable={false}
   />
 );
