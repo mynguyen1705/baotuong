@@ -153,10 +153,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
 
               <h1 className="relative z-10 leading-tight sm:leading-snug select-none text-center">
                 <span className="relative inline-block">
-                  <span
-                    className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] tracking-wider sm:tracking-[0.09em]"
-                    data-text="CHẮP CÁNH"
-                  >
+                  <span className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] tracking-wider sm:tracking-[0.09em]">
                     CHẮP CÁNH
                   </span>
                   {/* Ngôi sao lấp lánh 2D hai bên tiêu đề theo ảnh mẫu */}
@@ -167,10 +164,7 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
                     ✦
                   </span>
                 </span>
-                <span
-                  className="title-2d-orange block text-6xl sm:text-8xl md:text-9xl lg:text-[6.5rem] tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-4"
-                  data-text="ƯỚC MƠ"
-                >
+                <span className="title-2d-orange block text-6xl sm:text-8xl md:text-9xl lg:text-[6.5rem] tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-4">
                   ƯỚC MƠ
                 </span>
               </h1>
