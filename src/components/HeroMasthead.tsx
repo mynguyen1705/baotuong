@@ -138,124 +138,51 @@ export const HeroMasthead: React.FC<HeroMastheadProps> = ({
               Chào mừng Ngày nhà giáo Việt Nam 20/11
             </p>
 
-            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ SVG Gradient Cam Vàng Viền Trắng Tinh Tế */}
-            <div className="mt-1 sm:mt-2 flex items-end justify-center relative max-w-5xl mx-auto px-1">
+            {/* Dòng 3: Đôi cánh Ước Mơ nét vẽ nghệ thuật ôm sát chữ ƯỚC MƠ + Chữ Loang Gradient Cam Vàng Viền Trắng Tinh Tế */}
+            <div className="mt-2 sm:mt-3 flex items-center justify-center gap-0 sm:gap-2 relative">
               <motion.div
-                animate={{ rotate: [-6, -2, -6], y: [0, -4, 0] }}
+                animate={{ rotate: [-4, 0, -4], y: [0, -6, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -mr-16 sm:-mr-24 md:-mr-32 lg:-mr-40 self-end mb-1 sm:mb-2 select-none z-0"
+                className="shrink-0 -mr-3 sm:-mr-5 md:-mr-8 lg:-mr-10 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="left"
-                  className="w-18 sm:w-24 md:w-32 lg:w-40 h-auto"
+                  className="w-16 sm:w-26 md:w-38 lg:w-48 h-auto"
                 />
               </motion.div>
 
-              <h1 className="relative z-10 select-none text-center w-full max-w-[85vw] sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto flex flex-col items-center justify-center">
-                <span className="relative w-full">
-                  <svg
-                    viewBox="100 0 720 250"
-                    className="w-full h-auto overflow-visible select-none drop-shadow-sm"
-                    role="img"
-                    aria-label="CHẮP CÁNH ƯỚC MƠ"
+              <h1 className="relative z-10 leading-tight sm:leading-snug select-none text-center">
+                <span className="relative inline-block">
+                  <span
+                    className="title-2d-orange block text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] tracking-wider sm:tracking-[0.09em]"
+                    data-text="CHẮP CÁNH"
                   >
-                    <defs>
-                      {/* Gradient loang từ Màu 2 (#F88F22) ở trên xuống Màu 1 (#EA6113) rõ nét, rực rỡ */}
-                      <linearGradient id="title-grad-vivid" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFA62B" />
-                        <stop offset="28%" stopColor="#F88F22" />
-                        <stop offset="72%" stopColor="#EA6113" />
-                        <stop offset="100%" stopColor="#C23E04" />
-                      </linearGradient>
-                      {/* Đổ bóng ấm áp dưới viền trắng */}
-                      <filter id="title-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="4" stdDeviation="3.5" floodColor="#5C1D06" floodOpacity="0.45" />
-                      </filter>
-
-                      {/* Khai báo text duy nhất trong defs để DOM chỉ có đúng 1 bản ghi cho mỗi cụm từ */}
-                      <text
-                        id="title-txt-chapcanh"
-                        x="460"
-                        y="86"
-                        textAnchor="middle"
-                        fontFamily="Praise, cursive, sans-serif"
-                        fontSize="92"
-                        fontWeight="bold"
-                        letterSpacing="5"
-                      >
-                        CHẮP CÁNH
-                      </text>
-                      <text
-                        id="title-txt-uocmo"
-                        x="460"
-                        y="218"
-                        textAnchor="middle"
-                        fontFamily="Praise, cursive, sans-serif"
-                        fontSize="114"
-                        fontWeight="bold"
-                        letterSpacing="6"
-                      >
-                        ƯỚC MƠ
-                      </text>
-                    </defs>
-
-                    <g filter="url(#title-shadow)">
-                      {/* Viền trắng thanh thoát, nhỏ gọn hơn bọc ngoài chữ CHẮP CÁNH (stroke 11px) */}
-                      <use
-                        href="#title-txt-chapcanh"
-                        stroke="#FFFFFF"
-                        strokeWidth="11"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        fill="#FFFFFF"
-                      />
-                      {/* Chữ loang gradient từ Màu 2 (#F88F22) xuống Màu 1 (#EA6113) */}
-                      <use
-                        href="#title-txt-chapcanh"
-                        fill="url(#title-grad-vivid)"
-                        stroke="url(#title-grad-vivid)"
-                        strokeWidth="2.5"
-                        strokeLinejoin="round"
-                      />
-
-                      {/* ƯỚC MƠ - Viền trắng nhỏ gọn hơn (stroke 12.5px) */}
-                      <use
-                        href="#title-txt-uocmo"
-                        stroke="#FFFFFF"
-                        strokeWidth="12.5"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        fill="#FFFFFF"
-                      />
-                      {/* ƯỚC MƠ - Gradient */}
-                      <use
-                        href="#title-txt-uocmo"
-                        fill="url(#title-grad-vivid)"
-                        stroke="url(#title-grad-vivid)"
-                        strokeWidth="3"
-                        strokeLinejoin="round"
-                      />
-                    </g>
-                  </svg>
-
-                  {/* Ngôi sao lấp lánh 2 bên chữ CHẮP CÁNH theo ảnh mẫu */}
-                  <span className="pointer-events-none absolute -left-2 sm:-left-4 top-[26%] -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                    CHẮP CÁNH
+                  </span>
+                  {/* Ngôi sao lấp lánh 2D hai bên tiêu đề theo ảnh mẫu */}
+                  <span className="pointer-events-none absolute -left-6 sm:-left-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
-                  <span className="pointer-events-none absolute -right-2 sm:-right-4 top-[26%] -translate-y-1/2 text-amber-500 text-lg sm:text-2xl select-none animate-pulse">
+                  <span className="pointer-events-none absolute -right-6 sm:-right-9 top-1/2 -translate-y-1/2 text-amber-500 text-xl sm:text-3xl select-none animate-pulse">
                     ✦
                   </span>
+                </span>
+                <span
+                  className="title-2d-orange block text-6xl sm:text-8xl md:text-9xl lg:text-[6.5rem] tracking-wider sm:tracking-[0.09em] mt-2 sm:mt-4"
+                  data-text="ƯỚC MƠ"
+                >
+                  ƯỚC MƠ
                 </span>
               </h1>
 
               <motion.div
-                animate={{ rotate: [6, 2, 6], y: [0, -4, 0] }}
+                animate={{ rotate: [4, 0, 4], y: [0, -6, 0] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="shrink-0 -ml-16 sm:-ml-24 md:-ml-32 lg:-ml-40 self-end mb-1 sm:mb-2 select-none z-0"
+                className="shrink-0 -ml-3 sm:-ml-5 md:-ml-8 lg:-ml-10 self-center select-none z-0"
               >
                 <DreamWingSVG
                   side="right"
-                  className="w-18 sm:w-24 md:w-32 lg:w-40 h-auto"
+                  className="w-16 sm:w-26 md:w-38 lg:w-48 h-auto"
                 />
               </motion.div>
             </div>
