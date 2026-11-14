@@ -95,6 +95,38 @@ async function getInitialFileTeachers() {
   }
 }
 
+function isLocalhost(req) {
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return false;
+  }
+
+  const forwardedFor = req.headers?.['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim().length > 0) {
+    const firstIp = forwardedFor.split(',')[0].trim().replace(/^::ffff:/, '');
+    if (firstIp !== '127.0.0.1' && firstIp !== '::1' && firstIp !== 'localhost') {
+      return false;
+    }
+  }
+
+  const hostHeader = req.headers?.host;
+  if (typeof hostHeader === 'string' && hostHeader.trim().length > 0) {
+    const hostname = hostHeader.split(':')[0].trim().toLowerCase();
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '[::1]') {
+      return false;
+    }
+  }
+
+  const remoteAddr = req.socket?.remoteAddress;
+  if (remoteAddr) {
+    const normalized = remoteAddr.replace(/^::ffff:/, '');
+    if (normalized !== '127.0.0.1' && normalized !== '::1' && normalized !== 'localhost') {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -104,6 +136,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+
+  const isOwner = isLocalhost(req);
 
   let teachers = await getUpstashTeachers();
   if (!teachers || teachers.length === 0) {
@@ -133,8 +167,16 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     return res.status(200).json({
       teachers,
-      isOwner: false,
+      isOwner,
     });
+  }
+
+  if (req.method === 'POST') {
+    if (!isOwner) {
+      return res.status(403).json({
+        error: 'Chỉ máy tính chủ sở hữu (localhost/127.0.0.1) mới có quyền thêm hoặc bớt giáo viên.',
+      });
+    }
   }
 
   let body = req.body;
@@ -269,22 +311,49 @@ export default async function handler(req, res) {
       return res.status(200).json({ teacher: updatedTeacher, deletedId: impId });
     }
 
-    // 4. Cập nhật ảnh giáo viên (nếu có)
-    if (body.photoUrl !== undefined) {
-      const updatedTeacher = {
-        ...targetTeacher,
-        photoUrl: String(body.photoUrl),
-        updatedAt: new Date().toISOString(),
-      };
-      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-      await setUpstashTeachers(teachers);
-      return res.status(200).json({ teacher: updatedTeacher });
+    // 4. Cập nhật ảnh hoặc thông tin giáo viên (Chỉ dành riêng cho Owner)
+    const hasProfileFields = [
+      'subject',
+      'honorificAndName',
+      'badgeText',
+      'badgeSide',
+      'summary',
+      'personalityTraits',
+      'detailedBio',
+      'memorableQuote',
+      'photoUrl',
+    ].some((key) => body[key] !== undefined);
+
+    if (hasProfileFields) {
+      if (!isOwner) {
+        return res.status(403).json({
+          error:
+            'Chỉ máy tính chủ sở hữu (localhost/127.0.0.1) mới có quyền đổi ảnh hoặc sửa thông tin giáo viên.',
+        });
+      }
+
+      if (body.photoUrl !== undefined) {
+        const updatedTeacher = {
+          ...targetTeacher,
+          photoUrl: String(body.photoUrl),
+          updatedAt: new Date().toISOString(),
+        };
+        teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
+        await setUpstashTeachers(teachers);
+        return res.status(200).json({ teacher: updatedTeacher });
+      }
     }
 
     return res.status(200).json({ teacher: targetTeacher });
   }
 
   if (req.method === 'DELETE') {
+    if (!isOwner) {
+      return res.status(403).json({
+        error:
+          'Chỉ máy tính chủ sở hữu (localhost/127.0.0.1) mới có quyền xóa giáo viên khỏi bảng tổng hợp.',
+      });
+    }
     // Xóa giáo viên
     if (teacherId) {
       const nextTeachers = teachers.filter((t) => t.id !== teacherId);

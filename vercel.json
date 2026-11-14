@@ -8,6 +8,10 @@
     {
       "source": "/api/wishes/:match*",
       "destination": "/api/wishes"
+    },
+    {
+      "source": "/api/memories/:match*",
+      "destination": "/api/memories"
     }
   ]
 }

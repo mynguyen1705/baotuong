@@ -133,5 +133,35 @@ describe('Memories API & RBAC Endpoint Tests', () => {
     expect(getStatusCode()).toBe(200);
     expect(getBody().data.title).toBe('Trạm Kỷ Niệm 9A3');
   });
+
+  it('chặn quyền Owner (isOwner = false & 403) khi request đi qua reverse proxy công khai (x-forwarded-for hoặc host public)', async () => {
+    const { req, res, getStatusCode, getBody } = mockRequest(
+      'GET',
+      '/api/memories',
+      null,
+      '127.0.0.1'
+    );
+    req.headers = {
+      host: 'baotuong2011.vercel.app',
+      'x-forwarded-for': '203.113.148.10',
+    };
+    const handled = await handleMemoriesApiRequest(req, res, store);
+    expect(handled).toBe(true);
+    expect(getStatusCode()).toBe(200);
+    expect(getBody().isOwner).toBe(false);
+
+    const putMock = mockRequest(
+      'PUT',
+      '/api/memories/slot/1',
+      { photoUrl: 'https://evil.com/x.jpg' },
+      '127.0.0.1'
+    );
+    putMock.req.headers = {
+      host: 'baotuong2011.vercel.app',
+      'x-forwarded-for': '203.113.148.10',
+    };
+    await handleMemoriesApiRequest(putMock.req, putMock.res, store);
+    expect(putMock.getStatusCode()).toBe(403);
+  });
 });
 

@@ -22,8 +22,11 @@ export class MemoriesStore {
   private lock: Promise<void> = Promise.resolve();
 
   constructor(options: MemoriesStoreOptions = {}) {
+    const isCustomStorage = Boolean(options.filePath);
     this.filePath = options.filePath || path.resolve(process.cwd(), 'server', 'data', 'memories.json');
-    this.publicFilePath = options.publicFilePath || path.resolve(process.cwd(), 'public', 'memories-data.json');
+    this.publicFilePath =
+      options.publicFilePath ||
+      (!isCustomStorage ? path.resolve(process.cwd(), 'public', 'memories-data.json') : undefined);
   }
 
   private async withLock<T>(op: () => Promise<T>): Promise<T> {

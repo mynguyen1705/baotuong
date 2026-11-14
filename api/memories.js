@@ -13,15 +13,35 @@ function sendJson(res, statusCode, payload) {
 }
 
 function isLocalhost(req) {
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return false;
+  }
+
+  const forwardedFor = req.headers?.['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim().length > 0) {
+    const firstIp = forwardedFor.split(',')[0].trim().replace(/^::ffff:/, '');
+    if (firstIp !== '127.0.0.1' && firstIp !== '::1' && firstIp !== 'localhost') {
+      return false;
+    }
+  }
+
+  const hostHeader = req.headers?.host;
+  if (typeof hostHeader === 'string' && hostHeader.trim().length > 0) {
+    const hostname = hostHeader.split(':')[0].trim().toLowerCase();
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '[::1]') {
+      return false;
+    }
+  }
+
   const remoteAddr = req.socket?.remoteAddress;
   if (remoteAddr) {
     const normalized = remoteAddr.replace(/^::ffff:/, '');
-    if (normalized === '127.0.0.1' || normalized === '::1' || normalized === 'localhost') {
-      return true;
+    if (normalized !== '127.0.0.1' && normalized !== '::1' && normalized !== 'localhost') {
+      return false;
     }
   }
-  const host = (req.headers?.host || '').toLowerCase();
-  return host.startsWith('localhost') || host.startsWith('127.0.0.1');
+
+  return true;
 }
 
 export default async function handler(req, res) {

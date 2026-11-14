@@ -51,7 +51,7 @@ export async function fetchMemoriesClient(): Promise<{
 
   // 1. Thử gọi API backend
   try {
-    const res = await fetch('/api/memories');
+    const res = await fetch('/api/memories', { cache: 'no-store' });
     if (res.ok) {
       const payload = await res.json();
       if (payload && payload.success && payload.data && Array.isArray(payload.data.memories)) {
@@ -68,10 +68,10 @@ export async function fetchMemoriesClient(): Promise<{
 
   // 2. Thử đọc file tĩnh /memories-data.json
   try {
-    const staticRes = await fetch('/memories-data.json');
+    const staticRes = await fetch('/memories-data.json', { cache: 'no-store' });
     if (staticRes.ok) {
       const staticData = await staticRes.json();
-      if (staticData && Array.isArray(staticData.memories) && staticData.memories.length === 11) {
+      if (staticData && Array.isArray(staticData.memories) && staticData.memories.length >= 11) {
         saveMemoriesToLocal(staticData);
         return { data: staticData, isOwner: localOwner };
       }

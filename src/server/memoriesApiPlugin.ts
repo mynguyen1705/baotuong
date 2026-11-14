@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
 import { createMemoriesStore, MemoriesStore } from './memoriesStore';
@@ -135,6 +137,18 @@ export function memoriesApiPlugin(options?: { filePath?: string }): Plugin {
 
   return {
     name: 'vite-plugin-memories-api',
+    async buildStart() {
+      try {
+        const data = await store.getStationData();
+        if (data && Array.isArray(data.memories) && data.memories.length >= 11) {
+          const publicFile = path.resolve(process.cwd(), 'public', 'memories-data.json');
+          await fs.mkdir(path.dirname(publicFile), { recursive: true });
+          await fs.writeFile(publicFile, JSON.stringify(data, null, 2), 'utf-8');
+        }
+      } catch {
+        // Ignore snapshot write errors in restricted environments
+      }
+    },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         try {

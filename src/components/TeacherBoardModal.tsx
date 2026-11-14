@@ -89,6 +89,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
   }, [mode, selectedTeacherId, isOpen]);
 
   const handleUploadNewTeacherPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isOwner) return;
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -107,6 +108,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
     teacherId: string,
     newPhotoDataUrl: string
   ) => {
+    if (!isOwner) return;
     setErrorMessage(null);
     setSuccessMessage(null);
     setIsSubmitting(true);
@@ -163,6 +165,7 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
 
   const handleCreateTeacherSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isOwner) return;
     setErrorMessage(null);
     setSuccessMessage(null);
     setIsSubmitting(true);
