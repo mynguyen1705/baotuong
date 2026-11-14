@@ -41,8 +41,21 @@ interface StoredWishRecord extends WishItem {
 export interface WishesStore {
   listWishes(): Promise<WishItem[]>;
   addWish(input: CreateWishInput): Promise<WishItem>;
+  syncWishes?(items: WishItem[]): Promise<WishItem[]>;
   updateWish(id: string, input: Partial<CreateWishInput>): Promise<WishItem>;
   deleteWish(id: string): Promise<void>;
+}
+
+function normalizeWishContentKey(item: {
+  senderName?: string;
+  className?: string;
+  message?: string;
+}): string {
+  const sender = String(item.senderName || '').trim().toLowerCase();
+  const cls = String(item.className || '').trim().toLowerCase();
+  const msg = String(item.message || '').trim().toLowerCase();
+  if (!sender || !msg) return '';
+  return `${sender}|${cls}|${msg}`;
 }
 
 function getServerConfig(options?: WishesStoreOptions) {
@@ -99,12 +112,40 @@ async function pushCloudWishes(wishes: StoredWishRecord[]): Promise<boolean> {
     return false;
   }
   try {
+    // Gộp dữ liệu hiện có trên Cloud trước khi đẩy để tuyệt đối không ghi đè làm mất lời chúc từ thiết bị khác
+    const existingCloud = await fetchCloudWishes();
+    const byId = new Map<string, WishItem>();
+    const seenKeys = new Set<string>();
+
+    for (const item of wishes) {
+      const pub = toPublicWish(item);
+      const key = normalizeWishContentKey(pub);
+      byId.set(pub.id, pub);
+      if (key) seenKeys.add(key);
+    }
+
+    if (Array.isArray(existingCloud)) {
+      for (const cw of existingCloud) {
+        if (!cw || !cw.id) continue;
+        const pub = toPublicWish(cw);
+        const key = normalizeWishContentKey(pub);
+        if (!byId.has(pub.id) && (!key || !seenKeys.has(key))) {
+          byId.set(pub.id, pub);
+          if (key) seenKeys.add(key);
+        }
+      }
+    }
+
+    const mergedList = Array.from(byId.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
     const res = await fetch(CLOUD_WISHES_URL, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: 'baotuong_wishes',
-        data: { wishes: wishes.map(toPublicWish) },
+        data: { wishes: mergedList },
       }),
     });
     return res.ok;
@@ -178,19 +219,25 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
     async listWishes(): Promise<WishItem[]> {
       const records = await readRecords();
 
-      // Đồng bộ hai chiều từ Cloud Store về Local nếu có lời chúc mới từ khách / học sinh
+      // Đồng bộ hai chiều từ Cloud Store về Local nếu có lời chúc mới từ khách / học sinh (chống trùng lặp cả theo ID và nội dung)
       if (!isCustomStorage) {
         try {
           const cloudWishes = await fetchCloudWishes();
           if (cloudWishes && Array.isArray(cloudWishes) && cloudWishes.length > 0) {
             const map = new Map<string, StoredWishRecord>();
+            const seenKeys = new Set<string>();
             for (const r of records) {
               map.set(r.id, r);
+              const k = normalizeWishContentKey(r);
+              if (k) seenKeys.add(k);
             }
             let hasNew = false;
             for (const cw of cloudWishes) {
-              if (!map.has(cw.id)) {
+              if (!cw || !cw.id) continue;
+              const k = normalizeWishContentKey(cw);
+              if (!map.has(cw.id) && (!k || !seenKeys.has(k))) {
                 map.set(cw.id, cw);
+                if (k) seenKeys.add(k);
                 hasNew = true;
               }
             }
@@ -210,6 +257,65 @@ export function createWishesStore(options?: WishesStoreOptions): WishesStore {
       return records
         .map(toPublicWish)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+
+    async syncWishes(items: WishItem[]): Promise<WishItem[]> {
+      if (!Array.isArray(items) || items.length === 0) {
+        return this.listWishes();
+      }
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const map = new Map<string, StoredWishRecord>();
+        const seenKeys = new Set<string>();
+
+        for (const r of records) {
+          map.set(r.id, r);
+          const k = normalizeWishContentKey(r);
+          if (k) seenKeys.add(k);
+        }
+
+        let hasNew = false;
+        for (const item of items) {
+          if (!item || typeof item !== 'object') continue;
+          const validation = validateWishInput({
+            senderName: item.senderName,
+            className: item.className,
+            message: item.message,
+          });
+          if (!validation.valid) continue;
+
+          const id =
+            typeof item.id === 'string' && item.id.trim().startsWith('wish-')
+              ? item.id.trim()
+              : `wish-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+          const k = normalizeWishContentKey(validation.cleaned);
+          if (!map.has(id) && (!k || !seenKeys.has(k))) {
+            map.set(id, {
+              id,
+              senderName: validation.cleaned.senderName,
+              className: validation.cleaned.className,
+              message: validation.cleaned.message,
+              createdAt:
+                typeof item.createdAt === 'string' && !Number.isNaN(new Date(item.createdAt).getTime())
+                  ? item.createdAt
+                  : new Date().toISOString(),
+            });
+            if (k) seenKeys.add(k);
+            hasNew = true;
+          }
+        }
+
+        const merged = Array.from(map.values()).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        if (hasNew) {
+          await writeRecords(merged);
+        }
+        return merged.map(toPublicWish);
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
     },
 
     async addWish(input: CreateWishInput): Promise<WishItem> {

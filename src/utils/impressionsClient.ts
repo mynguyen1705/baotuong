@@ -127,21 +127,74 @@ export function removeLocalImpression(teacherId: string, impressionId: string): 
   }
 }
 
+function normalizeImpressionContentKey(imp: {
+  studentName?: string;
+  className?: string;
+  trait?: string;
+  detail?: string;
+}): string {
+  const s = String(imp.studentName || '').trim().toLowerCase();
+  const c = String(imp.className || '9A3').trim().toLowerCase();
+  const t = String(imp.trait || '').trim().toLowerCase();
+  const d = String(imp.detail || '').trim().toLowerCase();
+  if (!s || !t || !d) return '';
+  return `${s}|${c}|${t}|${d}`;
+}
+
 export function mergeTeacherImpressions(teacher: TeacherProfile): TeacherProfile {
   const deletedIds = new Set(getDeletedImpressionIds());
   const activeBase = (teacher.impressions || []).filter((imp) => !deletedIds.has(imp.id));
 
   const localRecords = getLocalImpressions(teacher.id);
   const map = new Map<string, TeacherImpression>();
+  const seenKeys = new Set<string>();
+  const serverIds = new Set<string>();
+  const serverKeys = new Set<string>();
 
   for (const imp of activeBase) {
-    map.set(imp.id, imp);
+    const key = normalizeImpressionContentKey(imp);
+    if (!map.has(imp.id) && (!key || !seenKeys.has(key))) {
+      map.set(imp.id, imp);
+      if (key) seenKeys.add(key);
+    }
+    serverIds.add(imp.id);
+    if (key) serverKeys.add(key);
   }
 
+  const unsyncedForTeacher: TeacherImpression[] = [];
   for (const rec of localRecords) {
-    if (!deletedIds.has(rec.impression.id)) {
-      map.set(rec.impression.id, rec.impression);
+    const imp = rec.impression;
+    if (deletedIds.has(imp.id)) continue;
+    const key = normalizeImpressionContentKey(imp);
+    if (map.has(imp.id)) {
+      if (getMyImpressionIds().includes(imp.id)) {
+        map.set(imp.id, imp);
+      }
+      continue;
     }
+    if (key && seenKeys.has(key)) {
+      continue;
+    }
+    map.set(imp.id, imp);
+    if (key) seenKeys.add(key);
+    if (!serverIds.has(imp.id) && (!key || !serverKeys.has(key))) {
+      unsyncedForTeacher.push(imp);
+    }
+  }
+
+  // Tự động đồng bộ các cảm nhận còn lưu cục bộ trên thiết bị khác lên máy chủ web chính thức
+  if (unsyncedForTeacher.length > 0 && typeof fetch !== 'undefined') {
+    fetch(`/api/teachers/${encodeURIComponent(teacher.id)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        teacherId: teacher.id,
+        syncImpressions: unsyncedForTeacher,
+      }),
+    }).catch(() => {});
   }
 
   const merged = Array.from(map.values());
@@ -151,8 +204,14 @@ export function mergeTeacherImpressions(teacher: TeacherProfile): TeacherProfile
     return timeB - timeA;
   });
 
+  const traitSet = new Set(teacher.personalityTraits || []);
+  for (const imp of merged) {
+    if (imp.trait) traitSet.add(imp.trait);
+  }
+
   return {
     ...teacher,
+    personalityTraits: Array.from(traitSet),
     impressions: merged,
   };
 }

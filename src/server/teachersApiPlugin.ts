@@ -269,6 +269,14 @@ export function createTeachersMiddleware(store: TeachersStore) {
           });
         }
 
+        // 1.5. Check if batch syncing impressions from other devices (Allowed for all devices)
+        if (Array.isArray(parsed.syncImpressions) && store.syncImpressions) {
+          updatedTeacher = await store.syncImpressions(
+            teacherId,
+            parsed.syncImpressions as never[]
+          );
+        }
+
         // 2. Check if appending a student impression (Allowed for all students/devices)
         if (parsed.impression && typeof parsed.impression === 'object') {
           const imp = parsed.impression as Record<string, unknown>;

@@ -69,6 +69,12 @@ export function createWishesMiddleware(store: WishesStore) {
           return;
         }
 
+        if (Array.isArray(parsed.syncWishes) && store.syncWishes) {
+          const merged = await store.syncWishes(parsed.syncWishes as never[]);
+          sendJson(res, 200, { wishes: merged });
+          return;
+        }
+
         const created = await store.addWish({
           senderName: typeof parsed.senderName === 'string' ? parsed.senderName : '',
           className: typeof parsed.className === 'string' ? parsed.className : '',

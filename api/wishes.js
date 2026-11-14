@@ -78,32 +78,82 @@ async function setUpstashWishes(wishes) {
   }
 }
 
-async function getInitialFileWishes() {
-  const filePath = path.join(process.cwd(), 'server', 'data', 'wishes.json');
-  try {
-    const data = await fs.readFile(filePath, 'utf-8');
-    const parsed = JSON.parse(data);
-    return Array.isArray(parsed) ? parsed : parsed.wishes || [];
-  } catch {
-    return [
-      {
-        id: 'wish-1794235620000-baokhoi',
-        senderName: 'Nguyễn Đức Bảo Khôi',
-        className: '9A3',
-        message:
-          'Cảm ơn tất cả thầy cô đã đồng hành cùng chúng em suốt thời gian qua, thầy cô luôn tận tâm chỉ bảo, giảng bài. Dù đôi lúc lớp vẫn còn ồn ào và chưa tập trung nhưng thầy cô vẫn cố gắng đưa đò sang sông. Thầy cô là những người lái đò, những người âm thầm hi sinh mà em sẽ không bao giờ quên được!',
-        createdAt: '2026-11-09T15:07:00.000Z',
-      },
-      {
-        id: 'wish-1794049247793-a0bc860d',
-        senderName: 'Nguyễn Trà My',
-        className: '9A3',
-        message:
-          'Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!',
-        createdAt: '2026-11-07T11:00:47.793Z',
-      },
-    ];
+function normalizeWishKey(wish) {
+  if (!wish) return '';
+  const sender = String(wish.senderName || '').trim().toLowerCase();
+  const cls = String(wish.className || '').trim().toLowerCase();
+  const msg = String(wish.message || '').trim().toLowerCase();
+  if (!sender || !msg) return '';
+  return `${sender}|${cls}|${msg}`;
+}
+
+function mergeWishesLists(...lists) {
+  const byId = new Map();
+  const seenContentKeys = new Set();
+
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const raw of list) {
+      if (!raw || typeof raw !== 'object') continue;
+      const id = String(raw.id || '').trim();
+      const senderName = String(raw.senderName || '').trim();
+      const className = String(raw.className || '9A3').trim();
+      const message = String(raw.message || '').trim();
+      const createdAt = String(raw.createdAt || new Date().toISOString());
+      if (!id || !senderName || !message) continue;
+
+      const contentKey = normalizeWishKey({ senderName, className, message });
+      if (byId.has(id)) continue;
+      if (contentKey && seenContentKeys.has(contentKey)) continue;
+
+      byId.set(id, { id, senderName, className, message, createdAt });
+      if (contentKey) seenContentKeys.add(contentKey);
+    }
   }
+
+  return Array.from(byId.values()).sort((a, b) => {
+    const tA = new Date(a.createdAt).getTime() || 0;
+    const tB = new Date(b.createdAt).getTime() || 0;
+    return tB - tA;
+  });
+}
+
+async function getInitialFileWishes() {
+  const results = [];
+  const serverPath = path.join(process.cwd(), 'server', 'data', 'wishes.json');
+  const publicPath = path.join(process.cwd(), 'public', 'wishes-data.json');
+
+  for (const filePath of [serverPath, publicPath]) {
+    try {
+      const data = await fs.readFile(filePath, 'utf-8');
+      const parsed = JSON.parse(data);
+      const list = Array.isArray(parsed) ? parsed : parsed?.wishes;
+      if (Array.isArray(list)) results.push(list);
+    } catch {
+      // ignore
+    }
+  }
+
+  const defaultSeed = [
+    {
+      id: 'wish-1794235620000-baokhoi',
+      senderName: 'Nguyễn Đức Bảo Khôi',
+      className: '9A3',
+      message:
+        'Cảm ơn tất cả thầy cô đã đồng hành cùng chúng em suốt thời gian qua, thầy cô luôn tận tâm chỉ bảo, giảng bài. Dù đôi lúc lớp vẫn còn ồn ào và chưa tập trung nhưng thầy cô vẫn cố gắng đưa đò sang sông. Thầy cô là những người lái đò, những người âm thầm hi sinh mà em sẽ không bao giờ quên được!',
+      createdAt: '2026-11-09T15:07:00.000Z',
+    },
+    {
+      id: 'wish-1794049247793-a0bc860d',
+      senderName: 'Nguyễn Trà My',
+      className: '9A3',
+      message:
+        'Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!',
+      createdAt: '2026-11-07T11:00:47.793Z',
+    },
+  ];
+
+  return mergeWishesLists(...results, defaultSeed);
 }
 
 export default async function handler(req, res) {
@@ -116,14 +166,13 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Lấy danh sách lời chúc: ưu tiên Redis -> Cloud Store -> tệp mặc định
-  let cloudWishes = await getUpstashWishes();
-  if (!cloudWishes) {
-    cloudWishes = await getCloudWishes();
-  }
-  if (!cloudWishes) {
-    cloudWishes = await getInitialFileWishes();
-  }
+  // Gộp dữ liệu từ tất cả các nguồn (Upstash Redis + Cloud Store + File hệ thống) để không bao giờ bỏ sót hay ghi đè mất dữ liệu
+  const [upstashList, cloudList, fileList] = await Promise.all([
+    getUpstashWishes(),
+    getCloudWishes(),
+    getInitialFileWishes(),
+  ]);
+  let cloudWishes = mergeWishesLists(upstashList, cloudList, fileList);
 
   if (req.method === 'GET') {
     return res.status(200).json({ wishes: cloudWishes });
@@ -138,24 +187,51 @@ export default async function handler(req, res) {
         // ignore
       }
     }
-    const { senderName, className, message } = body || {};
+    body = body || {};
+
+    // Hỗ trợ đồng bộ hàng loạt (batch merge) từ các thiết bị khác lên server
+    if (Array.isArray(body.syncWishes)) {
+      const merged = mergeWishesLists(cloudWishes, body.syncWishes);
+      if (merged.length !== cloudWishes.length) {
+        cloudWishes = merged;
+        await setUpstashWishes(cloudWishes);
+        await saveCloudWishes(cloudWishes);
+      }
+      return res.status(200).json({ wishes: cloudWishes });
+    }
+
+    const { id: clientId, senderName, className, message, createdAt } = body;
     if (!senderName || !className || !message) {
       return res.status(400).json({ error: 'Vui lòng điền đầy đủ tên người gửi, lớp và lời chúc.' });
     }
 
-    const newWish = {
-      id: `wish-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    const candidateWish = {
+      id:
+        typeof clientId === 'string' && clientId.trim().startsWith('wish-')
+          ? clientId.trim()
+          : `wish-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       senderName: String(senderName).trim(),
       className: String(className).trim(),
       message: String(message).trim(),
-      createdAt: new Date().toISOString(),
+      createdAt:
+        typeof createdAt === 'string' && !Number.isNaN(new Date(createdAt).getTime())
+          ? createdAt
+          : new Date().toISOString(),
     };
 
-    const updated = [newWish, ...cloudWishes.filter((w) => w.id !== newWish.id)];
+    const candidateKey = normalizeWishKey(candidateWish);
+    const existingDuplicate = cloudWishes.find(
+      (w) => w.id === candidateWish.id || (candidateKey && normalizeWishKey(w) === candidateKey)
+    );
+    if (existingDuplicate) {
+      return res.status(200).json({ wish: existingDuplicate, wishes: cloudWishes });
+    }
+
+    const updated = mergeWishesLists([candidateWish], cloudWishes);
     await setUpstashWishes(updated);
     await saveCloudWishes(updated);
 
-    return res.status(201).json({ wish: newWish });
+    return res.status(201).json({ wish: candidateWish, wishes: updated });
   }
 
   if (req.method === 'PATCH' || req.method === 'PUT') {

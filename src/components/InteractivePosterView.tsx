@@ -103,9 +103,6 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
           <h2 className="mt-2.5 font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#C2410C]">
             {config.newspaperTitle}
           </h2>
-          <p className="mt-1 font-script text-2xl sm:text-3xl font-bold text-[#4A2511]">
-            “{config.competitionTheme}” — {config.className} • {config.schoolName}
-          </p>
           <p className="mt-2 text-xs sm:text-sm font-semibold text-amber-950/80">
             👉 <em>Nhấp trực tiếp vào bất kỳ nút <strong>“NHẤP VÀO ĐÂY ĐỂ XEM”</strong> trên tranh poster dưới đây để mở từng chuyên mục</em>
           </p>

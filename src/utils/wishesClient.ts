@@ -127,6 +127,18 @@ function removeLocalWish(id: string): void {
   }
 }
 
+function normalizeWishContentKey(item: {
+  senderName?: string;
+  className?: string;
+  message?: string;
+}): string {
+  const s = String(item.senderName || '').trim().toLowerCase();
+  const c = String(item.className || '').trim().toLowerCase();
+  const m = String(item.message || '').trim().toLowerCase();
+  if (!s || !m) return '';
+  return `${s}|${c}|${m}`;
+}
+
 export async function fetchWishes(signal?: AbortSignal): Promise<WishItem[]> {
   let fetchedWishes: WishItem[] = [];
   let fetchSucceeded = false;
@@ -185,17 +197,54 @@ export async function fetchWishes(signal?: AbortSignal): Promise<WishItem[]> {
   const deletedIds = new Set(getDeletedWishIds());
   const activeFetched = fetchedWishes.filter((item) => !deletedIds.has(item.id));
 
-  // 5. Đồng bộ thêm các lời chúc người dùng vừa gửi / cập nhật trên thiết bị này (localStorage)
+  // 5. Đồng bộ gộp (merge) các lời chúc từ thiết bị này (localStorage) mà không làm trùng lặp hay ghi đè
   const localWishes = getLocalWishes();
   const map = new Map<string, WishItem>();
+  const seenKeys = new Set<string>();
+  const serverIds = new Set<string>();
+  const serverKeys = new Set<string>();
 
   for (const item of activeFetched) {
-    map.set(item.id, item);
-  }
-  for (const localItem of localWishes) {
-    if (!deletedIds.has(localItem.id)) {
-      map.set(localItem.id, localItem);
+    const key = normalizeWishContentKey(item);
+    if (!map.has(item.id) && (!key || !seenKeys.has(key))) {
+      map.set(item.id, item);
+      if (key) seenKeys.add(key);
     }
+    serverIds.add(item.id);
+    if (key) serverKeys.add(key);
+  }
+
+  const unsyncedLocal: WishItem[] = [];
+  for (const localItem of localWishes) {
+    if (deletedIds.has(localItem.id)) continue;
+    const key = normalizeWishContentKey(localItem);
+    if (map.has(localItem.id)) {
+      // Nếu chính người dùng vừa sửa lời chúc của mình trên thiết bị này, giữ bản cập nhật mới nhất
+      if (getMyWishIds().includes(localItem.id)) {
+        map.set(localItem.id, localItem);
+      }
+      continue;
+    }
+    if (key && seenKeys.has(key)) {
+      continue;
+    }
+    map.set(localItem.id, localItem);
+    if (key) seenKeys.add(key);
+    if (!serverIds.has(localItem.id) && (!key || !serverKeys.has(key))) {
+      unsyncedLocal.push(localItem);
+    }
+  }
+
+  // 6. Tự động đẩy các lời chúc còn lưu cục bộ trên thiết bị khác lên máy chủ web chính thức
+  if (fetchSucceeded && unsyncedLocal.length > 0 && typeof fetch !== 'undefined') {
+    fetch(WISHES_API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ syncWishes: unsyncedLocal }),
+    }).catch(() => {});
   }
 
   const merged = Array.from(map.values());

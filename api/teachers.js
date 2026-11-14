@@ -95,6 +95,48 @@ async function getInitialFileTeachers() {
   }
 }
 
+function normalizeImpressionKey(imp) {
+  if (!imp) return '';
+  const student = String(imp.studentName || '').trim().toLowerCase();
+  const cls = String(imp.className || '9A3').trim().toLowerCase();
+  const trait = String(imp.trait || '').trim().toLowerCase();
+  const detail = String(imp.detail || '').trim().toLowerCase();
+  if (!student || !trait || !detail) return '';
+  return `${student}|${cls}|${trait}|${detail}`;
+}
+
+function mergeImpressionsLists(...lists) {
+  const byId = new Map();
+  const seenKeys = new Set();
+
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const raw of list) {
+      if (!raw || typeof raw !== 'object') continue;
+      const id = String(raw.id || '').trim();
+      const studentName = String(raw.studentName || '').trim();
+      const className = String(raw.className || '9A3').trim();
+      const trait = String(raw.trait || '').trim();
+      const detail = String(raw.detail || '').trim();
+      const createdAt = String(raw.createdAt || new Date().toISOString());
+      if (!id || !studentName || !trait || !detail) continue;
+
+      const key = normalizeImpressionKey({ studentName, className, trait, detail });
+      if (byId.has(id)) continue;
+      if (key && seenKeys.has(key)) continue;
+
+      byId.set(id, { id, studentName, className, trait, detail, createdAt });
+      if (key) seenKeys.add(key);
+    }
+  }
+
+  return Array.from(byId.values()).sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return timeB - timeA;
+  });
+}
+
 function isLocalhost(req) {
   if (process.env.VERCEL || process.env.VERCEL_ENV) {
     return false;
@@ -139,29 +181,44 @@ export default async function handler(req, res) {
 
   const isOwner = isLocalhost(req);
 
-  let teachers = await getUpstashTeachers();
-  if (!teachers || teachers.length === 0) {
-    teachers = await getInitialFileTeachers();
+  const [upstashTeachers, fileTeachers, cloudImpressions] = await Promise.all([
+    getUpstashTeachers(),
+    getInitialFileTeachers(),
+    getCloudImpressions(),
+  ]);
+
+  let teachers =
+    Array.isArray(upstashTeachers) && upstashTeachers.length > 0 ? upstashTeachers : fileTeachers;
+
+  // Nếu fileTeachers có thêm giáo viên mới hoặc cảm nhận gốc, gộp không ghi đè
+  const fileTeacherMap = new Map((fileTeachers || []).map((t) => [t.id, t]));
+  for (const ft of fileTeachers || []) {
+    if (!teachers.some((t) => t.id === ft.id)) {
+      teachers.push(ft);
+    }
   }
 
-  // Tự động đồng bộ các cảm nhận từ Cloud Store xuyên suốt tất cả thiết bị
-  const cloudImpressions = await getCloudImpressions();
+  // Tự động gộp (merge) các cảm nhận từ Cloud Store + File + Upstash xuyên suốt tất cả thiết bị (không trùng lặp, không mất dữ liệu)
   teachers = teachers.map((teacher) => {
+    const fileT = fileTeacherMap.get(teacher.id);
     const cloudList = cloudImpressions[teacher.id] || [];
-    const existingIds = new Set((teacher.impressions || []).map((i) => i.id));
-    const combined = [...(teacher.impressions || [])];
-    for (const item of cloudList) {
-      if (!existingIds.has(item.id)) {
-        combined.push(item);
-        existingIds.add(item.id);
-      }
+    const combined = mergeImpressionsLists(
+      teacher.impressions || [],
+      fileT?.impressions || [],
+      cloudList
+    );
+    cloudImpressions[teacher.id] = combined;
+
+    const traitSet = new Set(teacher.personalityTraits || fileT?.personalityTraits || []);
+    for (const imp of combined) {
+      if (imp.trait) traitSet.add(imp.trait);
     }
-    combined.sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return timeB - timeA;
-    });
-    return { ...teacher, impressions: combined };
+
+    return {
+      ...teacher,
+      personalityTraits: Array.from(traitSet),
+      impressions: combined,
+    };
   });
 
   if (req.method === 'GET') {
@@ -213,7 +270,30 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Không tìm thấy giáo viên.' });
     }
 
-    // 1. Thêm cảm nhận học sinh mới
+    // 0. Đồng bộ hàng loạt cảm nhận từ thiết bị khác (syncImpressions)
+    if (Array.isArray(body.syncImpressions)) {
+      const mergedList = mergeImpressionsLists(targetTeacher.impressions || [], body.syncImpressions);
+      cloudImpressions[targetTeacher.id] = mergedList;
+      await saveCloudImpressions(cloudImpressions);
+
+      const traitSet = new Set(targetTeacher.personalityTraits || []);
+      for (const imp of mergedList) {
+        if (imp.trait) traitSet.add(imp.trait);
+      }
+
+      const updatedTeacher = {
+        ...targetTeacher,
+        personalityTraits: Array.from(traitSet),
+        impressions: mergedList,
+        updatedAt: new Date().toISOString(),
+      };
+
+      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
+      await setUpstashTeachers(teachers);
+      return res.status(200).json({ teacher: updatedTeacher });
+    }
+
+    // 1. Thêm cảm nhận học sinh mới (gộp an toàn, chống trùng lặp và chống ghi đè)
     if (body.impression && typeof body.impression === 'object') {
       const imp = body.impression;
       const studentName = String(imp.studentName || '').trim();
@@ -225,22 +305,36 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Vui lòng điền đầy đủ tên, tính cách và kỷ niệm.' });
       }
 
-      const newImp = {
-        id: `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      const candidateImp = {
+        id:
+          typeof imp.id === 'string' && imp.id.trim().startsWith('imp-')
+            ? imp.id.trim()
+            : `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         studentName,
         className,
         trait,
         detail,
-        createdAt: new Date().toISOString(),
+        createdAt:
+          typeof imp.createdAt === 'string' && !Number.isNaN(new Date(imp.createdAt).getTime())
+            ? imp.createdAt
+            : new Date().toISOString(),
       };
+
+      const currentList = targetTeacher.impressions || [];
+      const candidateKey = normalizeImpressionKey(candidateImp);
+      const existingDup = currentList.find(
+        (item) =>
+          item.id === candidateImp.id ||
+          (candidateKey && normalizeImpressionKey(item) === candidateKey)
+      );
+      const finalNewImp = existingDup || candidateImp;
+      const updatedList = mergeImpressionsLists([finalNewImp], currentList);
+
+      cloudImpressions[targetTeacher.id] = updatedList;
+      await saveCloudImpressions(cloudImpressions);
 
       const traits = targetTeacher.personalityTraits || [];
       const updatedTraits = traits.includes(trait) ? traits : [...traits, trait];
-
-      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
-      const updatedList = [newImp, ...currentList.filter((i) => i.id !== newImp.id)];
-      cloudImpressions[targetTeacher.id] = updatedList;
-      await saveCloudImpressions(cloudImpressions);
 
       const updatedTeacher = {
         ...targetTeacher,
@@ -252,14 +346,14 @@ export default async function handler(req, res) {
       teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
       await setUpstashTeachers(teachers);
 
-      return res.status(200).json({ teacher: updatedTeacher, impression: newImp });
+      return res.status(200).json({ teacher: updatedTeacher, impression: finalNewImp });
     }
 
     // 2. Chỉnh sửa cảm nhận học sinh
     if (body.updateImpression && typeof body.updateImpression === 'object') {
       const up = body.updateImpression;
       const impId = String(up.id || '').trim();
-      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
+      const currentList = targetTeacher.impressions || [];
       const impIndex = currentList.findIndex((i) => i.id === impId);
       if (impIndex === -1) {
         return res.status(404).json({ error: 'Không tìm thấy cảm nhận cần chỉnh sửa.' });
@@ -294,7 +388,7 @@ export default async function handler(req, res) {
     // 3. Xoá cảm nhận học sinh qua PATCH
     if (body.deleteImpressionId) {
       const impId = String(body.deleteImpressionId).trim();
-      const currentList = cloudImpressions[targetTeacher.id] || targetTeacher.impressions || [];
+      const currentList = targetTeacher.impressions || [];
       const nextImps = currentList.filter((i) => i.id !== impId);
       cloudImpressions[targetTeacher.id] = nextImps;
       await saveCloudImpressions(cloudImpressions);

@@ -39,12 +39,57 @@ export interface TeachersStore {
   updateTeacher(id: string, input: UpdateTeacherInput): Promise<TeacherProfile>;
   deleteTeacher(id: string): Promise<void>;
   addImpression(id: string, input: AddTeacherImpressionInput): Promise<TeacherProfile>;
+  syncImpressions?(id: string, items: TeacherImpression[]): Promise<TeacherProfile>;
   updateImpression(
     teacherId: string,
     impressionId: string,
     input: Partial<AddTeacherImpressionInput>
   ): Promise<TeacherProfile>;
   deleteImpression(teacherId: string, impressionId: string): Promise<TeacherProfile>;
+}
+
+function normalizeImpressionContentKey(imp: {
+  studentName?: string;
+  className?: string;
+  trait?: string;
+  detail?: string;
+}): string {
+  const s = cleanText(imp.studentName).toLowerCase();
+  const c = (cleanText(imp.className) || '9A3').toLowerCase();
+  const t = cleanText(imp.trait).toLowerCase();
+  const d = cleanText(imp.detail).toLowerCase();
+  if (!s || !t || !d) return '';
+  return `${s}|${c}|${t}|${d}`;
+}
+
+function mergeTeacherImpressionLists(...lists: (TeacherImpression[] | undefined)[]): TeacherImpression[] {
+  const byId = new Map<string, TeacherImpression>();
+  const seenKeys = new Set<string>();
+
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const raw of list) {
+      if (!raw || typeof raw !== 'object') continue;
+      const id = cleanText(raw.id);
+      const studentName = cleanText(raw.studentName);
+      const className = cleanText(raw.className) || '9A3';
+      const trait = cleanText(raw.trait);
+      const detail = cleanText(raw.detail);
+      const createdAt = cleanText(raw.createdAt) || new Date().toISOString();
+      if (!id || !studentName || !trait || !detail) continue;
+
+      const key = normalizeImpressionContentKey({ studentName, className, trait, detail });
+      if (byId.has(id)) continue;
+      if (key && seenKeys.has(key)) continue;
+
+      byId.set(id, { id, studentName, className, trait, detail, createdAt });
+      if (key) seenKeys.add(key);
+    }
+  }
+
+  return Array.from(byId.values()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 function inferAvatarTheme(subject: string, provided?: TeacherAvatarTheme): TeacherAvatarTheme {
@@ -93,15 +138,27 @@ async function fetchCloudImpressions(): Promise<Record<string, TeacherImpression
   return null;
 }
 
-async function pushCloudImpressions(teachers: TeacherProfile[]): Promise<boolean> {
+async function pushCloudImpressions(
+  teachers: TeacherProfile[],
+  forceReplaceForTeacherId?: string
+): Promise<boolean> {
   if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
     return false;
   }
   try {
-    const impressionsByTeacher: Record<string, TeacherImpression[]> = {};
+    // Gộp dữ liệu Cloud hiện có trước khi đẩy để không bao giờ ghi đè mất cảm nhận từ thiết bị khác
+    const existingCloud = (await fetchCloudImpressions()) || {};
+    const impressionsByTeacher: Record<string, TeacherImpression[]> = { ...existingCloud };
+
     for (const t of teachers) {
-      if (Array.isArray(t.impressions) && t.impressions.length > 0) {
-        impressionsByTeacher[t.id] = t.impressions;
+      const localImps = Array.isArray(t.impressions) ? t.impressions : [];
+      if (forceReplaceForTeacherId && t.id === forceReplaceForTeacherId) {
+        impressionsByTeacher[t.id] = localImps;
+      } else {
+        const merged = mergeTeacherImpressionLists(localImps, existingCloud[t.id]);
+        if (merged.length > 0) {
+          impressionsByTeacher[t.id] = merged;
+        }
       }
     }
     const res = await fetch(CLOUD_IMPRESSIONS_URL, {
@@ -191,7 +248,7 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
     async listTeachers(): Promise<TeacherProfile[]> {
       const records = await readRecords();
 
-      // Đồng bộ hai chiều các cảm nhận thầy cô từ Cloud Store về Local
+      // Đồng bộ hai chiều các cảm nhận thầy cô từ Cloud Store về Local (chống trùng lặp cả theo ID và nội dung)
       if (!isCustomStorage) {
         try {
           const cloudImpressions = await fetchCloudImpressions();
@@ -200,19 +257,17 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
             for (const teacher of records) {
               const cloudList = cloudImpressions[teacher.id];
               if (Array.isArray(cloudList) && cloudList.length > 0) {
-                const map = new Map<string, TeacherImpression>();
-                for (const imp of teacher.impressions || []) {
-                  map.set(imp.id, imp);
-                }
-                for (const cImp of cloudList) {
-                  if (!map.has(cImp.id)) {
-                    map.set(cImp.id, cImp);
-                    hasNew = true;
+                const currentLen = (teacher.impressions || []).length;
+                const merged = mergeTeacherImpressionLists(teacher.impressions, cloudList);
+                if (merged.length > currentLen) {
+                  hasNew = true;
+                  teacher.impressions = merged;
+                  const traitSet = new Set(teacher.personalityTraits || []);
+                  for (const imp of merged) {
+                    if (imp.trait) traitSet.add(imp.trait);
                   }
+                  teacher.personalityTraits = Array.from(traitSet);
                 }
-                teacher.impressions = Array.from(map.values()).sort(
-                  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                );
               }
             }
             if (hasNew) {
@@ -435,6 +490,41 @@ export function createTeachersStore(options?: TeachersStoreOptions): TeachersSto
         const nextRecords = [...records];
         nextRecords[index] = updatedTeacher;
         await writeRecords(nextRecords);
+        return updatedTeacher;
+      });
+
+      writeQueue = task.catch(() => {});
+      return task;
+    },
+
+    async syncImpressions(id: string, items: TeacherImpression[]): Promise<TeacherProfile> {
+      const targetId = cleanText(id);
+      const task = writeQueue.then(async () => {
+        const records = await readRecords();
+        const index = records.findIndex((item) => item.id === targetId);
+        if (index === -1) {
+          throw new TeacherNotFoundError();
+        }
+
+        const existing = records[index];
+        const mergedImps = mergeTeacherImpressionLists(existing.impressions, items);
+        const traitSet = new Set(existing.personalityTraits || []);
+        for (const imp of mergedImps) {
+          if (imp.trait) traitSet.add(imp.trait);
+        }
+
+        const updatedTeacher: TeacherProfile = {
+          ...existing,
+          personalityTraits: Array.from(traitSet),
+          impressions: mergedImps,
+          updatedAt: new Date().toISOString(),
+        };
+
+        if (mergedImps.length !== (existing.impressions || []).length) {
+          const nextRecords = [...records];
+          nextRecords[index] = updatedTeacher;
+          await writeRecords(nextRecords);
+        }
         return updatedTeacher;
       });
 
