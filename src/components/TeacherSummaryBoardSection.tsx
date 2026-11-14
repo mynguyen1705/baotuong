@@ -572,18 +572,6 @@ export const TeacherSummaryBoardSection: React.FC<TeacherSummaryBoardSectionProp
               đến với năm học mới !
             </p>
           </div>
-
-          {/* Thông tin phân quyền & đồng bộ góc dưới phải */}
-          <div className="rounded-2xl border border-white/60 bg-white/90 px-4 py-2.5 text-xs text-stone-700 shadow-md backdrop-blur-sm">
-            <p className="font-bold text-sky-950">
-              {isOwner
-                ? 'Quyền Chủ Sở Hữu (Localhost): Được phép thêm / bớt giáo viên & đổi ảnh'
-                : 'Chế độ Khách / Học Sinh: Xem bảng tổng hợp & gửi cảm nhận tính cách'}
-            </p>
-            <p className="mt-0.5 text-[11px] text-stone-600">
-              Mọi thay đổi từ máy chủ của bạn được đồng bộ trực tiếp sang thiết bị của thầy cô.
-            </p>
-          </div>
         </div>
       </div>
     </section>

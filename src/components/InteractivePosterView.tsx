@@ -39,47 +39,47 @@ const POSTER_HOTSPOTS: {
   width: string;
   height: string;
 }[] = [
-  {
-    id: 'loi-ngo',
-    name: '1. Lời ngỏ',
-    left: '9.1%',
-    top: '38.8%',
-    width: '32.8%',
-    height: '2.8%',
-  },
-  {
-    id: 'truyen-ngan',
-    name: '2. Truyện ngắn',
-    left: '58.7%',
-    top: '47.3%',
-    width: '33.8%',
-    height: '2.9%',
-  },
-  {
-    id: 'tho',
-    name: '3. Thơ',
-    left: '8.3%',
-    top: '68.0%',
-    width: '33.4%',
-    height: '2.4%',
-  },
-  {
-    id: 'mv',
-    name: '4. Âm nhạc',
-    left: '59.3%',
-    top: '78.2%',
-    width: '34.2%',
-    height: '2.4%',
-  },
-  {
-    id: 'tri-an',
-    name: '5. Bài tri ân',
-    left: '33.2%',
-    top: '96.3%',
-    width: '37.1%',
-    height: '2.4%',
-  },
-];
+    {
+      id: 'loi-ngo',
+      name: '1. Lời ngỏ',
+      left: '9.1%',
+      top: '38.8%',
+      width: '32.8%',
+      height: '2.8%',
+    },
+    {
+      id: 'truyen-ngan',
+      name: '2. Truyện ngắn',
+      left: '58.7%',
+      top: '47.3%',
+      width: '33.8%',
+      height: '2.9%',
+    },
+    {
+      id: 'tho',
+      name: '3. Thơ',
+      left: '8.3%',
+      top: '68.0%',
+      width: '33.4%',
+      height: '2.4%',
+    },
+    {
+      id: 'mv',
+      name: '4. Âm nhạc',
+      left: '59.3%',
+      top: '78.2%',
+      width: '34.2%',
+      height: '2.4%',
+    },
+    {
+      id: 'tri-an',
+      name: '5. Bài tri ân',
+      left: '33.2%',
+      top: '96.3%',
+      width: '37.1%',
+      height: '2.4%',
+    },
+  ];
 
 export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
   config,
@@ -198,10 +198,6 @@ export const InteractivePosterView: React.FC<InteractivePosterViewProps> = ({
                 <Users className="h-5 w-5 text-poster-orange" />
                 <span>Tổ Chức Thực Hiện • {config.className}</span>
               </h3>
-              <p className="flex items-center gap-1.5 text-xs font-extrabold text-emerald-800">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                <span>Đóng gói đầy đủ 05/05 thành phần báo tường điện tử</span>
-              </p>
             </div>
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
