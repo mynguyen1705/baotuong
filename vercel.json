@@ -3,16 +3,15 @@
   "rewrites": [
     {
       "source": "/api/teachers/:match*",
-      "destination": "/api/teachers"
+      "destination": "/api/teachers?id=:match*"
     },
     {
       "source": "/api/wishes/:match*",
-      "destination": "/api/wishes"
+      "destination": "/api/wishes?id=:match*"
     },
     {
       "source": "/api/memories/:match*",
-      "destination": "/api/memories"
+      "destination": "/api/memories?id=:match*"
     }
   ]
 }
-

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   BookHeart,
   RefreshCw,
@@ -14,8 +15,10 @@ import {
   X,
   AlertCircle,
 } from 'lucide-react';
+import { useSafeQueryClient } from '../lib/queryClient';
 import { WishItem } from '../types/wishes';
-import { fetchWishes, updateWish, deleteWish, isMyWish } from '../utils/wishesClient';
+import * as wishesClient from '../utils/wishesClient';
+import { WISHES_QUERY_KEY } from '../utils/wishesClient';
 import { validateWishInput } from '../utils/validateWish';
 
 export interface TeacherWishesViewProps {
@@ -43,16 +46,58 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
   onSwitchToSubmit,
   refreshTrigger = 0,
 }) => {
-  const [wishes, setWishes] = useState<WishItem[]>([]);
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const queryClient = useSafeQueryClient();
+
+  const wishesQuery = useQuery(
+    {
+      queryKey: WISHES_QUERY_KEY,
+      queryFn: () => wishesClient.fetchWishes(),
+      refetchInterval: 8000,
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+    },
+    queryClient
+  );
+
+  const updateWishMutation = useMutation(
+    {
+      mutationFn: (updatePromise: Promise<WishItem>) => updatePromise,
+      onSuccess: (updated) => {
+        queryClient.setQueryData<WishItem[]>(WISHES_QUERY_KEY, (prev) =>
+          Array.isArray(prev)
+            ? prev.map((item) => (item.id === updated.id ? updated : item))
+            : [updated]
+        );
+        queryClient.invalidateQueries({ queryKey: WISHES_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
+
+  const deleteWishMutation = useMutation(
+    {
+      mutationFn: ({ id, deletePromise }: { id: string; deletePromise: Promise<void> }) =>
+        deletePromise.then(() => id),
+      onSuccess: (deletedId) => {
+        queryClient.setQueryData<WishItem[]>(WISHES_QUERY_KEY, (prev) =>
+          Array.isArray(prev) ? prev.filter((item) => item.id !== deletedId) : []
+        );
+        queryClient.invalidateQueries({ queryKey: WISHES_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
 
   // Trạng thái Chỉnh sửa lời chúc
   const [editingWish, setEditingWish] = useState<WishItem | null>(null);
   const [editSenderName, setEditSenderName] = useState('');
   const [editClassName, setEditClassName] = useState('');
   const [editMessage, setEditMessage] = useState('');
-  const [editErrors, setEditErrors] = useState<{ senderName?: string; className?: string; message?: string }>({});
+  const [editErrors, setEditErrors] = useState<{
+    senderName?: string;
+    className?: string;
+    message?: string;
+  }>({});
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
 
   // Trạng thái Xác nhận xóa lời chúc
@@ -60,33 +105,20 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
   const [isSubmittingDelete, setIsSubmittingDelete] = useState(false);
 
   // Thông báo hành động thành công / lỗi
-  const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [actionFeedback, setActionFeedback] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const loadWishes = useCallback(async () => {
-    setStatus('loading');
-    setErrorMessage(null);
-    try {
-      const data = await fetchWishes();
-      setWishes(data);
-      setStatus('loaded');
-    } catch (err: unknown) {
-      let msg = 'Không thể tải danh sách lời chúc lúc này.';
-      if (typeof err === 'string') {
-        msg = err;
-      } else if (err instanceof Error && err.message) {
-        msg = err.message;
-      }
-      if (!msg || msg === '[object Object]' || msg.includes('[object Object]')) {
-        msg = 'Không thể kết nối đến máy chủ lời chúc lúc này. Vui lòng bấm Thử lại để tải lại.';
-      }
-      setErrorMessage(msg);
-      setStatus('error');
-    }
-  }, []);
+    await wishesQuery.refetch();
+  }, [wishesQuery]);
 
   useEffect(() => {
-    loadWishes();
-  }, [loadWishes, refreshTrigger]);
+    if (refreshTrigger > 0) {
+      wishesQuery.refetch();
+    }
+  }, [refreshTrigger, wishesQuery]);
 
   // Tự ẩn thông báo phản hồi sau 4 giây
   useEffect(() => {
@@ -96,6 +128,28 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
     }, 4000);
     return () => clearTimeout(timer);
   }, [actionFeedback]);
+
+  const wishes: WishItem[] = wishesQuery.data ?? [];
+  const status: 'loading' | 'loaded' | 'error' = wishesQuery.isPending
+    ? 'loading'
+    : wishesQuery.isError
+      ? 'error'
+      : 'loaded';
+
+  const errorMessage = (() => {
+    if (!wishesQuery.isError) return null;
+    const err = wishesQuery.error;
+    let msg = 'Không thể tải danh sách lời chúc lúc này.';
+    if (typeof err === 'string') {
+      msg = err;
+    } else if (err instanceof Error && err.message) {
+      msg = err.message;
+    }
+    if (!msg || msg === '[object Object]' || msg.includes('[object Object]')) {
+      msg = 'Không thể kết nối đến máy chủ lời chúc lúc này. Vui lòng bấm Thử lại để tải lại.';
+    }
+    return msg;
+  })();
 
   // Mở modal chỉnh sửa
   const handleOpenEdit = (wish: WishItem) => {
@@ -126,8 +180,8 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
     setIsSubmittingEdit(true);
 
     try {
-      const updated = await updateWish(editingWish.id, validation.cleaned);
-      setWishes((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+      const updatePromise = wishesClient.updateWish(editingWish.id, validation.cleaned);
+      await updateWishMutation.mutateAsync(updatePromise);
       setEditingWish(null);
       setActionFeedback({
         type: 'success',
@@ -147,8 +201,8 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
 
     setIsSubmittingDelete(true);
     try {
-      await deleteWish(deletingWish.id);
-      setWishes((prev) => prev.filter((item) => item.id !== deletingWish.id));
+      const deletePromise = wishesClient.deleteWish(deletingWish.id);
+      await deleteWishMutation.mutateAsync({ id: deletingWish.id, deletePromise });
       setActionFeedback({
         type: 'success',
         text: 'Đã xóa lời chúc của bạn.',
@@ -217,7 +271,9 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
             disabled={status === 'loading'}
             className="inline-flex items-center gap-1.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-950 transition hover:bg-amber-100 disabled:opacity-60"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${status === 'loading' ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${status === 'loading' || wishesQuery.isFetching ? 'animate-spin' : ''}`}
+            />
             <span>Làm mới danh sách</span>
           </button>
 
@@ -260,9 +316,7 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
           <p className="mt-3 font-display text-lg font-extrabold text-red-950">
             Không thể tải danh sách lời chúc
           </p>
-          <p className="mt-1 max-w-md text-xs sm:text-sm text-red-800">
-            {errorMessage}
-          </p>
+          <p className="mt-1 max-w-md text-xs sm:text-sm text-red-800">{errorMessage}</p>
           <button
             type="button"
             onClick={loadWishes}
@@ -301,7 +355,7 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
       {status === 'loaded' && wishes.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {wishes.map((wish) => {
-            const canManage = isMyWish(wish.id);
+            const canManage = wishesClient.isMyWish(wish.id);
 
             return (
               <article
@@ -389,7 +443,10 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
             <div className="flex items-center justify-between border-b border-amber-200 pb-3">
               <div className="flex items-center gap-2">
                 <Edit3 className="h-5 w-5 text-poster-orange" />
-                <h3 id="edit-wish-title" className="font-display text-lg font-extrabold text-stone-900">
+                <h3
+                  id="edit-wish-title"
+                  className="font-display text-lg font-extrabold text-stone-900"
+                >
                   Chỉnh Sửa Lời Chúc Của Bạn
                 </h3>
               </div>
@@ -406,7 +463,10 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
             <form onSubmit={handleSaveEdit} className="mt-4 space-y-4">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="edit-senderName" className="block text-xs font-bold text-stone-700">
+                  <label
+                    htmlFor="edit-senderName"
+                    className="block text-xs font-bold text-stone-700"
+                  >
                     Tên người gửi <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -423,7 +483,10 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
                 </div>
 
                 <div>
-                  <label htmlFor="edit-className" className="block text-xs font-bold text-stone-700">
+                  <label
+                    htmlFor="edit-className"
+                    className="block text-xs font-bold text-stone-700"
+                  >
                     Lớp <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -500,7 +563,10 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <h3 id="delete-wish-title" className="font-display text-lg font-extrabold text-stone-900">
+                <h3
+                  id="delete-wish-title"
+                  className="font-display text-lg font-extrabold text-stone-900"
+                >
                   Xác nhận xóa lời chúc
                 </h3>
                 <p className="text-xs text-stone-500">Hành động này không thể hoàn tác</p>
@@ -509,7 +575,8 @@ export const TeacherWishesView: React.FC<TeacherWishesViewProps> = ({
 
             <p className="mt-4 text-xs sm:text-sm text-stone-700 leading-relaxed">
               Bạn có chắc chắn muốn xóa lời chúc của{' '}
-              <strong className="text-stone-900">"{deletingWish.senderName}"</strong> (Lớp {deletingWish.className}) không?
+              <strong className="text-stone-900">"{deletingWish.senderName}"</strong> (Lớp{' '}
+              {deletingWish.className}) không?
             </p>
 
             <div className="mt-3 rounded-2xl border border-stone-200 bg-stone-50 p-3 text-xs italic text-stone-600 line-clamp-3">

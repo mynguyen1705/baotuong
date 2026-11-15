@@ -1,31 +1,31 @@
+import { supabase, isMockedTestFetch } from '../lib/supabaseClient';
 import { CreateWishInput, WishItem } from '../types/wishes';
 import { isLocalhostClient } from './isLocalhostClient';
 import { validateWishInput } from './validateWish';
 
 const WISHES_API_ENDPOINT = '/api/wishes';
-const WISHES_PUBLIC_FALLBACK = '/wishes-data.json';
-const LOCAL_STORAGE_KEY = 'baotuong_local_wishes';
+const LEGACY_LOCAL_STORAGE_KEY = 'baotuong_local_wishes';
 const MY_WISH_IDS_KEY = 'baotuong_my_wish_ids';
-const DELETED_WISH_IDS_KEY = 'baotuong_deleted_wish_ids';
 
-const DEFAULT_SEED_WISHES: WishItem[] = [
-  {
-    id: 'wish-1794235620000-baokhoi',
-    senderName: 'Nguyễn Đức Bảo Khôi',
-    className: '9A3',
-    message:
-      'Cảm ơn tất cả thầy cô đã đồng hành cùng chúng em suốt thời gian qua, thầy cô luôn tận tâm chỉ bảo, giảng bài. Dù đôi lúc lớp vẫn còn ồn ào và chưa tập trung nhưng thầy cô vẫn cố gắng đưa đò sang sông. Thầy cô là những người lái đò, những người âm thầm hi sinh mà em sẽ không bao giờ quên được!',
-    createdAt: '2026-11-09T15:07:00.000Z',
-  },
-  {
-    id: 'wish-1794049247793-a0bc860d',
-    senderName: 'Nguyễn Trà My',
-    className: '9A3',
-    message:
-      'Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!',
-    createdAt: '2026-11-07T11:00:47.793Z',
-  },
-];
+export const WISHES_QUERY_KEY = ['wishes'] as const;
+
+interface SupabaseWishRow {
+  id: string;
+  sender_name: string;
+  class_name: string;
+  message: string;
+  created_at: string;
+}
+
+function mapRowToWish(row: SupabaseWishRow): WishItem {
+  return {
+    id: String(row.id),
+    senderName: String(row.sender_name || '').trim(),
+    className: String(row.class_name || '9A3').trim(),
+    message: String(row.message || '').trim(),
+    createdAt: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+  };
+}
 
 export function getMyWishIds(): string[] {
   if (typeof window === 'undefined') return [];
@@ -69,187 +69,87 @@ export function isMyWish(id: string): boolean {
   return getMyWishIds().includes(id);
 }
 
-function getDeletedWishIds(): string[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(DELETED_WISH_IDS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function addDeletedWishId(id: string): void {
+/**
+ * Nếu trình duyệt của học sinh còn dữ liệu cũ từng bị kẹt trong localStorage trước khi nâng cấp Supabase,
+ * tự động đẩy toàn bộ lên bảng public.wishes trên Supabase rồi xóa bỏ bộ nhớ cục bộ.
+ */
+async function migrateLegacyLocalWishesToSupabase(): Promise<void> {
   if (typeof window === 'undefined') return;
   try {
-    const current = getDeletedWishIds();
-    if (!current.includes(id)) {
-      localStorage.setItem(DELETED_WISH_IDS_KEY, JSON.stringify([id, ...current]));
+    const raw = localStorage.getItem(LEGACY_LOCAL_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
+      return;
+    }
+
+    const rowsToUpsert: SupabaseWishRow[] = parsed
+      .filter(
+        (item: Partial<WishItem>) =>
+          item &&
+          typeof item.id === 'string' &&
+          typeof item.senderName === 'string' &&
+          typeof item.message === 'string' &&
+          item.senderName.trim().length > 0 &&
+          item.message.trim().length > 0
+      )
+      .map((item: WishItem) => ({
+        id: item.id.trim(),
+        sender_name: item.senderName.trim(),
+        class_name: (item.className || '9A3').trim(),
+        message: item.message.trim(),
+        created_at: item.createdAt || new Date().toISOString(),
+      }));
+
+    if (rowsToUpsert.length > 0) {
+      const { error } = await supabase
+        .from('wishes')
+        .upsert(rowsToUpsert, { onConflict: 'id', ignoreDuplicates: true });
+      if (!error) {
+        localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
+      }
+    } else {
+      localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
     }
   } catch {
-    // Ignore error
+    // Ignore migration errors
   }
-}
-
-function getLocalWishes(): WishItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveLocalWish(wish: WishItem): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const current = getLocalWishes();
-    const updated = [wish, ...current.filter((w) => w.id !== wish.id)];
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-  } catch {
-    // Ignore localStorage quotas or errors
-  }
-}
-
-function removeLocalWish(id: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const current = getLocalWishes();
-    const updated = current.filter((w) => w.id !== id);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-  } catch {
-    // Ignore error
-  }
-}
-
-function normalizeWishContentKey(item: {
-  senderName?: string;
-  className?: string;
-  message?: string;
-}): string {
-  const s = String(item.senderName || '').trim().toLowerCase();
-  const c = String(item.className || '').trim().toLowerCase();
-  const m = String(item.message || '').trim().toLowerCase();
-  if (!s || !m) return '';
-  return `${s}|${c}|${m}`;
 }
 
 export async function fetchWishes(signal?: AbortSignal): Promise<WishItem[]> {
-  let fetchedWishes: WishItem[] = [];
-  let fetchSucceeded = false;
+  // 1. Đọc trực tiếp từ Supabase (cơ sở dữ liệu chung cho mọi thiết bị)
+  if (!isMockedTestFetch()) {
+    await migrateLegacyLocalWishesToSupabase();
 
-  // 1. Thử gọi API máy chủ /api/wishes trước
-  try {
-    const response = await fetch(WISHES_API_ENDPOINT, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-      cache: 'no-store',
-      signal,
-    });
+    const { data, error } = await supabase
+      .from('wishes')
+      .select('id, sender_name, class_name, message, created_at')
+      .order('created_at', { ascending: false });
 
-    if (response.ok) {
-      const data = await response.json();
-      if (Array.isArray(data?.wishes)) {
-        fetchedWishes = data.wishes;
-        fetchSucceeded = true;
-      }
-    }
-  } catch {
-    // Bỏ qua lỗi và chuyển sang fallback tĩnh
-  }
-
-  // 2. Nếu API không khả dụng (ví dụ trên hosting tĩnh Vercel), đọc tệp /wishes-data.json
-  if (!fetchSucceeded) {
-    try {
-      const fallbackRes = await fetch(WISHES_PUBLIC_FALLBACK, {
-        headers: {
-          Accept: 'application/json',
-        },
-        cache: 'no-store',
-        signal,
-      });
-
-      if (fallbackRes.ok) {
-        const fallbackData = await fallbackRes.json();
-        if (Array.isArray(fallbackData?.wishes)) {
-          fetchedWishes = fallbackData.wishes;
-          fetchSucceeded = true;
-        }
-      }
-    } catch {
-      // Tiếp tục fallback bộ nhớ cục bộ
+    if (!error && Array.isArray(data)) {
+      return data.map((row) => mapRowToWish(row as SupabaseWishRow));
     }
   }
 
-  // 3. Nếu cả 2 đều không tải được (ngoại tuyến hoàn toàn), lấy danh sách mặc định
-  if (!fetchSucceeded || fetchedWishes.length === 0) {
-    fetchedWishes = DEFAULT_SEED_WISHES;
-  }
+  // 2. Dự phòng qua API máy chủ /api/wishes (cũng kết nối trực tiếp với Supabase)
+  const response = await fetch(WISHES_API_ENDPOINT, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+    cache: 'no-store',
+    signal,
+  });
 
-  // 4. Lọc bỏ các lời chúc đã bị xóa trên thiết bị này
-  const deletedIds = new Set(getDeletedWishIds());
-  const activeFetched = fetchedWishes.filter((item) => !deletedIds.has(item.id));
-
-  // 5. Đồng bộ gộp (merge) các lời chúc từ thiết bị này (localStorage) mà không làm trùng lặp hay ghi đè
-  const localWishes = getLocalWishes();
-  const map = new Map<string, WishItem>();
-  const seenKeys = new Set<string>();
-  const serverIds = new Set<string>();
-  const serverKeys = new Set<string>();
-
-  for (const item of activeFetched) {
-    const key = normalizeWishContentKey(item);
-    if (!map.has(item.id) && (!key || !seenKeys.has(key))) {
-      map.set(item.id, item);
-      if (key) seenKeys.add(key);
-    }
-    serverIds.add(item.id);
-    if (key) serverKeys.add(key);
-  }
-
-  const unsyncedLocal: WishItem[] = [];
-  for (const localItem of localWishes) {
-    if (deletedIds.has(localItem.id)) continue;
-    const key = normalizeWishContentKey(localItem);
-    if (map.has(localItem.id)) {
-      // Nếu chính người dùng vừa sửa lời chúc của mình trên thiết bị này, giữ bản cập nhật mới nhất
-      if (getMyWishIds().includes(localItem.id)) {
-        map.set(localItem.id, localItem);
-      }
-      continue;
-    }
-    if (key && seenKeys.has(key)) {
-      continue;
-    }
-    map.set(localItem.id, localItem);
-    if (key) seenKeys.add(key);
-    if (!serverIds.has(localItem.id) && (!key || !serverKeys.has(key))) {
-      unsyncedLocal.push(localItem);
+  if (response.ok) {
+    const data = await response.json();
+    if (Array.isArray(data?.wishes)) {
+      return data.wishes;
     }
   }
 
-  // 6. Tự động đẩy các lời chúc còn lưu cục bộ trên thiết bị khác lên máy chủ web chính thức
-  if (fetchSucceeded && unsyncedLocal.length > 0 && typeof fetch !== 'undefined') {
-    fetch(WISHES_API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({ syncWishes: unsyncedLocal }),
-    }).catch(() => {});
-  }
-
-  const merged = Array.from(map.values());
-  merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  return merged;
+  throw new Error('Không thể tải danh sách lời chúc từ cơ sở dữ liệu. Vui lòng thử lại.');
 }
 
 export async function submitWish(input: CreateWishInput): Promise<WishItem> {
@@ -263,51 +163,7 @@ export async function submitWish(input: CreateWishInput): Promise<WishItem> {
     throw new Error(firstError);
   }
 
-  // 1. Thử gửi lên API máy chủ nếu có
-  try {
-    const response = await fetch(WISHES_API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(validation.cleaned),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data?.wish) {
-        saveLocalWish(data.wish);
-        addMyWishId(data.wish.id);
-        return data.wish;
-      }
-    } else {
-      // Nếu máy chủ báo lỗi trùng hoặc xác thực nghiệp vụ (400, 409), đọc thông báo lỗi an toàn
-      try {
-        const errData = await response.json();
-        let serverMsg: string | null = null;
-        if (typeof errData?.error === 'string') {
-          serverMsg = errData.error;
-        } else if (typeof errData?.error?.message === 'string') {
-          serverMsg = errData.error.message;
-        }
-        if (serverMsg && response.status !== 404 && response.status !== 405) {
-          throw new Error(serverMsg);
-        }
-      } catch (parseErr: unknown) {
-        if (parseErr instanceof Error && parseErr.message && !parseErr.message.includes('JSON')) {
-          throw parseErr;
-        }
-      }
-    }
-  } catch (err: unknown) {
-    if (err instanceof Error && !err.message.includes('fetch') && !err.message.includes('NetworkError')) {
-      throw err;
-    }
-  }
-
-  // 2. Chế độ dự phòng khi chạy tĩnh trên Vercel: Lưu trực tiếp vào thiết bị của học sinh
-  const localCreatedWish: WishItem = {
+  const candidateWish: WishItem = {
     id: `wish-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     senderName: validation.cleaned.senderName,
     className: validation.cleaned.className,
@@ -315,9 +171,78 @@ export async function submitWish(input: CreateWishInput): Promise<WishItem> {
     createdAt: new Date().toISOString(),
   };
 
-  saveLocalWish(localCreatedWish);
-  addMyWishId(localCreatedWish.id);
-  return localCreatedWish;
+  // 1. Ghi trực tiếp lên bảng public.wishes trên Supabase
+  if (!isMockedTestFetch()) {
+    const { data, error } = await supabase
+      .from('wishes')
+      .insert({
+        id: candidateWish.id,
+        sender_name: candidateWish.senderName,
+        class_name: candidateWish.className,
+        message: candidateWish.message,
+        created_at: candidateWish.createdAt,
+      })
+      .select('id, sender_name, class_name, message, created_at')
+      .single();
+
+    if (!error && data) {
+      const saved = mapRowToWish(data as SupabaseWishRow);
+      addMyWishId(saved.id);
+
+      // Đồng bộ song song về API máy chủ nếu đang chạy kèm server
+      if (typeof fetch === 'function') {
+        fetch(WISHES_API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(saved),
+        }).catch(() => {});
+      }
+
+      return saved;
+    }
+  }
+
+  // 2. Dự phòng gọi qua /api/wishes (kết nối Supabase từ phía server)
+  const response = await fetch(WISHES_API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      ...validation.cleaned,
+      id: candidateWish.id,
+      createdAt: candidateWish.createdAt,
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    if (data?.wish) {
+      addMyWishId(data.wish.id);
+      return data.wish;
+    }
+  } else {
+    let serverMsg: string | null = null;
+    try {
+      const errData = await response.json();
+      if (typeof errData?.error === 'string') {
+        serverMsg = errData.error;
+      } else if (typeof errData?.error?.message === 'string') {
+        serverMsg = errData.error.message;
+      }
+    } catch {
+      // Ignore parse error
+    }
+    if (serverMsg) {
+      throw new Error(serverMsg);
+    }
+  }
+
+  throw new Error('Không thể lưu lời chúc lên cơ sở dữ liệu lúc này. Vui lòng thử lại.');
 }
 
 export async function updateWish(id: string, input: Partial<CreateWishInput>): Promise<WishItem> {
@@ -331,60 +256,86 @@ export async function updateWish(id: string, input: Partial<CreateWishInput>): P
     throw new Error(firstError);
   }
 
-  // 1. Thử gửi lên API máy chủ nếu có
-  try {
-    const response = await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(validation.cleaned),
-    });
+  // 1. Cập nhật trực tiếp trên Supabase
+  if (!isMockedTestFetch()) {
+    const { data, error } = await supabase
+      .from('wishes')
+      .update({
+        sender_name: validation.cleaned.senderName,
+        class_name: validation.cleaned.className,
+        message: validation.cleaned.message,
+      })
+      .eq('id', id)
+      .select('id, sender_name, class_name, message, created_at')
+      .single();
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data?.wish) {
-        saveLocalWish(data.wish);
-        addMyWishId(data.wish.id);
-        return data.wish;
+    if (!error && data) {
+      const updated = mapRowToWish(data as SupabaseWishRow);
+      addMyWishId(updated.id);
+
+      if (typeof fetch === 'function') {
+        fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(validation.cleaned),
+        }).catch(() => {});
       }
+
+      return updated;
     }
-  } catch {
-    // Tiếp tục lưu trữ cục bộ
   }
 
-  // 2. Cập nhật trong bộ nhớ cục bộ
-  const currentLocal = getLocalWishes();
-  const existing = currentLocal.find((w) => w.id === id);
-  const updatedWish: WishItem = {
-    id,
-    senderName: validation.cleaned.senderName,
-    className: validation.cleaned.className,
-    message: validation.cleaned.message,
-    createdAt: existing?.createdAt || new Date().toISOString(),
-  };
+  // 2. Dự phòng gọi API máy chủ
+  const response = await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(validation.cleaned),
+  });
 
-  saveLocalWish(updatedWish);
-  addMyWishId(id);
-  return updatedWish;
+  if (response.ok) {
+    const data = await response.json();
+    if (data?.wish) {
+      addMyWishId(data.wish.id);
+      return data.wish;
+    }
+  }
+
+  throw new Error('Không thể cập nhật lời chúc trên cơ sở dữ liệu lúc này. Vui lòng thử lại.');
 }
 
 export async function deleteWish(id: string): Promise<void> {
-  // 1. Thử gửi lên API máy chủ nếu có
-  try {
-    await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-  } catch {
-    // Tiếp tục cập nhật cục bộ
+  // 1. Xóa trực tiếp trên Supabase
+  if (!isMockedTestFetch()) {
+    const { error } = await supabase.from('wishes').delete().eq('id', id);
+    if (!error) {
+      removeMyWishId(id);
+      if (typeof fetch === 'function') {
+        fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+          headers: { Accept: 'application/json' },
+        }).catch(() => {});
+      }
+      return;
+    }
   }
 
-  // 2. Đánh dấu xóa và xóa khỏi bộ nhớ thiết bị
-  addDeletedWishId(id);
-  removeLocalWish(id);
+  // 2. Dự phòng gọi API máy chủ
+  const response = await fetch(`${WISHES_API_ENDPOINT}/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Không thể xóa lời chúc lúc này. Vui lòng thử lại.');
+  }
+
   removeMyWishId(id);
 }

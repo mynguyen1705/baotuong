@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Send, CheckCircle2, AlertCircle, Sparkles, BookHeart } from 'lucide-react';
+import { useSafeQueryClient } from '../lib/queryClient';
 import { CreateWishInput, WishItem } from '../types/wishes';
 import { validateWishInput } from '../utils/validateWish';
-import { submitWish } from '../utils/wishesClient';
+import * as wishesClient from '../utils/wishesClient';
+import { WISHES_QUERY_KEY } from '../utils/wishesClient';
 
 export interface WishSubmissionFormProps {
   defaultClassName?: string;
@@ -15,6 +18,8 @@ export const WishSubmissionForm: React.FC<WishSubmissionFormProps> = ({
   onWishCreated,
   onSwitchToView,
 }) => {
+  const queryClient = useSafeQueryClient();
+
   const [senderName, setSenderName] = useState('');
   const [className, setClassName] = useState(defaultClassName);
   const [message, setMessage] = useState('');
@@ -25,6 +30,20 @@ export const WishSubmissionForm: React.FC<WishSubmissionFormProps> = ({
   const [lastSubmittedWish, setLastSubmittedWish] = useState<WishItem | null>(null);
 
   const isSubmittingRef = useRef(false);
+
+  const createWishMutation = useMutation(
+    {
+      mutationFn: (submissionPromise: Promise<WishItem>) => submissionPromise,
+      onSuccess: (created) => {
+        queryClient.setQueryData<WishItem[]>(WISHES_QUERY_KEY, (prev) => {
+          if (!Array.isArray(prev)) return [created];
+          return [created, ...prev.filter((w) => w.id !== created.id)];
+        });
+        queryClient.invalidateQueries({ queryKey: WISHES_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +65,8 @@ export const WishSubmissionForm: React.FC<WishSubmissionFormProps> = ({
     setIsSubmitting(true);
 
     try {
-      const created = await submitWish(validation.cleaned);
+      const submissionPromise = wishesClient.submitWish(validation.cleaned);
+      const created = await createWishMutation.mutateAsync(submissionPromise);
       setLastSubmittedWish(created);
       setSenderName('');
       setMessage('');
@@ -244,4 +264,3 @@ export const WishSubmissionForm: React.FC<WishSubmissionFormProps> = ({
     </div>
   );
 };
-

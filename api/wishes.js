@@ -1,159 +1,50 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+const SUPABASE_URL =
+  process.env.VITE_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  'https://dludapuvvqzotyrkeimy.supabase.co';
 
-const CLOUD_WISHES_ID = 'ff808181a09d98f701a1c10cd30f720f';
-const CLOUD_WISHES_URL = `https://api.restful-api.dev/objects/${CLOUD_WISHES_ID}`;
+const SUPABASE_ANON_KEY =
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  'sb_publishable__bZnVMn_mCMPYwuc9XRBvw_MmXUSaCW';
 
-async function getCloudWishes() {
-  try {
-    const res = await fetch(CLOUD_WISHES_URL, { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data?.data?.wishes) && data.data.wishes.length > 0) {
-        return data.data.wishes;
-      }
-    }
-  } catch (err) {
-    console.error('Error reading cloud wishes:', err);
-  }
-  return null;
+const SUPABASE_WISHES_REST_URL = `${SUPABASE_URL}/rest/v1/wishes`;
+
+function getSupabaseHeaders(extra = {}) {
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    ...extra,
+  };
 }
 
-async function saveCloudWishes(wishes) {
-  try {
-    const res = await fetch(CLOUD_WISHES_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'baotuong_wishes',
-        data: { wishes },
-      }),
-    });
-    return res.ok;
-  } catch (err) {
-    console.error('Error saving cloud wishes:', err);
-    return false;
-  }
+function mapRowToWish(row) {
+  return {
+    id: String(row.id),
+    senderName: String(row.sender_name || '').trim(),
+    className: String(row.class_name || '9A3').trim(),
+    message: String(row.message || '').trim(),
+    createdAt: row.created_at
+      ? new Date(row.created_at).toISOString()
+      : new Date().toISOString(),
+  };
 }
 
-// Hỗ trợ kết nối Redis / KV trên Vercel để lưu trữ tập trung xuyên suốt tất cả thiết bị
-async function getUpstashWishes() {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-
-  try {
-    const res = await fetch(`${url}/get/baotuong_wishes`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (data?.result) {
-      const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch (err) {
-    console.error('Error reading from Upstash Redis:', err);
-  }
-  return null;
-}
-
-async function setUpstashWishes(wishes) {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return false;
-
-  try {
-    const res = await fetch(`${url}/set/baotuong_wishes`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(JSON.stringify(wishes)),
-    });
-    return res.ok;
-  } catch (err) {
-    console.error('Error writing to Upstash Redis:', err);
-    return false;
-  }
-}
-
-function normalizeWishKey(wish) {
-  if (!wish) return '';
-  const sender = String(wish.senderName || '').trim().toLowerCase();
-  const cls = String(wish.className || '').trim().toLowerCase();
-  const msg = String(wish.message || '').trim().toLowerCase();
-  if (!sender || !msg) return '';
-  return `${sender}|${cls}|${msg}`;
-}
-
-function mergeWishesLists(...lists) {
-  const byId = new Map();
-  const seenContentKeys = new Set();
-
-  for (const list of lists) {
-    if (!Array.isArray(list)) continue;
-    for (const raw of list) {
-      if (!raw || typeof raw !== 'object') continue;
-      const id = String(raw.id || '').trim();
-      const senderName = String(raw.senderName || '').trim();
-      const className = String(raw.className || '9A3').trim();
-      const message = String(raw.message || '').trim();
-      const createdAt = String(raw.createdAt || new Date().toISOString());
-      if (!id || !senderName || !message) continue;
-
-      const contentKey = normalizeWishKey({ senderName, className, message });
-      if (byId.has(id)) continue;
-      if (contentKey && seenContentKeys.has(contentKey)) continue;
-
-      byId.set(id, { id, senderName, className, message, createdAt });
-      if (contentKey) seenContentKeys.add(contentKey);
-    }
-  }
-
-  return Array.from(byId.values()).sort((a, b) => {
-    const tA = new Date(a.createdAt).getTime() || 0;
-    const tB = new Date(b.createdAt).getTime() || 0;
-    return tB - tA;
-  });
-}
-
-async function getInitialFileWishes() {
-  const results = [];
-  const serverPath = path.join(process.cwd(), 'server', 'data', 'wishes.json');
-  const publicPath = path.join(process.cwd(), 'public', 'wishes-data.json');
-
-  for (const filePath of [serverPath, publicPath]) {
-    try {
-      const data = await fs.readFile(filePath, 'utf-8');
-      const parsed = JSON.parse(data);
-      const list = Array.isArray(parsed) ? parsed : parsed?.wishes;
-      if (Array.isArray(list)) results.push(list);
-    } catch {
-      // ignore
-    }
-  }
-
-  const defaultSeed = [
+async function fetchSupabaseWishes() {
+  const res = await fetch(
+    `${SUPABASE_WISHES_REST_URL}?select=id,sender_name,class_name,message,created_at&order=created_at.desc`,
     {
-      id: 'wish-1794235620000-baokhoi',
-      senderName: 'Nguyễn Đức Bảo Khôi',
-      className: '9A3',
-      message:
-        'Cảm ơn tất cả thầy cô đã đồng hành cùng chúng em suốt thời gian qua, thầy cô luôn tận tâm chỉ bảo, giảng bài. Dù đôi lúc lớp vẫn còn ồn ào và chưa tập trung nhưng thầy cô vẫn cố gắng đưa đò sang sông. Thầy cô là những người lái đò, những người âm thầm hi sinh mà em sẽ không bao giờ quên được!',
-      createdAt: '2026-11-09T15:07:00.000Z',
-    },
-    {
-      id: 'wish-1794049247793-a0bc860d',
-      senderName: 'Nguyễn Trà My',
-      className: '9A3',
-      message:
-        'Nhân ngày Nhà giáo Việt Nam 20/11, tập thể 9A3 kính chúc quý thầy cô Trường TH&THCS Hiệp Thạnh luôn mạnh khỏe và hạnh phúc!',
-      createdAt: '2026-11-07T11:00:47.793Z',
-    },
-  ];
-
-  return mergeWishesLists(...results, defaultSeed);
+      method: 'GET',
+      headers: getSupabaseHeaders(),
+      cache: 'no-store',
+    }
+  );
+  if (!res.ok) {
+    throw new Error(`Supabase GET wishes failed: ${res.status}`);
+  }
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows.map(mapRowToWish) : [];
 }
 
 export default async function handler(req, res) {
@@ -166,128 +57,154 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Gộp dữ liệu từ tất cả các nguồn (Upstash Redis + Cloud Store + File hệ thống) để không bao giờ bỏ sót hay ghi đè mất dữ liệu
-  const [upstashList, cloudList, fileList] = await Promise.all([
-    getUpstashWishes(),
-    getCloudWishes(),
-    getInitialFileWishes(),
-  ]);
-  let cloudWishes = mergeWishesLists(upstashList, cloudList, fileList);
+  const urlPath = (req.url || '').split('?')[0];
+  const idMatch = urlPath.match(/\/api\/wishes\/([^/]+)$/);
+  const wishId =
+    (idMatch ? decodeURIComponent(idMatch[1]) : null) ||
+    req.query?.id ||
+    req.query?.match ||
+    null;
 
-  if (req.method === 'GET') {
-    return res.status(200).json({ wishes: cloudWishes });
-  }
+  try {
+    if (req.method === 'GET') {
+      const wishes = await fetchSupabaseWishes();
+      return res.status(200).json({ wishes });
+    }
 
-  if (req.method === 'POST') {
     let body = req.body;
     if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
       } catch {
-        // ignore
+        body = {};
       }
     }
     body = body || {};
 
-    // Hỗ trợ đồng bộ hàng loạt (batch merge) từ các thiết bị khác lên server
-    if (Array.isArray(body.syncWishes)) {
-      const merged = mergeWishesLists(cloudWishes, body.syncWishes);
-      if (merged.length !== cloudWishes.length) {
-        cloudWishes = merged;
-        await setUpstashWishes(cloudWishes);
-        await saveCloudWishes(cloudWishes);
+    if (req.method === 'POST') {
+      if (Array.isArray(body.syncWishes) || Array.isArray(body.wishes)) {
+        const list = body.syncWishes || body.wishes;
+        const rows = list
+          .filter((w) => w && w.id && w.senderName && w.message)
+          .map((w) => ({
+            id: String(w.id).trim(),
+            sender_name: String(w.senderName).trim(),
+            class_name: String(w.className || '9A3').trim(),
+            message: String(w.message).trim(),
+            created_at: w.createdAt || new Date().toISOString(),
+          }));
+
+        if (rows.length > 0) {
+          await fetch(`${SUPABASE_WISHES_REST_URL}?on_conflict=id`, {
+            method: 'POST',
+            headers: getSupabaseHeaders({
+              Prefer: 'resolution=merge-duplicates,return=minimal',
+            }),
+            body: JSON.stringify(rows),
+          });
+        }
+        const wishes = await fetchSupabaseWishes();
+        return res.status(200).json({ wishes });
       }
-      return res.status(200).json({ wishes: cloudWishes });
-    }
 
-    const { id: clientId, senderName, className, message, createdAt } = body;
-    if (!senderName || !className || !message) {
-      return res.status(400).json({ error: 'Vui lòng điền đầy đủ tên người gửi, lớp và lời chúc.' });
-    }
-
-    const candidateWish = {
-      id:
-        typeof clientId === 'string' && clientId.trim().startsWith('wish-')
-          ? clientId.trim()
-          : `wish-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-      senderName: String(senderName).trim(),
-      className: String(className).trim(),
-      message: String(message).trim(),
-      createdAt:
-        typeof createdAt === 'string' && !Number.isNaN(new Date(createdAt).getTime())
-          ? createdAt
-          : new Date().toISOString(),
-    };
-
-    const candidateKey = normalizeWishKey(candidateWish);
-    const existingDuplicate = cloudWishes.find(
-      (w) => w.id === candidateWish.id || (candidateKey && normalizeWishKey(w) === candidateKey)
-    );
-    if (existingDuplicate) {
-      return res.status(200).json({ wish: existingDuplicate, wishes: cloudWishes });
-    }
-
-    const updated = mergeWishesLists([candidateWish], cloudWishes);
-    await setUpstashWishes(updated);
-    await saveCloudWishes(updated);
-
-    return res.status(201).json({ wish: candidateWish, wishes: updated });
-  }
-
-  if (req.method === 'PATCH' || req.method === 'PUT') {
-    let body = req.body;
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch {
-        // ignore
+      const { id: clientId, senderName, className, message, createdAt } = body;
+      if (!senderName || !className || !message) {
+        return res
+          .status(400)
+          .json({ error: 'Vui lòng điền đầy đủ tên người gửi, lớp và lời chúc.' });
       }
-    }
-    const id = req.query.id || body?.id;
-    const { senderName, className, message } = body || {};
-    if (!id) {
-      return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
-    }
 
-    const index = cloudWishes.findIndex((w) => w.id === String(id));
-    if (index === -1) {
-      return res.status(404).json({ error: 'Không tìm thấy lời chúc.' });
-    }
+      const row = {
+        id:
+          typeof clientId === 'string' && clientId.trim().startsWith('wish-')
+            ? clientId.trim()
+            : `wish-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        sender_name: String(senderName).trim(),
+        class_name: String(className).trim(),
+        message: String(message).trim(),
+        created_at:
+          typeof createdAt === 'string' && !Number.isNaN(new Date(createdAt).getTime())
+            ? createdAt
+            : new Date().toISOString(),
+      };
 
-    const updatedWish = {
-      ...cloudWishes[index],
-      senderName: senderName ? String(senderName).trim() : cloudWishes[index].senderName,
-      className: className ? String(className).trim() : cloudWishes[index].className,
-      message: message ? String(message).trim() : cloudWishes[index].message,
-    };
+      const insertRes = await fetch(`${SUPABASE_WISHES_REST_URL}?on_conflict=id`, {
+        method: 'POST',
+        headers: getSupabaseHeaders({
+          Prefer: 'resolution=merge-duplicates,return=representation',
+        }),
+        body: JSON.stringify(row),
+      });
 
-    cloudWishes[index] = updatedWish;
-    await setUpstashWishes(cloudWishes);
-    await saveCloudWishes(cloudWishes);
-
-    return res.status(200).json({ wish: updatedWish });
-  }
-
-  if (req.method === 'DELETE') {
-    let body = req.body;
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch {
-        // ignore
+      if (!insertRes.ok) {
+        return res.status(500).json({ error: 'Không thể lưu lời chúc lên Supabase.' });
       }
-    }
-    const id = req.query.id || body?.id;
-    if (!id) {
-      return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
+
+      const insertedRows = await insertRes.json();
+      const created =
+        Array.isArray(insertedRows) && insertedRows[0]
+          ? mapRowToWish(insertedRows[0])
+          : mapRowToWish(row);
+
+      return res.status(201).json({ wish: created });
     }
 
-    const filtered = cloudWishes.filter((w) => w.id !== String(id));
-    await setUpstashWishes(filtered);
-    await saveCloudWishes(filtered);
+    if (req.method === 'PATCH' || req.method === 'PUT') {
+      const targetId = wishId || body.id;
+      if (!targetId) {
+        return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
+      }
 
-    return res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công.' });
+      const updatePayload = {};
+      if (body.senderName) updatePayload.sender_name = String(body.senderName).trim();
+      if (body.className) updatePayload.class_name = String(body.className).trim();
+      if (body.message) updatePayload.message = String(body.message).trim();
+
+      const patchRes = await fetch(
+        `${SUPABASE_WISHES_REST_URL}?id=eq.${encodeURIComponent(String(targetId))}`,
+        {
+          method: 'PATCH',
+          headers: getSupabaseHeaders({ Prefer: 'return=representation' }),
+          body: JSON.stringify(updatePayload),
+        }
+      );
+
+      if (!patchRes.ok) {
+        return res.status(500).json({ error: 'Không thể cập nhật lời chúc trên Supabase.' });
+      }
+
+      const updatedRows = await patchRes.json();
+      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
+        return res.status(404).json({ error: 'Không tìm thấy lời chúc.' });
+      }
+
+      return res.status(200).json({ wish: mapRowToWish(updatedRows[0]) });
+    }
+
+    if (req.method === 'DELETE') {
+      const targetId = wishId || body.id;
+      if (!targetId) {
+        return res.status(400).json({ error: 'Mã lời chúc không hợp lệ.' });
+      }
+
+      const delRes = await fetch(
+        `${SUPABASE_WISHES_REST_URL}?id=eq.${encodeURIComponent(String(targetId))}`,
+        {
+          method: 'DELETE',
+          headers: getSupabaseHeaders(),
+        }
+      );
+
+      if (!delRes.ok) {
+        return res.status(500).json({ error: 'Không thể xóa lời chúc trên Supabase.' });
+      }
+
+      return res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công.' });
+    }
+
+    return res.status(405).json({ error: 'Phương thức không được hỗ trợ.' });
+  } catch (err) {
+    console.error('Error in /api/wishes:', err);
+    return res.status(500).json({ error: 'Lỗi máy chủ khi xử lý lời chúc.' });
   }
-
-  return res.status(405).json({ error: 'Phương thức không được hỗ trợ.' });
 }

@@ -1,79 +1,102 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-const CLOUD_IMPRESSIONS_ID = 'ff808181a09d98f701a1c10cd3967210';
-const CLOUD_API_URL = `https://api.restful-api.dev/objects/${CLOUD_IMPRESSIONS_ID}`;
+const SUPABASE_URL =
+  process.env.VITE_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  'https://dludapuvvqzotyrkeimy.supabase.co';
 
-async function getCloudImpressions() {
-  try {
-    const res = await fetch(CLOUD_API_URL, { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      return data?.data?.impressionsByTeacher || {};
+const SUPABASE_ANON_KEY =
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  'sb_publishable__bZnVMn_mCMPYwuc9XRBvw_MmXUSaCW';
+
+const SUPABASE_IMPRESSIONS_REST_URL = `${SUPABASE_URL}/rest/v1/teacher_impressions`;
+
+function getSupabaseHeaders(extra = {}) {
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    ...extra,
+  };
+}
+
+function mapImpressionToRow(teacherId, imp) {
+  return {
+    id: String(imp.id),
+    teacher_id: String(teacherId),
+    author: String(imp.studentName || 'Học sinh 9A3').trim(),
+    color: String(imp.className || '9A3').trim(),
+    content: JSON.stringify({
+      studentName: String(imp.studentName || 'Học sinh 9A3').trim(),
+      className: String(imp.className || '9A3').trim(),
+      trait: String(imp.trait || '').trim(),
+      detail: String(imp.detail || '').trim(),
+    }),
+    rotation: 0,
+    created_at: imp.createdAt || new Date().toISOString(),
+  };
+}
+
+function mapRowToImpression(row) {
+  let studentName = String(row.author || 'Học sinh 9A3').trim();
+  let className = row.color && row.color !== 'yellow' ? String(row.color).trim() : '9A3';
+  let trait = 'Tận tâm & nhiệt huyết';
+  let detail = String(row.content || '').trim();
+
+  if (detail.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(detail);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.studentName) studentName = String(parsed.studentName).trim();
+        if (parsed.className) className = String(parsed.className).trim();
+        if (parsed.trait) trait = String(parsed.trait).trim();
+        if (parsed.detail) detail = String(parsed.detail).trim();
+      }
+    } catch {
+      // Fallback plain text
     }
-  } catch (err) {
-    console.error('Error reading cloud impressions:', err);
   }
-  return {};
+
+  return {
+    teacherId: String(row.teacher_id),
+    impression: {
+      id: String(row.id),
+      studentName,
+      className,
+      trait,
+      detail,
+      createdAt: row.created_at
+        ? new Date(row.created_at).toISOString()
+        : new Date().toISOString(),
+    },
+  };
 }
 
-async function saveCloudImpressions(impressionsByTeacher) {
+async function fetchSupabaseImpressionsByTeacher() {
   try {
-    const res = await fetch(CLOUD_API_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'baotuong_impressions',
-        data: { impressionsByTeacher },
-      }),
-    });
-    return res.ok;
-  } catch (err) {
-    console.error('Error saving cloud impressions:', err);
-    return false;
-  }
-}
-
-// Hỗ trợ kết nối Redis / KV trên Vercel để lưu trữ tập trung xuyên suốt tất cả thiết bị
-async function getUpstashTeachers() {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-
-  try {
-    const res = await fetch(`${url}/get/baotuong_teachers`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (data?.result) {
-      const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
-      if (Array.isArray(parsed)) return parsed;
-      if (parsed && Array.isArray(parsed.teachers)) return parsed.teachers;
+    const res = await fetch(
+      `${SUPABASE_IMPRESSIONS_REST_URL}?select=id,teacher_id,author,content,color,rotation,created_at&order=created_at.desc`,
+      {
+        method: 'GET',
+        headers: getSupabaseHeaders(),
+        cache: 'no-store',
+      }
+    );
+    if (!res.ok) return {};
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return {};
+    const grouped = {};
+    for (const row of rows) {
+      const { teacherId, impression } = mapRowToImpression(row);
+      if (!grouped[teacherId]) grouped[teacherId] = [];
+      grouped[teacherId].push(impression);
     }
+    return grouped;
   } catch (err) {
-    console.error('Error reading teachers from Upstash Redis:', err);
-  }
-  return null;
-}
-
-async function setUpstashTeachers(teachers) {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return false;
-
-  try {
-    const res = await fetch(`${url}/set/baotuong_teachers`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(JSON.stringify(teachers)),
-    });
-    return res.ok;
-  } catch (err) {
-    console.error('Error writing teachers to Upstash Redis:', err);
-    return false;
+    console.error('Error reading Supabase impressions:', err);
+    return {};
   }
 }
 
@@ -181,35 +204,16 @@ export default async function handler(req, res) {
 
   const isOwner = isLocalhost(req);
 
-  const [upstashTeachers, fileTeachers, cloudImpressions] = await Promise.all([
-    getUpstashTeachers(),
+  const [fileTeachers, supabaseImpressions] = await Promise.all([
     getInitialFileTeachers(),
-    getCloudImpressions(),
+    fetchSupabaseImpressionsByTeacher(),
   ]);
 
-  let teachers =
-    Array.isArray(upstashTeachers) && upstashTeachers.length > 0 ? upstashTeachers : fileTeachers;
+  let teachers = (fileTeachers || []).map((teacher) => {
+    const dbList = supabaseImpressions[teacher.id] || [];
+    const combined = mergeImpressionsLists(dbList);
 
-  // Nếu fileTeachers có thêm giáo viên mới hoặc cảm nhận gốc, gộp không ghi đè
-  const fileTeacherMap = new Map((fileTeachers || []).map((t) => [t.id, t]));
-  for (const ft of fileTeachers || []) {
-    if (!teachers.some((t) => t.id === ft.id)) {
-      teachers.push(ft);
-    }
-  }
-
-  // Tự động gộp (merge) các cảm nhận từ Cloud Store + File + Upstash xuyên suốt tất cả thiết bị (không trùng lặp, không mất dữ liệu)
-  teachers = teachers.map((teacher) => {
-    const fileT = fileTeacherMap.get(teacher.id);
-    const cloudList = cloudImpressions[teacher.id] || [];
-    const combined = mergeImpressionsLists(
-      teacher.impressions || [],
-      fileT?.impressions || [],
-      cloudList
-    );
-    cloudImpressions[teacher.id] = combined;
-
-    const traitSet = new Set(teacher.personalityTraits || fileT?.personalityTraits || []);
+    const traitSet = new Set(teacher.personalityTraits || []);
     for (const imp of combined) {
       if (imp.trait) traitSet.add(imp.trait);
     }
@@ -246,10 +250,12 @@ export default async function handler(req, res) {
   }
   body = body || {};
 
-  // Trích xuất teacherId từ URL /api/teachers/:id hoặc query hoặc body
+  // Trích xuất teacherId từ URL /api/teachers/:id hoặc query (?id= / ?match=) hoặc body
   let teacherId = '';
-  if (req.query && req.query.id) {
+  if (req.query?.id) {
     teacherId = String(req.query.id);
+  } else if (req.query?.match) {
+    teacherId = String(req.query.match);
   } else if (body.teacherId) {
     teacherId = String(body.teacherId);
   } else if (req.url) {
@@ -270,12 +276,26 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Không tìm thấy giáo viên.' });
     }
 
-    // 0. Đồng bộ hàng loạt cảm nhận từ thiết bị khác (syncImpressions)
+    // 0. Đồng bộ hàng loạt cảm nhận từ thiết bị khác lên Supabase (syncImpressions)
     if (Array.isArray(body.syncImpressions)) {
-      const mergedList = mergeImpressionsLists(targetTeacher.impressions || [], body.syncImpressions);
-      cloudImpressions[targetTeacher.id] = mergedList;
-      await saveCloudImpressions(cloudImpressions);
+      const rows = body.syncImpressions
+        .filter((imp) => imp && imp.id && imp.studentName && imp.trait && imp.detail)
+        .map((imp) => mapImpressionToRow(targetTeacher.id, imp));
 
+      if (rows.length > 0) {
+        await fetch(`${SUPABASE_IMPRESSIONS_REST_URL}?on_conflict=id`, {
+          method: 'POST',
+          headers: getSupabaseHeaders({
+            Prefer: 'resolution=merge-duplicates,return=minimal',
+          }),
+          body: JSON.stringify(rows),
+        });
+      }
+
+      const mergedList = mergeImpressionsLists(
+        targetTeacher.impressions || [],
+        body.syncImpressions
+      );
       const traitSet = new Set(targetTeacher.personalityTraits || []);
       for (const imp of mergedList) {
         if (imp.trait) traitSet.add(imp.trait);
@@ -287,13 +307,10 @@ export default async function handler(req, res) {
         impressions: mergedList,
         updatedAt: new Date().toISOString(),
       };
-
-      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-      await setUpstashTeachers(teachers);
       return res.status(200).json({ teacher: updatedTeacher });
     }
 
-    // 1. Thêm cảm nhận học sinh mới (gộp an toàn, chống trùng lặp và chống ghi đè)
+    // 1. Thêm cảm nhận học sinh mới trực tiếp vào Supabase
     if (body.impression && typeof body.impression === 'object') {
       const imp = body.impression;
       const studentName = String(imp.studentName || '').trim();
@@ -302,7 +319,9 @@ export default async function handler(req, res) {
       const detail = String(imp.detail || '').trim();
 
       if (!studentName || !trait || !detail) {
-        return res.status(400).json({ error: 'Vui lòng điền đầy đủ tên, tính cách và kỷ niệm.' });
+        return res
+          .status(400)
+          .json({ error: 'Vui lòng điền đầy đủ tên, tính cách và kỷ niệm.' });
       }
 
       const candidateImp = {
@@ -320,19 +339,23 @@ export default async function handler(req, res) {
             : new Date().toISOString(),
       };
 
+      const row = mapImpressionToRow(targetTeacher.id, candidateImp);
+      const insertRes = await fetch(`${SUPABASE_IMPRESSIONS_REST_URL}?on_conflict=id`, {
+        method: 'POST',
+        headers: getSupabaseHeaders({
+          Prefer: 'resolution=merge-duplicates,return=representation',
+        }),
+        body: JSON.stringify(row),
+      });
+
+      if (!insertRes.ok) {
+        return res
+          .status(500)
+          .json({ error: 'Không thể lưu nhận xét lên cơ sở dữ liệu Supabase.' });
+      }
+
       const currentList = targetTeacher.impressions || [];
-      const candidateKey = normalizeImpressionKey(candidateImp);
-      const existingDup = currentList.find(
-        (item) =>
-          item.id === candidateImp.id ||
-          (candidateKey && normalizeImpressionKey(item) === candidateKey)
-      );
-      const finalNewImp = existingDup || candidateImp;
-      const updatedList = mergeImpressionsLists([finalNewImp], currentList);
-
-      cloudImpressions[targetTeacher.id] = updatedList;
-      await saveCloudImpressions(cloudImpressions);
-
+      const updatedList = mergeImpressionsLists([candidateImp], currentList);
       const traits = targetTeacher.personalityTraits || [];
       const updatedTraits = traits.includes(trait) ? traits : [...traits, trait];
 
@@ -343,64 +366,95 @@ export default async function handler(req, res) {
         updatedAt: new Date().toISOString(),
       };
 
-      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-      await setUpstashTeachers(teachers);
-
-      return res.status(200).json({ teacher: updatedTeacher, impression: finalNewImp });
+      return res.status(200).json({ teacher: updatedTeacher, impression: candidateImp });
     }
 
-    // 2. Chỉnh sửa cảm nhận học sinh
+    // 2. Chỉnh sửa cảm nhận học sinh trực tiếp trên Supabase
     if (body.updateImpression && typeof body.updateImpression === 'object') {
       const up = body.updateImpression;
       const impId = String(up.id || '').trim();
-      const currentList = targetTeacher.impressions || [];
-      const impIndex = currentList.findIndex((i) => i.id === impId);
-      if (impIndex === -1) {
-        return res.status(404).json({ error: 'Không tìm thấy cảm nhận cần chỉnh sửa.' });
+      if (!impId) {
+        return res.status(400).json({ error: 'Mã cảm nhận không hợp lệ.' });
       }
 
-      const currentImp = currentList[impIndex];
+      const currentList = targetTeacher.impressions || [];
+      const existingImp = currentList.find((i) => i.id === impId);
+
       const updatedImp = {
-        ...currentImp,
-        studentName: up.studentName !== undefined ? String(up.studentName).trim() : currentImp.studentName,
-        className: up.className !== undefined ? String(up.className).trim() : currentImp.className,
-        trait: up.trait !== undefined ? String(up.trait).trim() : currentImp.trait,
-        detail: up.detail !== undefined ? String(up.detail).trim() : currentImp.detail,
+        id: impId,
+        studentName:
+          up.studentName !== undefined
+            ? String(up.studentName).trim()
+            : existingImp?.studentName || 'Học sinh 9A3',
+        className:
+          up.className !== undefined
+            ? String(up.className).trim()
+            : existingImp?.className || '9A3',
+        trait:
+          up.trait !== undefined ? String(up.trait).trim() : existingImp?.trait || '',
+        detail:
+          up.detail !== undefined ? String(up.detail).trim() : existingImp?.detail || '',
+        createdAt: existingImp?.createdAt || new Date().toISOString(),
       };
 
-      const nextImps = [...currentList];
-      nextImps[impIndex] = updatedImp;
-      cloudImpressions[targetTeacher.id] = nextImps;
-      await saveCloudImpressions(cloudImpressions);
+      const row = mapImpressionToRow(targetTeacher.id, updatedImp);
+      const patchRes = await fetch(
+        `${SUPABASE_IMPRESSIONS_REST_URL}?id=eq.${encodeURIComponent(impId)}`,
+        {
+          method: 'PATCH',
+          headers: getSupabaseHeaders({ Prefer: 'return=representation' }),
+          body: JSON.stringify({
+            author: row.author,
+            color: row.color,
+            content: row.content,
+          }),
+        }
+      );
+
+      if (!patchRes.ok) {
+        return res
+          .status(500)
+          .json({ error: 'Không thể cập nhật nhận xét trên cơ sở dữ liệu Supabase.' });
+      }
+
+      const nextImps = currentList.some((i) => i.id === impId)
+        ? currentList.map((i) => (i.id === impId ? updatedImp : i))
+        : [updatedImp, ...currentList];
 
       const updatedTeacher = {
         ...targetTeacher,
         impressions: nextImps,
         updatedAt: new Date().toISOString(),
       };
-
-      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-      await setUpstashTeachers(teachers);
 
       return res.status(200).json({ teacher: updatedTeacher, impression: updatedImp });
     }
 
-    // 3. Xoá cảm nhận học sinh qua PATCH
+    // 3. Xoá cảm nhận học sinh trực tiếp trên Supabase
     if (body.deleteImpressionId) {
       const impId = String(body.deleteImpressionId).trim();
+      const delRes = await fetch(
+        `${SUPABASE_IMPRESSIONS_REST_URL}?id=eq.${encodeURIComponent(impId)}`,
+        {
+          method: 'DELETE',
+          headers: getSupabaseHeaders(),
+        }
+      );
+
+      if (!delRes.ok) {
+        return res
+          .status(500)
+          .json({ error: 'Không thể xóa nhận xét trên cơ sở dữ liệu Supabase.' });
+      }
+
       const currentList = targetTeacher.impressions || [];
       const nextImps = currentList.filter((i) => i.id !== impId);
-      cloudImpressions[targetTeacher.id] = nextImps;
-      await saveCloudImpressions(cloudImpressions);
 
       const updatedTeacher = {
         ...targetTeacher,
         impressions: nextImps,
         updatedAt: new Date().toISOString(),
       };
-
-      teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-      await setUpstashTeachers(teachers);
 
       return res.status(200).json({ teacher: updatedTeacher, deletedId: impId });
     }
@@ -433,7 +487,6 @@ export default async function handler(req, res) {
           updatedAt: new Date().toISOString(),
         };
         teachers[targetIndex !== -1 ? targetIndex : 0] = updatedTeacher;
-        await setUpstashTeachers(teachers);
         return res.status(200).json({ teacher: updatedTeacher });
       }
     }
@@ -448,10 +501,7 @@ export default async function handler(req, res) {
           'Chỉ máy tính chủ sở hữu (localhost/127.0.0.1) mới có quyền xóa giáo viên khỏi bảng tổng hợp.',
       });
     }
-    // Xóa giáo viên
     if (teacherId) {
-      const nextTeachers = teachers.filter((t) => t.id !== teacherId);
-      await setUpstashTeachers(nextTeachers);
       return res.status(200).json({ deletedId: teacherId });
     }
   }

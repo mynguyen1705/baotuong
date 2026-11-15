@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { BAO_TUONG_DATA, getSectionById } from './data/baotuongData';
+import { useSafeQueryClient } from './lib/queryClient';
 import { SectionId } from './types/baotuong';
 import { WishesModalMode } from './types/wishes';
 import { DEFAULT_TEACHERS_SEED, TeacherModalMode, TeacherProfile } from './types/teachers';
@@ -27,7 +29,11 @@ import { TeacherSummaryBoardSection } from './components/TeacherSummaryBoardSect
 import { TeacherBoardModal } from './components/TeacherBoardModal';
 import { MemoryStationModal } from './components/MemoryStationModal';
 import { isLocalhostClient } from './utils/isLocalhostClient';
-import { mergeAllTeachersWithLocal } from './utils/impressionsClient';
+import {
+  fetchAllTeacherImpressionsFromSupabase,
+  mergeTeachersWithSupabaseImpressions,
+  TEACHERS_QUERY_KEY,
+} from './utils/impressionsClient';
 
 function parseSectionHash(hash: string): SectionId | null {
   const cleaned = hash.replace(/^#/, '').trim();
@@ -79,32 +85,63 @@ export const App: React.FC = () => {
   // Mặc định tự động bật nhạc nền khi vào trang (kèm cơ chế Auto-play fallback theo chính sách trình duyệt)
   const [isBgMusicPlaying, setIsBgMusicPlaying] = useState(true);
 
-  const fetchTeachers = useCallback(async () => {
-    if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+  const queryClient = useSafeQueryClient();
+
+  const loadTeachersWithSupabase = useCallback(async (): Promise<TeacherProfile[] | null> => {
+    if (typeof window === 'undefined' || typeof fetch === 'undefined') return null;
     try {
-      let res = await fetch('/api/teachers');
-      if (!res.ok) {
-        res = await fetch('/teachers-data.json');
+      const [apiResult, supabaseImps] = await Promise.all([
+        (async () => {
+          let res = await fetch('/api/teachers');
+          if (!res.ok) {
+            res = await fetch('/teachers-data.json');
+          }
+          if (!res.ok) return null;
+          return res.json();
+        })(),
+        fetchAllTeacherImpressionsFromSupabase(),
+      ]);
+
+      if (apiResult && typeof apiResult.isOwner === 'boolean') {
+        setIsOwner(apiResult.isOwner && isLocalhostClient());
       }
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data && Array.isArray(data.teachers)) {
-        const fetchedTeachers: TeacherProfile[] = mergeAllTeachersWithLocal(data.teachers);
-        setTeachers(fetchedTeachers);
+
+      if (apiResult && Array.isArray(apiResult.teachers)) {
+        const hasSupabaseRows = Object.keys(supabaseImps).length > 0;
+        const mergedTeachers = mergeTeachersWithSupabaseImpressions(
+          apiResult.teachers,
+          supabaseImps,
+          hasSupabaseRows
+        );
+        setTeachers(mergedTeachers);
         setSelectedTeacherId((prevId) => {
-          if (prevId && fetchedTeachers.some((t) => t.id === prevId)) {
+          if (prevId && mergedTeachers.some((t) => t.id === prevId)) {
             return prevId;
           }
-          return fetchedTeachers[0]?.id ?? null;
+          return mergedTeachers[0]?.id ?? null;
         });
-      }
-      if (typeof data?.isOwner === 'boolean') {
-        setIsOwner(data.isOwner && isLocalhostClient());
+        return mergedTeachers;
       }
     } catch {
       // Fallback to seeded teachers when offline or in unit tests without fetch stub
     }
+    return null;
   }, []);
+
+  const teachersQuery = useQuery(
+    {
+      queryKey: TEACHERS_QUERY_KEY,
+      queryFn: loadTeachersWithSupabase,
+      refetchInterval: 8000,
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+    },
+    queryClient
+  );
+
+  const fetchTeachers = useCallback(async () => {
+    await teachersQuery.refetch();
+  }, [teachersQuery]);
 
   const fetchMemories = useCallback(async () => {
     try {
@@ -119,9 +156,8 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchTeachers();
     fetchMemories();
-  }, [fetchTeachers, fetchMemories]);
+  }, [fetchMemories]);
 
   const handleUpdateMemorySlot = useCallback(
     async (slotId: MemorySlotId, payload: UpdateMemoryPayload) => {

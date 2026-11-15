@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Camera,
@@ -16,19 +17,20 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { useSafeQueryClient } from '../lib/queryClient';
 import { TeacherImpression, TeacherModalMode, TeacherProfile } from '../types/teachers';
 import { TeacherAvatarIllustration } from './TeacherAvatarIllustration';
 import { DecoPolaroidFrame } from './DecoPolaroidFrame';
 import { TeacherSummaryBoardSection } from './TeacherSummaryBoardSection';
 import { fileToImageDataUrl } from '../utils/imageDataUrl';
 import {
-  addDeletedImpressionId,
-  addMyImpressionId,
+  createTeacherImpressionClient,
+  deleteTeacherImpressionClient,
   formatImpressionTime,
   isMyImpression,
-  removeLocalImpression,
-  removeMyImpressionId,
-  saveLocalImpression,
+  TEACHER_IMPRESSIONS_QUERY_KEY,
+  TEACHERS_QUERY_KEY,
+  updateTeacherImpressionClient,
 } from '../utils/impressionsClient';
 
 export interface TeacherBoardModalProps {
@@ -239,51 +241,93 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
     setErrorMessage(null);
   };
 
+  const queryClient = useSafeQueryClient();
+
+  const createImpressionMutation = useMutation(
+    {
+      mutationFn: ({
+        teacher,
+        input,
+      }: {
+        teacher: TeacherProfile;
+        input: { studentName: string; className: string; trait: string; detail: string };
+      }) => createTeacherImpressionClient(teacher.id, input, teacher),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: TEACHER_IMPRESSIONS_QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: TEACHERS_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
+
+  const updateImpressionMutation = useMutation(
+    {
+      mutationFn: ({
+        teacher,
+        impression,
+      }: {
+        teacher: TeacherProfile;
+        impression: TeacherImpression;
+      }) => updateTeacherImpressionClient(teacher.id, impression, teacher),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: TEACHER_IMPRESSIONS_QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: TEACHERS_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
+
+  const deleteImpressionMutation = useMutation(
+    {
+      mutationFn: ({
+        teacher,
+        impressionId,
+      }: {
+        teacher: TeacherProfile;
+        impressionId: string;
+      }) => deleteTeacherImpressionClient(teacher.id, impressionId, teacher),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: TEACHER_IMPRESSIONS_QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: TEACHERS_QUERY_KEY });
+      },
+    },
+    queryClient
+  );
+
   const handleDeleteImpression = async (impressionId: string) => {
     if (!activeTeacher) return;
-    if (typeof window !== 'undefined' && !window.confirm('Bạn có chắc chắn muốn xóa cảm nhận này không?')) {
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm('Bạn có chắc chắn muốn xóa cảm nhận này không?')
+    ) {
       return;
     }
 
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // 1. Thử gửi lên máy chủ nếu có
     try {
-      await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          teacherId: activeTeacher.id,
-          deleteImpressionId: impressionId,
-        }),
+      const { teacher: updatedTeacher } = await deleteImpressionMutation.mutateAsync({
+        teacher: activeTeacher,
+        impressionId,
       });
-    } catch {
-      // Tiếp tục xóa cục bộ
+
+      onTeachersUpdated(
+        teachers.map((item) => (item.id === updatedTeacher.id ? updatedTeacher : item))
+      );
+
+      if (editingImpressionId === impressionId) {
+        handleCancelEditImpression();
+      }
+
+      setSuccessMessage('Đã xóa cảm nhận thành công!');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error && err.message
+          ? err.message
+          : 'Không thể xóa cảm nhận lúc này. Vui lòng thử lại.';
+      setErrorMessage(msg);
     }
-
-    // 2. Ghi nhận xóa vào bộ nhớ thiết bị
-    addDeletedImpressionId(impressionId);
-    removeMyImpressionId(impressionId);
-    removeLocalImpression(activeTeacher.id, impressionId);
-
-    // 3. Cập nhật giao diện
-    const nextImps = activeTeacher.impressions.filter((i) => i.id !== impressionId);
-    const updatedTeacher: TeacherProfile = {
-      ...activeTeacher,
-      impressions: nextImps,
-      updatedAt: new Date().toISOString(),
-    };
-
-    onTeachersUpdated(
-      teachers.map((item) => (item.id === updatedTeacher.id ? updatedTeacher : item))
-    );
-
-    if (editingImpressionId === impressionId) {
-      handleCancelEditImpression();
-    }
-
-    setSuccessMessage('Đã xóa cảm nhận thành công!');
   };
 
   const handleAddOrEditImpressionSubmit = async (e: React.FormEvent) => {
@@ -296,35 +340,8 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
 
     try {
       if (editingImpressionId) {
-        // Cập nhật cảm nhận đã có
-        const payload = {
-          teacherId: activeTeacher.id,
-          updateImpression: {
-            id: editingImpressionId,
-            studentName,
-            className: className || '9A3',
-            trait: impressionTrait,
-            detail: impressionDetail,
-          },
-        };
-
-        let updatedTeacher: TeacherProfile | null = null;
-        try {
-          const res = await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.teacher) updatedTeacher = data.teacher;
-          }
-        } catch {
-          // Bỏ qua lỗi kết nối và lưu trữ cục bộ
-        }
-
         const existingImp = activeTeacher.impressions.find((i) => i.id === editingImpressionId);
-        const updatedImp: TeacherImpression = {
+        const candidateImp: TeacherImpression = {
           id: editingImpressionId,
           studentName,
           className: className || '9A3',
@@ -333,21 +350,13 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
           createdAt: existingImp?.createdAt || new Date().toISOString(),
         };
 
-        saveLocalImpression(activeTeacher.id, updatedImp);
-
-        if (!updatedTeacher) {
-          const nextImps = activeTeacher.impressions.map((i) =>
-            i.id === editingImpressionId ? updatedImp : i
-          );
-          updatedTeacher = {
-            ...activeTeacher,
-            impressions: nextImps,
-            updatedAt: new Date().toISOString(),
-          };
-        }
+        const { teacher: updatedTeacher } = await updateImpressionMutation.mutateAsync({
+          teacher: activeTeacher,
+          impression: candidateImp,
+        });
 
         onTeachersUpdated(
-          teachers.map((item) => (item.id === updatedTeacher!.id ? updatedTeacher! : item))
+          teachers.map((item) => (item.id === updatedTeacher.id ? updatedTeacher : item))
         );
 
         setEditingImpressionId(null);
@@ -356,70 +365,18 @@ export const TeacherBoardModal: React.FC<TeacherBoardModalProps> = ({
         setImpressionDetail('');
         setSuccessMessage('Đã cập nhật chi tiết cảm nhận thành công!');
       } else {
-        // Thêm cảm nhận mới
-        const payload = {
-          teacherId: activeTeacher.id,
-          impression: {
+        const { teacher: updatedTeacher } = await createImpressionMutation.mutateAsync({
+          teacher: activeTeacher,
+          input: {
             studentName,
             className: className || '9A3',
             trait: impressionTrait,
             detail: impressionDetail,
           },
-        };
-
-        let updatedTeacher: TeacherProfile | null = null;
-        let createdImpId = `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-        try {
-          const res = await fetch(`/api/teachers/${encodeURIComponent(activeTeacher.id)}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.teacher) {
-              updatedTeacher = data.teacher;
-              if (data.impression?.id) {
-                createdImpId = data.impression.id;
-              } else if (
-                Array.isArray(data.teacher.impressions) &&
-                data.teacher.impressions.length > 0
-              ) {
-                createdImpId = data.teacher.impressions[0].id;
-              }
-            }
-          }
-        } catch {
-          // Fallback cục bộ
-        }
-
-        const newImp: TeacherImpression = {
-          id: createdImpId,
-          studentName,
-          className: className || '9A3',
-          trait: impressionTrait,
-          detail: impressionDetail,
-          createdAt: new Date().toISOString(),
-        };
-
-        addMyImpressionId(newImp.id);
-        saveLocalImpression(activeTeacher.id, newImp);
-
-        if (!updatedTeacher) {
-          const traits = activeTeacher.personalityTraits.includes(impressionTrait)
-            ? activeTeacher.personalityTraits
-            : [...activeTeacher.personalityTraits, impressionTrait];
-          updatedTeacher = {
-            ...activeTeacher,
-            personalityTraits: traits,
-            impressions: [newImp, ...activeTeacher.impressions],
-            updatedAt: new Date().toISOString(),
-          };
-        }
+        });
 
         onTeachersUpdated(
-          teachers.map((item) => (item.id === updatedTeacher!.id ? updatedTeacher! : item))
+          teachers.map((item) => (item.id === updatedTeacher.id ? updatedTeacher : item))
         );
 
         setStudentName('');

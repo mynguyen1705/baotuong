@@ -1,9 +1,23 @@
+import { isMockedTestFetch, supabase } from '../lib/supabaseClient';
 import { TeacherImpression, TeacherProfile } from '../types/teachers';
 import { isLocalhostClient } from './isLocalhostClient';
 
 const MY_IMPRESSION_IDS_KEY = 'baotuong_my_impression_ids';
-const DELETED_IMPRESSION_IDS_KEY = 'baotuong_deleted_impression_ids';
-const LOCAL_IMPRESSIONS_KEY = 'baotuong_local_impressions';
+const LEGACY_LOCAL_IMPRESSIONS_KEY = 'baotuong_local_impressions';
+const LEGACY_DELETED_IMPRESSION_IDS_KEY = 'baotuong_deleted_impression_ids';
+
+export const TEACHERS_QUERY_KEY = ['teachers'] as const;
+export const TEACHER_IMPRESSIONS_QUERY_KEY = ['teacher_impressions'] as const;
+
+export interface SupabaseTeacherImpressionRow {
+  id: string;
+  teacher_id: string;
+  author: string;
+  content: string;
+  color: string;
+  rotation: number;
+  created_at: string;
+}
 
 export function getMyImpressionIds(): string[] {
   if (typeof window === 'undefined') return [];
@@ -53,78 +67,60 @@ export function isMyImpression(id: string, isOwner?: boolean): boolean {
   return getMyImpressionIds().includes(id);
 }
 
-export function getDeletedImpressionIds(): string[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(DELETED_IMPRESSION_IDS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+export function mapImpressionToSupabaseRow(
+  teacherId: string,
+  impression: TeacherImpression
+): SupabaseTeacherImpressionRow {
+  return {
+    id: impression.id,
+    teacher_id: teacherId,
+    author: impression.studentName.trim(),
+    color: (impression.className || '9A3').trim(),
+    content: JSON.stringify({
+      studentName: impression.studentName.trim(),
+      className: (impression.className || '9A3').trim(),
+      trait: impression.trait.trim(),
+      detail: impression.detail.trim(),
+    }),
+    rotation: 0,
+    created_at: impression.createdAt || new Date().toISOString(),
+  };
 }
 
-export function addDeletedImpressionId(id: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const current = getDeletedImpressionIds();
-    if (!current.includes(id)) {
-      localStorage.setItem(DELETED_IMPRESSION_IDS_KEY, JSON.stringify([id, ...current]));
-    }
-  } catch {
-    // Ignore error
-  }
-}
-
-interface LocalImpressionRecord {
+export function mapRowToTeacherImpression(row: SupabaseTeacherImpressionRow): {
   teacherId: string;
   impression: TeacherImpression;
-}
+} {
+  let studentName = String(row.author || 'Học sinh 9A3').trim();
+  let className = row.color && row.color !== 'yellow' ? String(row.color).trim() : '9A3';
+  let trait = 'Tận tâm & nhiệt huyết';
+  let detail = String(row.content || '').trim();
 
-export function getLocalImpressions(teacherId?: string): LocalImpressionRecord[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(LOCAL_IMPRESSIONS_KEY);
-    if (!raw) return [];
-    const parsed: LocalImpressionRecord[] = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    if (teacherId) {
-      return parsed.filter((rec) => rec.teacherId === teacherId);
+  if (detail.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(detail);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.studentName) studentName = String(parsed.studentName).trim();
+        if (parsed.className) className = String(parsed.className).trim();
+        if (parsed.trait) trait = String(parsed.trait).trim();
+        if (parsed.detail) detail = String(parsed.detail).trim();
+      }
+    } catch {
+      // Fallback to plain text
     }
-    return parsed;
-  } catch {
-    return [];
   }
-}
 
-export function saveLocalImpression(teacherId: string, impression: TeacherImpression): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const records = getLocalImpressions();
-    const filtered = records.filter(
-      (rec) => !(rec.teacherId === teacherId && rec.impression.id === impression.id)
-    );
-    localStorage.setItem(
-      LOCAL_IMPRESSIONS_KEY,
-      JSON.stringify([{ teacherId, impression }, ...filtered])
-    );
-  } catch {
-    // Ignore localStorage errors
-  }
-}
-
-export function removeLocalImpression(teacherId: string, impressionId: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const records = getLocalImpressions();
-    const updated = records.filter(
-      (rec) => !(rec.teacherId === teacherId && rec.impression.id === impressionId)
-    );
-    localStorage.setItem(LOCAL_IMPRESSIONS_KEY, JSON.stringify(updated));
-  } catch {
-    // Ignore error
-  }
+  return {
+    teacherId: String(row.teacher_id),
+    impression: {
+      id: String(row.id),
+      studentName,
+      className,
+      trait,
+      detail,
+      createdAt: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+    },
+  };
 }
 
 function normalizeImpressionContentKey(imp: {
@@ -141,83 +137,354 @@ function normalizeImpressionContentKey(imp: {
   return `${s}|${c}|${t}|${d}`;
 }
 
-export function mergeTeacherImpressions(teacher: TeacherProfile): TeacherProfile {
-  const deletedIds = new Set(getDeletedImpressionIds());
-  const activeBase = (teacher.impressions || []).filter((imp) => !deletedIds.has(imp.id));
-
-  const localRecords = getLocalImpressions(teacher.id);
-  const map = new Map<string, TeacherImpression>();
-  const seenKeys = new Set<string>();
-  const serverIds = new Set<string>();
-  const serverKeys = new Set<string>();
-
-  for (const imp of activeBase) {
-    const key = normalizeImpressionContentKey(imp);
-    if (!map.has(imp.id) && (!key || !seenKeys.has(key))) {
-      map.set(imp.id, imp);
-      if (key) seenKeys.add(key);
+/**
+ * Nếu trình duyệt của học sinh còn nhận xét cũ từng lưu trong localStorage trước khi nâng cấp Supabase,
+ * tự động đẩy toàn bộ lên bảng public.teacher_impressions trên Supabase rồi xóa bỏ bộ nhớ cục bộ.
+ */
+async function migrateLegacyLocalImpressionsToSupabase(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(LEGACY_DELETED_IMPRESSION_IDS_KEY);
+    const raw = localStorage.getItem(LEGACY_LOCAL_IMPRESSIONS_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.removeItem(LEGACY_LOCAL_IMPRESSIONS_KEY);
+      return;
     }
-    serverIds.add(imp.id);
-    if (key) serverKeys.add(key);
-  }
 
-  const unsyncedForTeacher: TeacherImpression[] = [];
-  for (const rec of localRecords) {
-    const imp = rec.impression;
-    if (deletedIds.has(imp.id)) continue;
-    const key = normalizeImpressionContentKey(imp);
-    if (map.has(imp.id)) {
-      if (getMyImpressionIds().includes(imp.id)) {
-        map.set(imp.id, imp);
+    const rowsToUpsert: SupabaseTeacherImpressionRow[] = [];
+    for (const rec of parsed) {
+      if (
+        rec &&
+        typeof rec.teacherId === 'string' &&
+        rec.impression &&
+        typeof rec.impression.id === 'string' &&
+        typeof rec.impression.studentName === 'string' &&
+        typeof rec.impression.trait === 'string' &&
+        typeof rec.impression.detail === 'string'
+      ) {
+        rowsToUpsert.push(mapImpressionToSupabaseRow(rec.teacherId, rec.impression));
       }
-      continue;
     }
-    if (key && seenKeys.has(key)) {
-      continue;
+
+    if (rowsToUpsert.length > 0) {
+      const { error } = await supabase
+        .from('teacher_impressions')
+        .upsert(rowsToUpsert, { onConflict: 'id', ignoreDuplicates: true });
+      if (!error) {
+        localStorage.removeItem(LEGACY_LOCAL_IMPRESSIONS_KEY);
+      }
+    } else {
+      localStorage.removeItem(LEGACY_LOCAL_IMPRESSIONS_KEY);
     }
-    map.set(imp.id, imp);
-    if (key) seenKeys.add(key);
-    if (!serverIds.has(imp.id) && (!key || !serverKeys.has(key))) {
-      unsyncedForTeacher.push(imp);
-    }
+  } catch {
+    // Ignore migration errors
+  }
+}
+
+export async function fetchAllTeacherImpressionsFromSupabase(): Promise<
+  Record<string, TeacherImpression[]>
+> {
+  if (isMockedTestFetch()) {
+    return {};
   }
 
-  // Tự động đồng bộ các cảm nhận còn lưu cục bộ trên thiết bị khác lên máy chủ web chính thức
-  if (unsyncedForTeacher.length > 0 && typeof fetch !== 'undefined') {
-    fetch(`/api/teachers/${encodeURIComponent(teacher.id)}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        teacherId: teacher.id,
-        syncImpressions: unsyncedForTeacher,
-      }),
-    }).catch(() => {});
+  await migrateLegacyLocalImpressionsToSupabase();
+
+  const { data, error } = await supabase
+    .from('teacher_impressions')
+    .select('id, teacher_id, author, content, color, rotation, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error || !Array.isArray(data)) {
+    return {};
   }
 
-  const merged = Array.from(map.values());
-  merged.sort((a, b) => {
-    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-    return timeB - timeA;
+  const grouped: Record<string, TeacherImpression[]> = {};
+  for (const rawRow of data) {
+    const { teacherId, impression } = mapRowToTeacherImpression(
+      rawRow as SupabaseTeacherImpressionRow
+    );
+    if (!grouped[teacherId]) {
+      grouped[teacherId] = [];
+    }
+    grouped[teacherId].push(impression);
+  }
+
+  return grouped;
+}
+
+export function mergeTeachersWithSupabaseImpressions(
+  teachers: TeacherProfile[],
+  impressionsByTeacher: Record<string, TeacherImpression[]>,
+  replaceFromDatabase = false
+): TeacherProfile[] {
+  return teachers.map((teacher) => {
+    const dbImps = impressionsByTeacher[teacher.id] || [];
+    const baseImps = replaceFromDatabase ? [] : teacher.impressions || [];
+
+    const map = new Map<string, TeacherImpression>();
+    const seenKeys = new Set<string>();
+
+    for (const imp of [...dbImps, ...baseImps]) {
+      if (!imp || !imp.id) continue;
+      const key = normalizeImpressionContentKey(imp);
+      if (!map.has(imp.id) && (!key || !seenKeys.has(key))) {
+        map.set(imp.id, imp);
+        if (key) seenKeys.add(key);
+      }
+    }
+
+    const merged = Array.from(map.values()).sort((a, b) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    const traitSet = new Set(teacher.personalityTraits || []);
+    for (const imp of merged) {
+      if (imp.trait) traitSet.add(imp.trait);
+    }
+
+    return {
+      ...teacher,
+      personalityTraits: Array.from(traitSet),
+      impressions: merged,
+    };
   });
-
-  const traitSet = new Set(teacher.personalityTraits || []);
-  for (const imp of merged) {
-    if (imp.trait) traitSet.add(imp.trait);
-  }
-
-  return {
-    ...teacher,
-    personalityTraits: Array.from(traitSet),
-    impressions: merged,
-  };
 }
 
 export function mergeAllTeachersWithLocal(teachers: TeacherProfile[]): TeacherProfile[] {
-  return teachers.map((t) => mergeTeacherImpressions(t));
+  return mergeTeachersWithSupabaseImpressions(teachers, {}, false);
+}
+
+export async function createTeacherImpressionClient(
+  teacherId: string,
+  input: {
+    studentName: string;
+    className: string;
+    trait: string;
+    detail: string;
+  },
+  currentTeacher: TeacherProfile
+): Promise<{ teacher: TeacherProfile; impression: TeacherImpression }> {
+  const newImp: TeacherImpression = {
+    id: `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    studentName: input.studentName.trim(),
+    className: (input.className || '9A3').trim(),
+    trait: input.trait.trim(),
+    detail: input.detail.trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  // 1. Ghi trực tiếp vào bảng public.teacher_impressions trên Supabase
+  if (!isMockedTestFetch()) {
+    const row = mapImpressionToSupabaseRow(teacherId, newImp);
+    const { data, error } = await supabase
+      .from('teacher_impressions')
+      .insert(row)
+      .select('id, teacher_id, author, content, color, rotation, created_at')
+      .single();
+
+    if (!error && data) {
+      const { impression: savedImp } = mapRowToTeacherImpression(
+        data as SupabaseTeacherImpressionRow
+      );
+      addMyImpressionId(savedImp.id);
+
+      // Đồng bộ song song về API máy chủ
+      if (typeof fetch === 'function') {
+        fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teacherId,
+            impression: savedImp,
+          }),
+        }).catch(() => {});
+      }
+
+      const traits = currentTeacher.personalityTraits.includes(savedImp.trait)
+        ? currentTeacher.personalityTraits
+        : [...currentTeacher.personalityTraits, savedImp.trait];
+
+      const updatedTeacher: TeacherProfile = {
+        ...currentTeacher,
+        personalityTraits: traits,
+        impressions: [
+          savedImp,
+          ...currentTeacher.impressions.filter((i) => i.id !== savedImp.id),
+        ],
+        updatedAt: new Date().toISOString(),
+      };
+
+      return { teacher: updatedTeacher, impression: savedImp };
+    }
+  }
+
+  // 2. Dự phòng gọi API máy chủ /api/teachers/:id
+  const res = await fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      teacherId,
+      impression: newImp,
+    }),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    if (data?.teacher) {
+      const updatedTeacher: TeacherProfile = data.teacher;
+      const savedImp: TeacherImpression =
+        data.impression ||
+        (Array.isArray(updatedTeacher.impressions) && updatedTeacher.impressions[0]) ||
+        newImp;
+      addMyImpressionId(savedImp.id);
+      return { teacher: updatedTeacher, impression: savedImp };
+    }
+  }
+
+  throw new Error('Không thể lưu nhận xét tính cách lên cơ sở dữ liệu lúc này. Vui lòng thử lại.');
+}
+
+export async function updateTeacherImpressionClient(
+  teacherId: string,
+  updatedImp: TeacherImpression,
+  currentTeacher: TeacherProfile
+): Promise<{ teacher: TeacherProfile; impression: TeacherImpression }> {
+  // 1. Cập nhật trực tiếp trên Supabase
+  if (!isMockedTestFetch()) {
+    const row = mapImpressionToSupabaseRow(teacherId, updatedImp);
+    const { data, error } = await supabase
+      .from('teacher_impressions')
+      .update({
+        author: row.author,
+        color: row.color,
+        content: row.content,
+      })
+      .eq('id', updatedImp.id)
+      .select('id, teacher_id, author, content, color, rotation, created_at')
+      .single();
+
+    if (!error && data) {
+      const { impression: savedImp } = mapRowToTeacherImpression(
+        data as SupabaseTeacherImpressionRow
+      );
+      addMyImpressionId(savedImp.id);
+
+      if (typeof fetch === 'function') {
+        fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teacherId,
+            updateImpression: savedImp,
+          }),
+        }).catch(() => {});
+      }
+
+      const nextImps = currentTeacher.impressions.map((i) =>
+        i.id === savedImp.id ? savedImp : i
+      );
+      const traitSet = new Set(currentTeacher.personalityTraits || []);
+      for (const imp of nextImps) {
+        if (imp.trait) traitSet.add(imp.trait);
+      }
+
+      const updatedTeacher: TeacherProfile = {
+        ...currentTeacher,
+        personalityTraits: Array.from(traitSet),
+        impressions: nextImps,
+        updatedAt: new Date().toISOString(),
+      };
+
+      return { teacher: updatedTeacher, impression: savedImp };
+    }
+  }
+
+  // 2. Dự phòng qua API máy chủ
+  const res = await fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      teacherId,
+      updateImpression: updatedImp,
+    }),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    if (data?.teacher) {
+      addMyImpressionId(updatedImp.id);
+      return { teacher: data.teacher, impression: data.impression || updatedImp };
+    }
+  }
+
+  throw new Error('Không thể cập nhật nhận xét trên cơ sở dữ liệu lúc này. Vui lòng thử lại.');
+}
+
+export async function deleteTeacherImpressionClient(
+  teacherId: string,
+  impressionId: string,
+  currentTeacher: TeacherProfile
+): Promise<{ teacher: TeacherProfile; deletedId: string }> {
+  // 1. Xóa trực tiếp trên Supabase
+  if (!isMockedTestFetch()) {
+    const { error } = await supabase
+      .from('teacher_impressions')
+      .delete()
+      .eq('id', impressionId);
+
+    if (!error) {
+      removeMyImpressionId(impressionId);
+
+      if (typeof fetch === 'function') {
+        fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teacherId,
+            deleteImpressionId: impressionId,
+          }),
+        }).catch(() => {});
+      }
+
+      const nextImps = currentTeacher.impressions.filter((i) => i.id !== impressionId);
+      const updatedTeacher: TeacherProfile = {
+        ...currentTeacher,
+        impressions: nextImps,
+        updatedAt: new Date().toISOString(),
+      };
+
+      return { teacher: updatedTeacher, deletedId: impressionId };
+    }
+  }
+
+  // 2. Dự phòng qua API máy chủ
+  const res = await fetch(`/api/teachers/${encodeURIComponent(teacherId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      teacherId,
+      deleteImpressionId: impressionId,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error('Không thể xóa nhận xét lúc này. Vui lòng thử lại.');
+  }
+
+  removeMyImpressionId(impressionId);
+  const nextImps = currentTeacher.impressions.filter((i) => i.id !== impressionId);
+  const updatedTeacher: TeacherProfile = {
+    ...currentTeacher,
+    impressions: nextImps,
+    updatedAt: new Date().toISOString(),
+  };
+
+  return { teacher: updatedTeacher, deletedId: impressionId };
 }
 
 export function formatImpressionTime(isoString?: string): string {
