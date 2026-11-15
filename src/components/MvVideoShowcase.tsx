@@ -123,11 +123,21 @@ export const MvVideoShowcase: React.FC<MvVideoShowcaseProps> = ({
       <div className="overflow-hidden rounded-3xl border-4 border-stone-900 bg-stone-950 shadow-xl">
         {videoSourceMode === 'local' && !localVideoError ? (
           <video
+            key={mvData.videoUrl}
             controls
+            playsInline
+            preload="metadata"
             onError={() => setLocalVideoError(true)}
             className="aspect-video w-full object-cover"
           >
-            <source src={mvData.videoUrl} type="video/mp4" />
+            <source
+              src={
+                mvData.videoUrl.includes('?')
+                  ? mvData.videoUrl
+                  : `${mvData.videoUrl}?v=master1080p60`
+              }
+              type="video/mp4"
+            />
             Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
           </video>
         ) : videoSourceMode === 'youtube' && embedUrl ? (
